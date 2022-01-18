@@ -5,6 +5,7 @@ import { ListStoreConstructor } from './core/ListStoreConstructor';
 import { computed } from 'mobx';
 import { sleep } from '../blockchain-bridge/utils';
 import { networkFromToken, NETWORKS } from '../blockchain-bridge';
+import BigNumber from 'bignumber.js';
 
 export class Tokens extends ListStoreConstructor<ITokenInfo> {
   constructor(stores: IStores) {
@@ -23,6 +24,19 @@ export class Tokens extends ListStoreConstructor<ITokenInfo> {
 
   getTokenBySymbol(symbol: string): ITokenInfo {
     return this.allData.find(token => token.display_props.symbol.toLowerCase() === symbol.toLowerCase());
+  }
+
+  getTokenByDstAddress(dst_address: string): ITokenInfo {
+    return this.allData.find(token => token.dst_address === dst_address);
+  }
+
+  getPriceByDstAddress(dst_address: string): BigNumber {
+    if(dst_address === 'uscrt') // If the token is the native SCRT, get the price for sSCRT
+      dst_address = 'secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek'
+
+    let token = this.allData.find(token => token.dst_address === dst_address);
+
+    return new BigNumber(token?.price);
   }
 
   //

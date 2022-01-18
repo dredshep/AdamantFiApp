@@ -2,6 +2,8 @@ import { decode } from 'bech32';
 import cogoToast from 'cogo-toast';
 import { ExecuteResult } from 'secretjs';
 import { StdFee } from 'secretjs/types/types';
+import { Tokens } from 'stores/Tokens';
+import { GAS_FOR_BASE_SWAP_ROUTE, GAS_FOR_SWAP_DIRECT } from 'utils/gasPrices';
 import { EXCHANGE_MODE, TOKEN } from '../../stores/interfaces';
 import { NETWORKS } from '../eth/networks';
 
@@ -48,6 +50,26 @@ export function getFeeForExecute(gas: number): StdFee {
     amount: [{ amount: String(Math.floor(gas * gasPriceUscrt) + 1), denom: 'uscrt' }],
     gas: String(gas),
   };
+}
+
+export function getFeeForExecuteUSD(numHops: number, tokens: Tokens): number {
+  if(numHops === 1)
+    var gas = GAS_FOR_SWAP_DIRECT;
+  else
+    var gas = numHops * GAS_FOR_BASE_SWAP_ROUTE;
+
+  return Number(tokens.getTokenBySymbol('sSCRT').price) * gas / 1_000_000 * gasPriceUscrt;
+}
+
+// Cache fees by numHops so we don't have to recompute as often
+export function cacheFeesForExecuteUSD(tokens: Tokens): number[] {
+  return [
+    0,
+    getFeeForExecuteUSD(1, tokens),
+    getFeeForExecuteUSD(2, tokens),
+    getFeeForExecuteUSD(3, tokens),
+    getFeeForExecuteUSD(4, tokens),
+  ]
 }
 
 // todo: fix this up - proxy token

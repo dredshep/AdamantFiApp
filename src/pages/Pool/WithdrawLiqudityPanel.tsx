@@ -376,7 +376,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                     <PriceRow
                       fromToken={this.props.tokens.get(tokenA)?.symbol}
                       toToken={this.props.tokens.get(tokenB)?.symbol}
-                      price={price.toNumber()}
+                      price={price}
                     />
                   )}
                   <div style={rowStyle}>

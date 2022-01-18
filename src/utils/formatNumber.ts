@@ -117,14 +117,24 @@ export function formatWithTwoDecimalsRub(value: number) {
  * 123.456789 => 123.457
  * 123456789.123456 => 123456789
  */
-export function formatSignificantFigures(value: number | string, sigFigs: number) {
+export function formatSignificantFigures(value: number | string | BigNumber, sigFigs: number) {
   value = Number(value);
 
-  let maxFractionDigits = sigFigs - 1 - Math.floor(Math.log10(value));
+  let maxFractionDigits = sigFigs - 1 - Math.floor(Math.log10(Math.abs(value)));
   maxFractionDigits = Math.max(0, maxFractionDigits);
   maxFractionDigits = Math.min(20, maxFractionDigits);
 
   return new Intl.NumberFormat('en-US', {maximumFractionDigits: maxFractionDigits}).format(value);
+}
+
+export function formatAsUSD(value: number | string | BigNumber) {
+  return '$' +
+  new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+  .format(Number(value)) +
+  ' USD';
 }
 
 export function ones(value: number | string) {

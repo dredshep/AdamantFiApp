@@ -18,7 +18,7 @@ export const NewPoolWarning = (props: { inputA: string; inputB: string; tokenA: 
           const newPrice = new BigNumber(props.inputA).dividedBy(props.inputB);
 
           return newPrice.isNaN() ? null : (
-            <PriceRow fromToken={props.tokenA} toToken={props.tokenB} price={newPrice.toNumber()} labelPrefix="New " />
+            <PriceRow fromToken={props.tokenA} toToken={props.tokenB} price={newPrice} labelPrefix="New " />
           );
         })()}
       </Message>

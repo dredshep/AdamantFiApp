@@ -6,11 +6,12 @@ export type SwapTokenMap = Map<string, SwapToken>;
 
 export type SwapToken = {
   symbol: string;
-  logo: string;
-  identifier: string;
+  logo?: string;
+  identifier?: string;
   decimals?: number;
   address?: string;
   name?: string;
+  balance?: string;
 };
 
 export const SwapTokenFromSnip20Params = (address: string, token: Snip20TokenInfo) => {

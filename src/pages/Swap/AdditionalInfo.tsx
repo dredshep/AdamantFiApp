@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import React, { useState } from 'react';
 import { Container, Popup, Icon } from 'semantic-ui-react';
 import { useStores } from 'stores';
+import { formatSignificantFigures } from 'utils';
 import { PairAnalyticsLink } from '../../components/Swap/PairAnalyticsLink';
 import style from './styles.styl';
 export const AdditionalInfo = ({
@@ -9,35 +10,23 @@ export const AdditionalInfo = ({
   maximumSold,
   liquidityProviderFee,
   priceImpact,
-  expectedCSHBK,
   fromToken,
   toToken,
   pairAddress,
 }: {
-  minimumReceived?: BigNumber;
-  maximumSold?: BigNumber;
-  liquidityProviderFee: number;
-  isSupported: Boolean;
-  priceImpact: number;
-  expectedCSHBK: number;
-  fromToken: string;
-  toToken: string;
-  pairAddress: string;
+  minimumReceived?: BigNumber,
+  maximumSold?: BigNumber,
+  liquidityProviderFee: BigNumber,
+  isSupported: Boolean,
+  priceImpact: number,
+  fromToken: string,
+  toToken: string,
+  pairAddress: string,
 }) => {
   const [minReceivedIconBackground, setMinReceivedIconBackground] = useState<string>('whitesmoke');
   const [liqProvFeeIconBackground, setLiqProvFeeIconBackground] = useState<string>('whitesmoke');
   const [priceImpactIconBackground, setPriceImpactIconBackground] = useState<string>('whitesmoke');
-  //isSupported = is pair of tokens supported to get CASHBACK token
   const { theme, user } = useStores();
-
-  let priceImpactColor = 'green'; // Less than 1% - Awesome
-  if (priceImpact > 0.05) {
-    priceImpactColor = 'red'; // High
-  } else if (priceImpact > 0.03) {
-    priceImpactColor = 'orange'; // Medium
-  } else if (priceImpact > 0.01) {
-    priceImpactColor = 'green'; // Low
-  }
 
   return (
     <div style={{ maxWidth: '450px', minWidth: '450px' }}>
@@ -70,9 +59,7 @@ export const AdditionalInfo = ({
             />
           </span>
           <strong>
-            {minimumReceived !== null
-              ? `${minimumReceived.toFormat(6)} ${toToken}`
-              : `${maximumSold.toFormat(6)} ${fromToken}`}
+            {formatSignificantFigures(minimumReceived, 6)} {toToken}
           </strong>
         </div>
         <div
@@ -98,19 +85,11 @@ export const AdditionalInfo = ({
                   onMouseLeave={() => setPriceImpactIconBackground('whitesmoke')}
                 />
               }
-              content="The difference between the market price and estimated price due to trade size."
+              content="The amount this trade will affect the price of this token pair."
               position="top center"
             />
           </span>
-          <strong style={{ color: priceImpactColor }}>{`${
-            priceImpact < 0.01 / 100
-              ? '<0.01'
-              : new Intl.NumberFormat('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                  useGrouping: true,
-                }).format(priceImpact * 100)
-          }%`}</strong>
+          <strong style={{ color: getPriceImpactColor(priceImpact) }}>{getPriceImpactString(priceImpact)}</strong>
         </div>
         <div
           style={{
@@ -140,52 +119,35 @@ export const AdditionalInfo = ({
             />
           </span>
           <strong>
-            {new Intl.NumberFormat('en-US', {
-              maximumFractionDigits: 10,
-              useGrouping: true,
-            }).format(liquidityProviderFee)}{' '}
+            {formatSignificantFigures(liquidityProviderFee, 8)}
+            &nbsp;
             {fromToken}
           </strong>
         </div>
-        {/* <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            paddingTop: '0.2rem',
-          }}
-        >
-          <span>
-            Expected Cashback Rewards
-            <Popup
-            className={style.icon_info__popup} 
-            // on='click'
-              trigger={
-                <Icon
-                  name="info"
-                  className={style.icon_info}
-                  circular
-                  size="tiny"
-                  style={{
-                    marginLeft: '0.5rem',
-                    verticalAlign: 'middle',
-                  }}
-                />
-              } 
-              position="top center"
-            >
-              <Popup.Content>
-                When users trade, they acquire cashback tokens.<br/> 
-                These cashback tokens can be burned to claim SEFI. <br/>
-                {/* <a href="#">Learn more about cashback tokens</a> 
-              </Popup.Content>
-            </Popup>
-          </span>
-          <strong>
-            {expectedCSHBK}
-          </strong>
-        </div> */}
         <PairAnalyticsLink pairAddress={pairAddress} />
       </Container>
     </div>
   );
 };
+
+function getPriceImpactColor(priceImpact: number): string {
+  if (priceImpact > 0.05) return 'red'; // High
+
+  if (priceImpact > 0.03) return 'orange'; // Medium
+
+  return 'green'; // Low
+}
+
+function getPriceImpactString(priceImpact: number): string {
+  if (isNaN(priceImpact) || Math.abs(priceImpact) === Infinity) return 'No price data';
+
+  priceImpact = Math.max(0, priceImpact); //Do not show a Price Impact lower than 0
+
+  return (
+    new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      useGrouping: true,
+    }).format(priceImpact * 100) + '%'
+  );
+}

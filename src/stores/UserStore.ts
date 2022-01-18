@@ -298,8 +298,8 @@ export class UserStoreEx extends StoreConstructor {
     try {
       this.error = '';
 
-      console.log('Waiting for Keplr...');
       while (wait || !this.keplrWallet) {
+        console.log('Waiting for Keplr...');
         await sleep(100);
       }
       console.log('Found Keplr', globalThis.config.CHAIN_ID);

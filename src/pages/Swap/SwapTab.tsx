@@ -4,23 +4,24 @@ import { canonicalizeBalance, humanizeBalance, sortedStringify } from 'utils';
 import { SwapAssetRow } from '../SwapAssetRow/SwapAssetRow';
 import { AdditionalInfo } from './AdditionalInfo';
 import { PriceRow } from '../../components/Swap/PriceRow';
-import { compute_offer_amount, compute_swap } from '../../blockchain-bridge/scrt/swap';
 import { SwapTokenMap } from '../TokenModal/types/SwapToken';
-import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from 'secretjs';
+import { CosmWasmClient, ExecuteResult } from 'secretjs';
 import { BigNumber } from 'bignumber.js';
-import { extractValueFromLogs, getFeeForExecute, Snip20Send } from '../../blockchain-bridge';
+import { cacheFeesForExecuteUSD, getFeeForExecute, Snip20Send } from '../../blockchain-bridge';
 import { FlexRowSpace } from '../../components/Swap/FlexRowSpace';
 import { PairMap, SwapPair } from '../TokenModal/types/SwapPair';
 import cn from 'classnames';
 import styles from './styles.styl';
-import { storeTxResultLocally } from './utils';
-import { RouteRow } from 'components/Swap/RouteRow';
-import { Token } from '../TokenModal/types/trade';
+import { RouteOutput, RouteRow } from 'components/Swap/RouteRow';
 import { AsyncSender } from '../../blockchain-bridge/scrt/asyncSender';
 import { UserStoreEx } from '../../stores/UserStore';
 import stores from '../../stores';
 import { observer } from 'mobx-react';
-import { GAS_FOR_BASE_SWAP_ROUTE, GAS_FOR_SWAP_DIRECT, GAS_FOR_SWAP_NATIVE_COIN } from '../../utils/gasPrices';
+import { GAS_FOR_SWAP_DIRECT } from '../../utils/gasPrices';
+import { Tokens } from 'stores/Tokens';
+import { executeRouterSwap, executeSwapUscrt, getBestRoute, getHops, storeResult } from './SwapFunctions';
+import { serviceUnwrapToken, serviceWrapToken } from 'services/wrapToken';
+
 const baseButtonStyle = {
   margin: '1em 0 0 0',
   borderRadius: '4px',
@@ -44,128 +45,15 @@ const BUTTON_MSG_LOADING_PRICE = 'Loading price data';
 const BUTTON_CONNECTING_TO_CHAIN = 'Connect Wallet to Trade';
 const BUTTON_MSG_NOT_ENOUGH_LIQUIDITY = 'Insufficient liquidity for this trade';
 const BUTTON_MSG_SWAP = 'Swap';
+const BUTTON_MSG_WRAP = 'Wrap SCRT';
+const BUTTON_MSG_UNWRAP = 'Unwrap sSCRT';
 const BUTTON_MSG_FINDING_ROUTE = 'Finding best route';
 const BUTTON_MSG_SELECT_TOKEN = 'Select a token';
 
-function executeRouterSwap(
-  secretjsSender: AsyncSender,
-  secretAddress: string,
-  fromToken: string,
-  fromAmount: string,
-  hops: (null | {
-    from_token: { snip20: { address: string; code_hash: string } } | 'scrt';
-    pair_address: string;
-    pair_code_hash: string;
-    expected_return?: string;
-  })[],
-  expected_return: string,
-  bestRoute: string[],
-) {
-  if (fromToken === 'uscrt') {
-    return secretjsSender.asyncExecute(
-      globalThis.config.AMM_ROUTER_CONTRACT,
-      {
-        receive: {
-          from: secretAddress,
-          amount: fromAmount,
-          msg: btoa(
-            JSON.stringify({
-              to: secretAddress,
-              hops,
-              expected_return,
-            }),
-          ),
-        },
-      },
-      '',
-      [
-        {
-          amount: fromAmount,
-          denom: 'uscrt',
-        },
-      ],
-      getFeeForExecute(bestRoute.length * GAS_FOR_BASE_SWAP_ROUTE),
-    );
-  } else {
-    return secretjsSender.asyncExecute(
-      fromToken,
-      {
-        send: {
-          recipient: globalThis.config.AMM_ROUTER_CONTRACT,
-          amount: fromAmount,
-          msg: btoa(
-            JSON.stringify({
-              to: secretAddress,
-              hops,
-              expected_return,
-            }),
-          ),
-        },
-      },
-      '',
-      [],
-      getFeeForExecute(bestRoute.length * GAS_FOR_BASE_SWAP_ROUTE),
-    );
-  }
-}
-
-function executeSwapUscrt(secretjsSender: AsyncSender, pair: SwapPair, fromAmount: string, expected_return: string) {
-  // call the swap function directly since this is with uscrt
-  return secretjsSender.asyncExecute(
-    pair.contract_addr,
-    {
-      swap: {
-        offer_asset: {
-          info: { native_token: { denom: 'uscrt' } },
-          amount: fromAmount,
-        },
-        expected_return,
-        // offer_asset: Asset,
-        // expected_return: Option<Uint128>
-        // belief_price: Option<Decimal>,
-        // max_spread: Option<Decimal>,
-        // to: Option<HumanAddr>, // TODO
-      },
-    },
-    '',
-    [
-      {
-        amount: fromAmount,
-        denom: 'uscrt',
-      },
-    ],
-    getFeeForExecute(GAS_FOR_SWAP_NATIVE_COIN),
-  );
-}
-
-const extractError = (result: any) => {
-  if (result?.raw_log && result.raw_log.includes('Operation fell short of expected_return')) {
-    return 'Swap fell short of expected return (slippage error)';
-  }
-  if (result?.raw_log) {
-    return result.raw_log;
-  }
-  console.error(result);
-  return `Unknown error`;
-};
-
-function storeResult(result: any, fromAmount: string, fromDecimals: number, bestRoute: string[], toDecimals: number) {
-  if (result?.code) {
-    const error = extractError(result);
-    throw new Error(error);
-  }
-
-  storeTxResultLocally(result);
-
-  const sent = humanizeBalance(new BigNumber(fromAmount), fromDecimals).toFixed();
-  const received = humanizeBalance(
-    new BigNumber(extractValueFromLogs(result, 'return_amount', bestRoute != null)),
-    toDecimals,
-  ).toFixed();
-  return { sent, received };
-}
+const actionButtonMessages = [BUTTON_MSG_SWAP, BUTTON_MSG_WRAP, BUTTON_MSG_UNWRAP];
 
 const DEFAULT_SLIPPAGE = 0.5 / 100;
+
 @observer
 export class SwapTab extends React.Component<
   {
@@ -173,6 +61,7 @@ export class SwapTab extends React.Component<
     secretjs: CosmWasmClient;
     secretjsSender: AsyncSender;
     tokens: SwapTokenMap;
+    tokensStore: Tokens;
     balances: { [symbol: string]: BigNumber | JSX.Element };
     selectedToken0?: string;
     selectedToken1?: string;
@@ -195,22 +84,15 @@ export class SwapTab extends React.Component<
     isFromEstimated: boolean;
     isToEstimated: boolean;
     spread: number;
-    commission: number;
     priceImpact: number;
     slippageTolerance: BigNumber;
     buttonMessage: string;
     loadingSwap: boolean;
     loadingBestRoute: boolean;
-    expectedCSHBK: number;
-    loadingBestRouteCount: number;
     bestRoute: string[];
     loadingPriceData: boolean;
-    allRoutesOutputs: Array<{
-      route: string[];
-      toOutput?: BigNumber;
-      fromOutput?: BigNumber;
-      priceImpacts: number[];
-    }>;
+    allRoutesOutputs: Array<RouteOutput>;
+    cachedGasFeesUSD: number[];
   }
 > {
   constructor(props) {
@@ -224,17 +106,15 @@ export class SwapTab extends React.Component<
       isFromEstimated: false,
       isToEstimated: false,
       spread: 0,
-      expectedCSHBK: 0.0,
-      commission: 0,
       priceImpact: 0,
       slippageTolerance: new BigNumber(DEFAULT_SLIPPAGE),
       buttonMessage: BUTTON_MSG_ENTER_AMOUNT,
       loadingSwap: false,
       loadingPriceData: false,
       loadingBestRoute: false,
-      loadingBestRouteCount: 0,
       bestRoute: null,
       allRoutesOutputs: [],
+      cachedGasFeesUSD: [],
     };
   }
 
@@ -247,43 +127,20 @@ export class SwapTab extends React.Component<
     }
   }
 
-  getOfferAndAskPools(
-    fromToken: string,
-    toToken: string,
-    pair: SwapPair,
-    ): { offer_pool: BigNumber; ask_pool: BigNumber } {
-    if (pair === undefined) {
-      return {offer_pool: new BigNumber(0), ask_pool: new BigNumber(0)}
-    }
+  setStateWrapOrUnwrap(buttonMessage: string) {
+    const { fromInput, toInput } = this.state;
 
-    const fromDecimals = this.props.tokens.get(fromToken).decimals;
-    const toDecimals = this.props.tokens.get(toToken).decimals;
-
-    // we normalize offer_pool & ask_pool
-    // we could also canonicalize offer_amount & ask_amount
-    // but this way is less code because we get the results normalized
-
-    let offer_pool = humanizeBalance(
-      new BigNumber(this.props.balances[`${fromToken}-${pair.identifier()}`] as any),
-      fromDecimals,
-    );
-    let ask_pool = humanizeBalance(
-      new BigNumber(this.props.balances[`${toToken}-${pair.identifier()}`] as any),
-      toDecimals,
-    );
-
-    // this condition tested as never true,
-    // therefore commented out in case a revert is needed later. 2021-01-13
-    // if (offer_pool.isNaN() || ask_pool.isNaN()) {
-    //   const balances = await this.props.refreshPools({ pair });
-    //   offer_pool = humanizeBalance(new BigNumber(balances[`${fromToken}-${pair.identifier()}`] as any), fromDecimals);
-    //   ask_pool = humanizeBalance(new BigNumber(balances[`${toToken}-${pair.identifier()}`] as any), toDecimals);
-    // }
-
-    return { offer_pool, ask_pool };
+    this.setState({
+      toInput: this.state.isToEstimated ? fromInput : toInput,
+      fromInput: this.state.isToEstimated ? fromInput : toInput,
+      priceImpact: 0,
+      buttonMessage,
+      loadingBestRoute: false,
+      slippageTolerance: new BigNumber(0) // No slippage in a wrap
+    });
   }
 
-  async updateInputsFromBestRoute() {
+  updateInputsFromBestRoute() {
     const { fromToken, toToken, fromInput, toInput } = this.state;
 
     if (Number(fromInput) === 0 && this.state.isToEstimated) {
@@ -296,128 +153,49 @@ export class SwapTab extends React.Component<
       return;
     }
 
-    this.setState({ loadingBestRoute: true, loadingBestRouteCount: 0, bestRoute: null, allRoutesOutputs: [] });
+    this.setState({ loadingBestRoute: true, bestRoute: null, allRoutesOutputs: [] });
+
+    const cachedGasFeesUnfilledCoin = this.cacheFees(fromToken, toToken);
+
+    const fromTokenSymbol = this.props.tokens.get(fromToken).symbol;
+    const toTokenSymbol = this.props.tokens.get(toToken).symbol;
+
+    if (fromTokenSymbol === 'SCRT' && toTokenSymbol === 'sSCRT') {
+      this.setStateWrapOrUnwrap(BUTTON_MSG_WRAP);
+      return;
+    }
+    else if (fromTokenSymbol === 'sSCRT' && toTokenSymbol === 'SCRT') {
+      this.setStateWrapOrUnwrap(BUTTON_MSG_UNWRAP);
+      return;
+    }
+    else {
+      this.setState({
+        slippageTolerance: new BigNumber(DEFAULT_SLIPPAGE) // It's not a wrap or unwrap, so set the slippage to default
+      });
+    }
 
     try {
-      const routes = this.props.selectedPairRoutes;
-
-      let bestRoute: string[] = null;
-      let allRoutesOutputs: Array<{
-        route: string[];
-        toOutput?: BigNumber;
-        fromOutput?: BigNumber;
-        priceImpacts: number[];
-      }> = [];
-      let bestRouteToInput = new BigNumber(0);
-      let bestRouteFromInput = new BigNumber(Infinity);
-      let bestRoutePriceImpact = 0;
-      for (let i = 0; i < routes.length; i++) {
-        const route = routes[i];
-        this.setState({ loadingBestRouteCount: i });
-
-        if (this.state.isToEstimated /* top input is filled */) {
-          let from = new BigNumber(fromInput);
-          let to = new BigNumber(0);
-          let priceImpacts: number[] = [];
-          for (let i = 0; i < route.length - 1; i++) {
-            const fromToken = route[i];
-            const toToken = route[i + 1];
-            const pair: SwapPair = this.props.pairs.get(`${fromToken}${SwapPair.id_delimiter}${toToken}`);
-
-            const { offer_pool, ask_pool } = this.getOfferAndAskPools(fromToken, toToken, pair);
-
-            const offer_amount = from;
-            if (
-              offer_pool.isEqualTo(0) ||
-              ask_pool.isEqualTo(0) ||
-              offer_amount.isNaN() ||
-              offer_amount.isLessThanOrEqualTo(0)
-            ) {
-              to = new BigNumber(0);
-              break;
-            }
-
-            const { return_amount, spread_amount } = compute_swap(offer_pool, ask_pool, offer_amount);
-
-            if (return_amount.isNaN() || return_amount.isLessThanOrEqualTo(0)) {
-              to = new BigNumber(0);
-              break;
-            }
-
-            to = return_amount;
-            priceImpacts.push(spread_amount.dividedBy(return_amount).toNumber());
-
-            if (i < route.length - 2) {
-              // setup for next iteration
-              from = return_amount;
-            }
-          }
-
-          allRoutesOutputs.push({ route, toOutput: to, priceImpacts });
-
-          if (to.isGreaterThan(bestRouteToInput)) {
-            bestRouteToInput = to;
-            bestRoute = route;
-            bestRoutePriceImpact = Math.max(...priceImpacts);
-          }
-        } else {
-          // isFromEstimated
-          // bottom input is filled
-          let from = new BigNumber(0);
-          let to = new BigNumber(toInput);
-          let priceImpacts: number[] = [];
-          for (let i = route.length - 1; i > 0; i--) {
-            const fromToken = route[i - 1];
-            const toToken = route[i];
-            const pair: SwapPair = this.props.pairs.get(`${fromToken}${SwapPair.id_delimiter}${toToken}`);
-            const { offer_pool, ask_pool } = this.getOfferAndAskPools(fromToken, toToken, pair);
-
-            const ask_amount = to;
-            if (
-              offer_pool.isEqualTo(0) ||
-              ask_pool.isEqualTo(0) ||
-              ask_amount.gt(ask_pool) ||
-              ask_amount.isNaN() ||
-              ask_amount.isZero()
-            ) {
-              from = new BigNumber(Infinity);
-              break;
-            }
-
-            const { offer_amount, spread_amount } = compute_offer_amount(offer_pool, ask_pool, ask_amount);
-
-            if (offer_amount.isNaN() || offer_amount.isLessThanOrEqualTo(0)) {
-              from = new BigNumber(Infinity);
-              break;
-            }
-
-            from = offer_amount;
-            priceImpacts.push(spread_amount.dividedBy(ask_amount).toNumber());
-
-            if (i > 1) {
-              // setup for next iteration
-              to = offer_amount;
-            }
-          }
-
-          allRoutesOutputs.push({ route, fromOutput: from, priceImpacts });
-
-          if (from.isLessThan(bestRouteFromInput)) {
-            bestRouteFromInput = from;
-            bestRoute = route;
-            bestRoutePriceImpact = Math.max(...priceImpacts);
-          }
-        }
-      }
+      let { bestRoute, allRoutesOutputs, bestRouteToInput, bestRouteFromInput } = getBestRoute(fromInput, toInput, cachedGasFeesUnfilledCoin, this.state.isToEstimated, this.props.selectedPairRoutes, this.props.tokens, this.props.pairs, this.props.balances);
 
       if (bestRoute) {
+        const ourPrice = bestRouteToInput.div(bestRouteFromInput);
+
+        const fromTokenPrice = this.props.tokensStore.getPriceByDstAddress(fromToken);
+
+        const marketPrice = fromTokenPrice.div(this.props.tokensStore.getPriceByDstAddress(toToken));
+
+        const tenDollarsOfFromToken = new BigNumber(10.0).div(fromTokenPrice);
+
+        let { bestRouteToInput:bestRouteToTenDollars, bestRouteFromInput:bestRouteFromTenDollars } = getBestRoute(tenDollarsOfFromToken, null, cachedGasFeesUnfilledCoin, this.state.isToEstimated, this.props.selectedPairRoutes, this.props.tokens, this.props.pairs, this.props.balances);
+        const priceAtTenDollars = bestRouteToTenDollars.div(bestRouteFromTenDollars);
+        let priceImpact = 1 - ourPrice.div(priceAtTenDollars);
+
         if (this.state.isToEstimated) {
           const toDecimals = this.props.tokens.get(toToken).decimals;
           this.setState({
             toInput: bestRouteToInput.toFixed(toDecimals, BigNumber.ROUND_DOWN),
             bestRoute,
-            commission: (0.3 / 100) * bestRouteToInput.toNumber(), // always denominated in toToken
-            priceImpact: bestRoutePriceImpact,
+            priceImpact,
             allRoutesOutputs,
           });
         } else {
@@ -426,8 +204,7 @@ export class SwapTab extends React.Component<
           this.setState({
             fromInput: bestRouteFromInput.toFixed(fromDecimals, BigNumber.ROUND_UP),
             bestRoute,
-            commission: (0.3 / 100) * Number(this.state.toInput), // always denominated in toToken
-            priceImpact: bestRoutePriceImpact,
+            priceImpact,
             allRoutesOutputs,
           });
         }
@@ -440,14 +217,29 @@ export class SwapTab extends React.Component<
         }
       }
     } catch (e) {
-      console.error('Error finding best route:', e.message);
+      console.error('Error finding best route:', e);
     }
 
-    this.setState({ loadingBestRoute: false, loadingBestRouteCount: 0 });
+    this.setState({ loadingBestRoute: false });
   }
 
-  async updateInputs() {
-    this.setState({ bestRoute: null, allRoutesOutputs: [] });
+  cacheFees(fromToken: string, toToken: string) {
+    let cachedGasFeesUSD = cacheFeesForExecuteUSD(this.props.tokensStore); // Must use a temporary variable because the setState may not get updated in time
+    this.setState({ cachedGasFeesUSD });
+    let unfilledCoin;
+
+    if (this.state.isToEstimated) { // top input is filled
+      unfilledCoin = toToken;
+    } else { // isFromEstimated, bottom input is filled
+      unfilledCoin = fromToken;
+    }
+
+    // gas fees as expressed in the unfilled coin (can be the top or the bottom)
+    return cachedGasFeesUSD.map(x => new BigNumber(x).div(this.props.tokensStore.getPriceByDstAddress(unfilledCoin)));
+  }
+
+  updateInputs() {
+    this.setState({ bestRoute: null, allRoutesOutputs: [], buttonMessage: BUTTON_MSG_ENTER_AMOUNT });
 
     const routes = this.props.selectedPairRoutes;
 
@@ -461,11 +253,11 @@ export class SwapTab extends React.Component<
       return;
     }
 
-    await this.updateInputsFromBestRoute();
-    await this.updateExpectedCSHBK();
+    this.updateInputsFromBestRoute();
   }
+
   symbolFromAddress = (identifier: string) => {
-    const uniqueSymbols = ['SCRT', 'SEFI', 'CSHBK', 'sSCRT'];
+    const uniqueSymbols = ['SCRT', 'SEFI', 'sSCRT'];
     const symbol = this.props.tokens.get(identifier)?.symbol;
     if (uniqueSymbols.includes(symbol)) {
       return symbol;
@@ -473,49 +265,145 @@ export class SwapTab extends React.Component<
       return symbol?.substring(1, symbol.length);
     }
   };
-  async updateExpectedCSHBK(): Promise<void> {
+
+  async executeSwap(canonToInput:BigNumber, fromDecimals:number, toDecimals:number) {
+    const { fromInput, fromToken, toToken, bestRoute, priceImpact, slippageTolerance } = this.state;
     const pair = this.props.selectedPair;
-    let expectedCSHBK = '0.0';
-    let doubleCashback = false;
-    if (!this.props.isSupported && this.state.bestRoute?.length > 2) {
-      doubleCashback = this.state.bestRoute?.some(address => address === globalThis.config.SSCRT_CONTRACT);
+    this.setState({ loadingSwap: true });
+
+    if (priceImpact >= 0.08) {
+      const confirmString = 'confirm';
+      const confirm = prompt(
+        `Price impact for this swap is very high. Please type the word "${confirmString}" to continue.`,
+      );
+      if (confirm !== confirmString) {
+        this.setState({ loadingSwap: false });
+        return;
+      }
     }
 
-    //Either From or To input is sSCRT or SCRT
-    if (pair && this.props.isSupported) {
-      if (this.state.fromToken == 'uscrt' || this.state.fromToken == globalThis.config.SSCRT_CONTRACT) {
-        expectedCSHBK = this.state.fromInput;
-      } else if (this.state.toToken == 'uscrt' || this.state.toToken == globalThis.config.SSCRT_CONTRACT) {
-        expectedCSHBK = this.state.toInput;
-      }
-    } else if (!this.props.isSupported && doubleCashback) {
-      expectedCSHBK = await this.queryExpectedDoubleCashBack();
-    } else {
-      expectedCSHBK = '0.0';
-    }
-    const cb_reward = parseFloat(parseFloat(expectedCSHBK).toFixed(8));
-    this.setState({ expectedCSHBK: cb_reward });
-  }
-  async queryExpectedDoubleCashBack(): Promise<any> {
     try {
-      let { toToken, toInput, fromInput, fromToken } = this.state;
-      let token = this.props.tokens.get(toToken);
-      const pair: SwapPair = this.props.pairs.get(`${globalThis.config.SSCRT_CONTRACT}${SwapPair.id_delimiter}${toToken}`);
+      const fromAmount = canonicalizeBalance(new BigNumber(fromInput), fromDecimals).toFixed(
+        0,
+        BigNumber.ROUND_DOWN,
+        /*
+      should be 0 fraction digits because of canonicalizeBalance,
+      but to be sure we're rounding down to prevent over-spending
+      */
+      );
 
-      if (pair) {
-        const { offer_pool, ask_pool } = this.getOfferAndAskPools(toToken, globalThis.config.SSCRT_CONTRACT, pair);
-        let offer_amount = new BigNumber(toInput);
-        const { return_amount } = compute_swap(offer_pool, ask_pool, offer_amount);
-        const amount = return_amount.toFixed(token.decimals, BigNumber.ROUND_DOWN);
-        return parseFloat(amount) * 2;
-      } else {
-        console.error(`SCRT -> ${token.identifier} is not registered, estimated Cashback cannot be calculated`);
-        return 0.0;
+      // offer_amount: exactly how much we're sending
+      // ask_amount: roughly how much we're getting
+      // expected_return: at least ask_amount minus some slippage
+
+      //const ask_amount = canonToInput;
+      let expected_return = canonToInput
+        .multipliedBy(new BigNumber(1).minus(slippageTolerance))
+        .toFormat(0, { groupSeparator: '' });
+      if (Number(expected_return) < 1) {
+        // make sure even low value trade won't lose funds
+        expected_return = '1';
       }
+
+      const fromTokenSymbol = this.props.tokens.get(fromToken).symbol;
+      const toTokenSymbol = this.props.tokens.get(toToken).symbol;
+
+      if (fromTokenSymbol === 'SCRT' && toTokenSymbol === 'sSCRT') {
+        await serviceWrapToken(fromAmount, this.props.tokens.get(toToken), this.props.user);
+      }
+      else if (fromTokenSymbol === 'sSCRT' && toTokenSymbol === 'SCRT') {
+        await serviceUnwrapToken(fromAmount, this.props.tokens.get(fromToken), this.props.user);
+      }
+      else if (fromTokenSymbol === 'SCRT') {
+        let result: ExecuteResult;
+        if (bestRoute && bestRoute.length > 2) {
+          const hops = await getHops(bestRoute, this.props.pairs, this.props.secretjs);
+
+          result = await executeRouterSwap(
+            this.props.secretjsSender,
+            this.props.secretAddress,
+            fromToken,
+            fromAmount,
+            hops,
+            expected_return,
+            bestRoute,
+          );
+        } else {
+          result = await executeSwapUscrt(this.props.secretjsSender, pair, fromAmount, expected_return);
+        }
+
+        const { fromTokenFromTxn, toTokenFromTxn, sent, received } = storeResult(result, fromAmount, fromDecimals, bestRoute, toDecimals);
+
+        this.props.notify(
+          'success',
+          `Swapped ${sent} ${this.props.tokens.get(fromTokenFromTxn)?.symbol} for ${received} ${this.props.tokens.get(toTokenFromTxn).symbol}`,
+        );
+      } else {
+        let result: ExecuteResult;
+        if (bestRoute && bestRoute.length > 2) {
+          const hops = await getHops(bestRoute, this.props.pairs, this.props.secretjs);
+          result = await executeRouterSwap(
+            this.props.secretjsSender,
+            this.props.secretAddress,
+            fromToken,
+            fromAmount,
+            hops,
+            expected_return,
+            bestRoute,
+          );
+        } else {
+          if (pair.assetIds().includes(fromToken) && pair.assetIds().includes(toToken)) {
+            result = await Snip20Send({
+              secretjs: this.props.secretjsSender,
+              address: fromToken,
+              amount: fromAmount,
+              msg: btoa(
+                JSON.stringify({
+                  swap: {
+                    expected_return,
+                  },
+                }),
+              ),
+              recipient: pair.contract_addr,
+              fee: getFeeForExecute(GAS_FOR_SWAP_DIRECT),
+            });
+          } else {
+            throw 'UI got out of sync with the chain, please refresh the page and try again';
+          }
+        }
+
+        const { fromTokenFromTxn, toTokenFromTxn, sent, received } = storeResult(result, fromAmount, fromDecimals, bestRoute, toDecimals);
+
+        this.props.notify(
+          'success',
+          `Swapped ${sent} ${this.props.tokens.get(fromTokenFromTxn).symbol} for ${received} ${this.props.tokens.get(toTokenFromTxn).symbol}`,
+        );
+      }
+      await this.props.updateBalances();
     } catch (error) {
-      console.error(error);
-      return 0.0;
+      console.error('Swap error', error);
+      const txHash = error?.txHash;
+      this.props.notify(
+        'errorWithHash',
+        `Error swapping ${fromInput} ${this.props.tokens.get(fromToken).symbol} for ${
+          this.props.tokens.get(toToken).symbol
+        }: ${error.message} ${txHash ? '\nTx Hash: ' + txHash : ''}`,
+        undefined,
+        txHash,
+      );
+      return;
+    } finally {
+      this.setState({
+        loadingSwap: false,
+      });
     }
+    await this.props.onSetTokens(this.props.selectedToken0, this.props.selectedToken1, true);
+    this.setState({
+      toInput: '',
+      fromInput: '',
+      isFromEstimated: false,
+      isToEstimated: false,
+    });
   }
 
   render() {
@@ -541,7 +429,9 @@ export class SwapTab extends React.Component<
     const canonToInput = canonicalizeBalance(new BigNumber(this.state.toInput), toDecimals);
 
     let buttonMessage: string;
-    if (this.state.toToken === '' || this.state.fromToken === '') {
+    if (this.state.buttonMessage === BUTTON_MSG_WRAP || this.state.buttonMessage === BUTTON_MSG_UNWRAP) {
+      buttonMessage = this.state.buttonMessage; // If it's set, keep it
+    } else if (this.state.toToken === '' || this.state.fromToken === '') {
       buttonMessage = BUTTON_MSG_SELECT_TOKEN;
     } else if (this.state.loadingPriceData) {
       buttonMessage = BUTTON_MSG_LOADING_PRICE;
@@ -592,8 +482,12 @@ export class SwapTab extends React.Component<
       this.state.buttonMessage === BUTTON_MSG_LOADING_PRICE ||
       this.state.buttonMessage === BUTTON_MSG_NOT_ENOUGH_LIQUIDITY ||
       this.state.buttonMessage === BUTTON_MSG_NO_ROUTE;
-    const price = Number(this.state.fromInput) / Number(this.state.toInput);
+    const price = new BigNumber(this.state.fromInput).div(new BigNumber(this.state.toInput));
     const btnError = buttonMessage == BUTTON_MSG_NO_ROUTE || buttonMessage == BUTTON_MSG_NOT_ENOUGH_LIQUIDITY;
+
+    // liquidityProviderFee is 0.3% times the number of hops in the best route
+    const liquidityProviderFee = this.state.bestRoute && new BigNumber(this.state.fromInput).times(0.3/100 * (this.state.bestRoute.length - 1));
+
     return (
       <>
         <Container className={`${styles.swapContainerStyle} ${styles[stores.theme.currentTheme]}`}>
@@ -688,9 +582,9 @@ export class SwapTab extends React.Component<
             <RouteRow
               tokens={this.props.tokens}
               isLoading={this.state.loadingBestRoute}
-              loadingCount={`${this.state.loadingBestRouteCount}/${this.props.selectedPairRoutes.length}`}
               route={this.state.bestRoute}
               allRoutesOutputs={this.state.allRoutesOutputs}
+              cachedGasFeesUSD={this.state.cachedGasFeesUSD}
             />
           )}
           {btnError ? (
@@ -700,167 +594,28 @@ export class SwapTab extends React.Component<
           ) : (
             <Button
               className={`${styles.swap_button} ${styles[stores.theme.currentTheme]}`}
-              disabled={buttonMessage !== BUTTON_MSG_SWAP || this.state.loadingSwap}
+              disabled={!actionButtonMessages.includes(buttonMessage) || this.state.loadingSwap}
               // loading={this.state.loadingSwap}
               primary={buttonMessage === BUTTON_MSG_SWAP}
               fluid
-              onClick={async () => {
-                const { fromInput, fromToken, toToken, bestRoute, priceImpact, slippageTolerance } = this.state;
-                const pair = this.props.selectedPair;
-                const optMessage = this.state.expectedCSHBK
-                  ? // ? `And you earned ${this.state.expectedCSHBK} cashback`
-                    ''
-                  : '';
-                this.setState({ loadingSwap: true });
-
-                if (priceImpact >= 0.15) {
-                  const confirmString = 'confirm';
-                  const confirm = prompt(
-                    `Price impact for this swap is very high. Please type the word "${confirmString}" to continue.`,
-                  );
-                  if (confirm !== confirmString) {
-                    this.setState({ loadingSwap: false });
-                    return;
-                  }
-                }
-
-                try {
-                  const { decimals } = this.props.tokens.get(fromToken);
-                  const fromAmount = canonicalizeBalance(new BigNumber(fromInput), decimals).toFixed(
-                    0,
-                    BigNumber.ROUND_DOWN,
-                    /*
-                  should be 0 fraction digits because of canonicalizeBalance,
-                  but to be sure we're rounding down to prevent over-spending
-                  */
-                  );
-
-                  // offer_amount: exactly how much we're sending
-                  // ask_amount: roughly how much we're getting
-                  // expected_return: at least ask_amount minus some slippage
-
-                  //const ask_amount = canonToInput;
-                  let expected_return = canonToInput
-                    .multipliedBy(new BigNumber(1).minus(slippageTolerance))
-                    .toFormat(0, { groupSeparator: '' });
-                  if (Number(expected_return) < 1) {
-                    // make sure even low value trade won't lose funds
-                    expected_return = '1';
-                  }
-
-                  if (fromToken === 'uscrt') {
-                    let result: ExecuteResult;
-                    if (bestRoute && bestRoute.length > 2) {
-                      const hops = await this.getHops(bestRoute);
-
-                      result = await executeRouterSwap(
-                        this.props.secretjsSender,
-                        this.props.secretAddress,
-                        fromToken,
-                        fromAmount,
-                        hops,
-                        expected_return,
-                        bestRoute,
-                      );
-                    } else {
-                      result = await executeSwapUscrt(this.props.secretjsSender, pair, fromAmount, expected_return);
-                    }
-
-                    const { sent, received } = storeResult(result, fromAmount, fromDecimals, bestRoute, toDecimals);
-
-                    this.props.notify(
-                      'success',
-                      `Swapped ${sent} ${this.props.tokens.get(fromToken)?.symbol} for ${received} ${
-                        this.props.tokens.get(toToken).symbol
-                      } ${optMessage}`,
-                    );
-                  } else {
-                    let result: ExecuteResult;
-                    if (bestRoute && bestRoute.length > 2) {
-                      const hops = await this.getHops(bestRoute);
-                      result = await executeRouterSwap(
-                        this.props.secretjsSender,
-                        this.props.secretAddress,
-                        fromToken,
-                        fromAmount,
-                        hops,
-                        expected_return,
-                        bestRoute,
-                      );
-                    } else {
-                      if (pair.assetIds().includes(fromToken) && pair.assetIds().includes(toToken)) {
-                        result = await Snip20Send({
-                          secretjs: this.props.secretjsSender,
-                          address: fromToken,
-                          amount: fromAmount,
-                          msg: btoa(
-                            JSON.stringify({
-                              swap: {
-                                expected_return,
-                              },
-                            }),
-                          ),
-                          recipient: pair.contract_addr,
-                          fee: getFeeForExecute(GAS_FOR_SWAP_DIRECT),
-                        });
-                      } else {
-                        throw 'UI got out of sync with the chain, please refresh the page and try again';
-                      }
-                    }
-
-                    const { sent, received } = storeResult(result, fromAmount, fromDecimals, bestRoute, toDecimals);
-
-                    this.props.notify(
-                      'success',
-                      `Swapped ${sent} ${this.props.tokens.get(fromToken).symbol} for ${received} ${
-                        this.props.tokens.get(toToken).symbol
-                      } ${optMessage}`,
-                    );
-                  }
-                  await this.props.updateBalances();
-                  await this.props.user.updateCSHBKBalance();
-                } catch (error) {
-                  console.error('Swap error', error);
-                  const txHash = error?.txHash;
-                  this.props.notify(
-                    'errorWithHash',
-                    `Error swapping ${fromInput} ${this.props.tokens.get(fromToken).symbol} for ${
-                      this.props.tokens.get(toToken).symbol
-                    }: ${error.message} ${txHash ? '\nTx Hash: ' + txHash : ''}`,
-                    undefined,
-                    txHash,
-                  );
-                  return;
-                } finally {
-                  this.setState({
-                    loadingSwap: false,
-                  });
-                }
-                await this.props.onSetTokens(this.props.selectedToken0, this.props.selectedToken1, true);
-                this.setState({
-                  toInput: '',
-                  fromInput: '',
-                  isFromEstimated: false,
-                  isToEstimated: false,
-                });
-              }}
+              onClick={() => this.executeSwap(canonToInput, fromDecimals, toDecimals)}
             >
               {buttonMessage}
             </Button>
           )}
         </Container>
+
         {!hidePriceRow && (
           <div style={this.state.loadingSwap ? { opacity: '0.4' } : {}}>
             <AdditionalInfo
               fromToken={this.props.tokens.get(this.state.fromToken).symbol}
               toToken={this.props.tokens.get(this.state.toToken).symbol}
-              liquidityProviderFee={this.state.commission * price}
+              liquidityProviderFee={liquidityProviderFee}
               priceImpact={this.state.priceImpact}
               minimumReceived={new BigNumber(this.state.toInput).multipliedBy(
                 new BigNumber(1).minus(this.state.slippageTolerance),
               )}
-              pairAddress={this.props.selectedPair?.contract_addr}
-              expectedCSHBK={this.state.expectedCSHBK}
+              pairAddress={this.state.bestRoute && this.props.selectedPair?.contract_addr}
               isSupported={this.props.isSupported}
               /*
               maximumSold={
@@ -877,57 +632,6 @@ export class SwapTab extends React.Component<
     );
   }
 
-  async getHops(bestRoute: string[]) {
-    return (
-      await Promise.all(
-        bestRoute.map(async (fromToken, idx) => {
-          if (idx === bestRoute.length - 1) {
-            // destination token
-            return null;
-          }
-
-          const hop: {
-            from_token:
-              | {
-                  snip20: {
-                    address: string;
-                    code_hash: string;
-                  };
-                }
-              | 'scrt';
-            pair_address: string;
-            pair_code_hash: string;
-            expected_return?: string;
-          } = {
-            from_token: null,
-            pair_address: null,
-            pair_code_hash: null,
-          };
-
-          const toToken = bestRoute[idx + 1];
-          const pair: SwapPair = this.props.pairs.get(`${fromToken}${SwapPair.id_delimiter}${toToken}`);
-
-          if (fromToken === 'uscrt') {
-            hop.from_token = 'scrt';
-          } else {
-            hop.from_token = {
-              snip20: {
-                address: fromToken,
-                code_hash: (pair.asset_infos.find(a => (a.info as Token)?.token?.contract_addr === fromToken)
-                  .info as Token).token.token_code_hash,
-              },
-            };
-          }
-
-          hop.pair_address = pair.contract_addr;
-          hop.pair_code_hash = await SwapPair.getPairCodeHash(hop.pair_address, this.props.secretjs);
-
-          return hop;
-        }),
-      )
-    ).filter(x => x !== null);
-  }
-
   private setToAmount(value: string) {
     if (value === '' || Number(value) === 0) {
       this.setState({
@@ -936,7 +640,6 @@ export class SwapTab extends React.Component<
         fromInput: '',
         isFromEstimated: false,
         spread: 0,
-        commission: 0,
         priceImpact: 0,
       });
       return;
@@ -961,7 +664,6 @@ export class SwapTab extends React.Component<
         toInput: '',
         isToEstimated: false,
         spread: 0,
-        commission: 0,
         priceImpact: 0,
       });
       return;
