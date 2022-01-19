@@ -1,39 +1,31 @@
-import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box } from 'grommet';
 import { BaseContainer, PageContainer } from 'components';
 import { observer } from 'mobx-react-lite';
 import { useStores } from 'stores';
 import styles from '../EthBridge/styles.styl';
-// import { IColumn, Table } from '../../components/Table';
-// import { ERC20Select } from '../Exchange/ERC20Select';
-import EarnRow from '../../components/Earn/EarnRow';
+import StandardEarnRow from '../../components/Earn/EarnRow/StandardEarnRow';
+import InfinityEarnRow from '../../components/Earn/EarnRow/InfinityEarnRow';
 import { rewardsDepositKey, rewardsKey } from '../../stores/UserStore';
 import {
   displayHumanizedBalance,
   divDecimals,
-  fixUnlockToken,
-  formatWithTwoDecimals,
+  formatZeroDecimals,
   humanizeBalance,
   sleep,
   truncateAddressString,
-  unlockToken,
 } from '../../utils';
-import { InfoModalEarn } from '../../components/InfoModalEarn';
-import EarnInfoBox from '../../components/Earn/EarnInfoBox';
 import { IRewardPool, ITokenInfo } from '../../stores/interfaces';
 import Loader from 'react-loader-spinner';
 import { Text } from 'components/Base';
 import thisStyles from './styles.styl';
 import cn from 'classnames';
 import { ethMethodsSefi, web3 } from '../../blockchain-bridge/eth';
-import { CheckClaimModal } from '../../components/Earn/ClaimToken/CheckClaim';
-import { claimErc, claimScrt } from '../../components/Earn/ClaimToken/utils';
-import { unlockJsx, wrongViewingKey } from 'pages/Swap/utils';
 import BigNumber from 'bignumber.js';
-import { SwapToken, SwapTokenMap, TokenMapfromITokenInfo } from 'pages/TokenModal/types/SwapToken';
 import { notify } from '../../blockchain-bridge/scrt/utils';
 import ToggleButton from '../../components/Earn/ToggleButton';
+import { getSefiPrice } from 'components/SefiModal';
+import { infinityRewardTokenInfo } from 'services';
 
 const Web3 = require('web3');
 
@@ -84,16 +76,20 @@ interface RewardData {
   reward: IRewardPool;
   token: ITokenInfo;
 }
+
 const KEY_SHOW_OLD_POOLS = 'SHOW_OLD_POOLS';
 
 const order = [
   'SEFI',
+  'ALTER',
   'LP-SUSDC-SUSDC(BSC)',
   'LP-SETH-SETH(BSC)',
   'LP-SSCRT-SUSDT',
   'LP-SSCRT-SETH',
   'LP-SSCRT-SWBTC',
   'LP-SSCRT-SEFI',
+  'LP-SSCRT-ALTER',
+  'LP-ALTER-SUSDC',
   'LP-SEFI-SXMR',
   'LP-SEFI-SUSDC',
   'LP-SETH-SWBTC',
@@ -125,11 +121,19 @@ const getLocalShowPools = (): boolean => {
 };
 const setLocalShowPools = (value: boolean) => localStorage.setItem(KEY_SHOW_OLD_POOLS, value.toString());
 
+const getInfinityPoolNumStaked = async () => Number(globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.total_locked)
+
+export const infinityOrder = {
+  'SEFI': 0,
+  'ALTER': 1,
+}
+
 export const SeFiPage = observer(() => {
   const { user, tokens, rewards, userMetamask, theme } = useStores();
 
   const [filteredTokens, setFilteredTokens] = useState<ITokenInfo[]>([]);
   const [showOldPools, setShowOldPools] = useState<boolean>(getLocalShowPools());
+  // const [rewardTokens, setRewardTokens] = useState<RewardsToken[]>([]);
 
   useEffect(() => {
     setLocalShowPools(showOldPools);
@@ -162,13 +166,14 @@ export const SeFiPage = observer(() => {
   }
 
   const [sefiBalanceErc, setSefiBalanceErc] = useState<string>(undefined);
-  const [rewardsData, setRewardsData] = useState<RewardData[]>([]);
+  const [rewardsData, setRewardsData] = useState([]);
 
   useEffect(() => {
     const asyncWrapper = async () => {
       while (rewards.isPending) {
         await sleep(100);
       }
+
       const mappedRewards = rewards.allData
         .filter(rewards => filteredTokens.find(element => element.dst_address === rewards.inc_token.address))
         .map(reward => {
@@ -176,8 +181,18 @@ export const SeFiPage = observer(() => {
         });
 
       setRewardsData(mappedRewards);
+
+      try {
+
+        infinityRewardTokenInfo[infinityOrder['SEFI']].info.price = await getSefiPrice()
+
+        infinityRewardTokenInfo[infinityOrder['SEFI']].info.numStaked = await getInfinityPoolNumStaked()
+      } catch (err) {
+        console.log(err);
+      }
+
     };
-    asyncWrapper().then(() => {});
+    asyncWrapper().then(() => { });
   }, [filteredTokens, rewards, rewards.data]);
 
   const testSetTokens = useCallback(() => {
@@ -219,6 +234,8 @@ export const SeFiPage = observer(() => {
     rewards.fetch();
     tokens.init();
     //eslint-disable-next-line
+    // console.log(rewards);
+    // console.log(tokens);
   }, []);
 
   return (
@@ -237,58 +254,75 @@ export const SeFiPage = observer(() => {
         </Box>
         <Box style={{ width: '100%' }} direction="row" wrap={true} fill={true} justify="center" align="start">
           <Box direction="column" align="center" justify="center" className={styles.base}>
-            {rewardsData
-              .slice()
-              .sort((a, b) => {
-                const testA = a.reward.inc_token.symbol.toUpperCase();
-                const testB = b.reward.inc_token.symbol.toUpperCase();
-                if (order.indexOf(testA) === -1) {
-                  return 1;
-                }
-                if (order.indexOf(testB) === -1) {
-                  return -1;
-                }
-                return order.indexOf(testA) - order.indexOf(testB);
-              })
-              .filter(rewardToken => globalThis.config.TEST_COINS || !rewardToken.reward.hidden)
-              .filter(a => showOldPools || (!a.reward.deprecated && !a.reward.zero))
-              .map((rewardToken, i) => {
-                const rewardsToken = {
-                  rewardsContract: rewardToken.reward.pool_address,
-                  lockedAsset: rewardToken.reward.inc_token.symbol,
-                  lockedAssetAddress: rewardToken.token.dst_address,
-                  totalLockedRewards: divDecimals(
-                    Number(rewardToken.reward.total_locked) * Number(rewardToken.reward.inc_token.price),
-                    rewardToken.reward.inc_token.decimals,
-                  ),
-                  rewardsDecimals: String(rewardToken.reward.rewards_token.decimals),
-                  rewards: user.balanceRewards[rewardsKey(rewardToken.reward.pool_address)],
-                  deposit: user.balanceRewards[rewardsDepositKey(rewardToken.reward.pool_address)],
-                  balance: user.balanceToken[rewardToken.token.dst_address],
-                  decimals: rewardToken.token.decimals,
-                  name: rewardToken.token.name,
-                  price: String(rewardToken.reward.inc_token.price),
-                  rewardsPrice: String(rewardToken.reward.rewards_token.price),
-                  display_props: rewardToken.token.display_props,
-                  remainingLockedRewards: rewardToken.reward.pending_rewards,
-                  deadline: Number(rewardToken.reward.deadline),
-                  rewardsSymbol: 'SEFI',
-                  deprecated: rewardToken.reward.deprecated,
-                  deprecated_by: rewardToken.reward.deprecated_by,
-                  zero: rewardToken.reward.zero
-                };
 
-                return (
-                  <EarnRow
-                    notify={notify}
-                    key={`${rewardToken.reward.inc_token.symbol}-${i}`}
-                    userStore={user}
-                    token={rewardsToken}
-                    callToAction="Sefi Earnings"
-                    theme={theme}
-                  />
-                );
-              })}
+            {rewardsData.length > 0 ?
+              (<>
+                {rewardsData
+                  .slice()
+                  .sort((a, b) => {
+                    const testA = a.reward.inc_token.symbol.toUpperCase();
+                    const testB = b.reward.inc_token.symbol.toUpperCase();
+                    if (order.indexOf(testA) === -1) {
+                      return 1;
+                    }
+                    if (order.indexOf(testB) === -1) {
+                      return -1;
+                    }
+                    return order.indexOf(testA) - order.indexOf(testB);
+                  })
+                  .filter(rewardToken => globalThis.config.TEST_COINS || !rewardToken.reward.hidden)
+                  .filter(a => showOldPools || (!a.reward.deprecated && !a.reward.zero))
+                  .map((rewardToken, i) => {
+
+                    const token = {
+                      rewardsContract: rewardToken.reward.pool_address,
+                      lockedAsset: rewardToken.reward.inc_token.symbol,
+                      lockedAssetAddress: rewardToken.token.dst_address,
+                      totalLockedRewards: divDecimals(
+                        Number(rewardToken.reward.total_locked) * Number(rewardToken.reward.inc_token.price),
+                        rewardToken.reward.inc_token.decimals,
+                      ),
+                      rewardsDecimals: String(rewardToken.reward.rewards_token.decimals),
+                      rewards: user.balanceRewards[rewardsKey(rewardToken.reward.pool_address)],
+                      deposit: user.balanceRewards[rewardsDepositKey(rewardToken.reward.pool_address)],
+                      balance: user.balanceToken[rewardToken.token.dst_address],
+                      decimals: rewardToken.token.decimals,
+                      name: rewardToken.token.name,
+                      price: String(rewardToken.reward.inc_token.price),
+                      rewardsPrice: String(rewardToken.reward.rewards_token.price),
+                      display_props: rewardToken.token.display_props,
+                      remainingLockedRewards: rewardToken.reward.pending_rewards,
+                      deadline: Number(rewardToken.reward.deadline),
+                      rewardsSymbol: rewardToken.reward.rewards_token.symbol,
+                      deprecated: rewardToken.reward.deprecated,
+                      deprecated_by: rewardToken.reward.deprecated_by,
+                      zero: rewardToken.reward.zero
+                    };
+
+                    if (token.rewardsContract === globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.pool_address) {
+                      return <InfinityEarnRow
+                        notify={notify}
+                        key={`${rewardsData[0].reward.inc_token.symbol}-${0}`}
+                        userStore={user}
+                        token={token}
+                        callToAction="Sefi Earnings"
+                        theme={theme}
+                      />
+                    }
+
+                    return (
+                      <StandardEarnRow
+                        notify={notify}
+                        key={`${token.lockedAsset}-${i}`}
+                        userStore={user}
+                        token={token}
+                        callToAction="Sefi Earnings"
+                        theme={theme}
+                      />
+                    );
+                  })}
+
+              </>) : <Loader />}
           </Box>
         </Box>
       </PageContainer>

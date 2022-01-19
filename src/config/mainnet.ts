@@ -51,4 +51,6 @@ export const config = {
   AMM_FACTORY_CONTRACT: 'secret1fjqlk09wp7yflxx7y433mkeskqdtw3yqerkcgp',
   AMM_ROUTER_CONTRACT: 'secret1xy5r5j4zp0v5fzza5r9yhmv7nux06rfp2yfuuv',
   SIG_THRESHOLD: 3,
+
+  FETCHER_CONFIGS: {}, // comes from the services/index.ts => getFetcherConfigs function
 };

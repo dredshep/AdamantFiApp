@@ -10,11 +10,13 @@ import {
   ISwap,
   ITokenInfo,
   tokenFromSecretToken,
+  TOKEN_USAGE,
 } from '../stores/interfaces';
 import * as agent from 'superagent';
 import { SwapStatus } from '../constants';
 import { ProxyTokens } from '../blockchain-bridge/eth/proxyTokens';
 import { networkFromToken, NETWORKS } from '../blockchain-bridge/eth/networks';
+import axios from 'axios';
 
 //
 // Map for override images for each token
@@ -195,10 +197,21 @@ export const getTokensInfo = async (params: any): Promise<{ content: ITokenInfo[
     }),
   );
 
-  const tokenArray: ITokenInfo[] = tokens.flatMap(t => t.body.tokens);
+  await getFetcherConfigs();
+
+  let tokenArray: ITokenInfo[] = tokens.flatMap(t => t.body.tokens);
+  // Add hardcoded alter token here
+  // TODO: Remove this when we have alter token comming from the api
+  if (globalThis.config.NETWORK_TYPE === "MAINNET") {
+    globalThis.config.FETCHER_CONFIGS.alterTokenContract && tokenArray.push(globalThis.config.FETCHER_CONFIGS.alterTokenContract);
+  }
+  if (globalThis.config.NETWORK_TYPE === "TESTNET") {
+    globalThis.config.FETCHER_CONFIGS.alterTokenContract && tokenArray.push(globalThis.config.FETCHER_CONFIGS.alterTokenContract);
+  }
+
   try {
     let content = tokenArray
-      .filter(t => (globalThis.config.TEST_COINS ? true : !t.display_props?.hidden))
+      .filter(t => (globalThis.config.TEST_COINS || !t.display_props?.hidden))
       .map(t => {
         if (t.display_props.proxy ) {
           try {
@@ -310,7 +323,20 @@ export const getRewardsInfo = async (params: any): Promise<{ content: IRewardPoo
 
   const res = await agent.get<{ body: { tokens: IRewardPool[] } }>(url, params);
 
-  const content = res.body.pools;
+  let content = res.body.pools;
+
+  await getFetcherConfigs();
+
+  // Add hardcoded alter token here
+  // TODO: Remove this when we have alter token comming from the api
+  if (globalThis.config.NETWORK_TYPE === "MAINNET") {
+    globalThis.config.FETCHER_CONFIGS.infinityPoolContract && content.unshift(globalThis.config.FETCHER_CONFIGS.infinityPoolContract);
+    globalThis.config.FETCHER_CONFIGS.alterStakingContract && content.push(globalThis.config.FETCHER_CONFIGS.alterStakingContract);
+  }
+  if (globalThis.config.NETWORK_TYPE === "TESTNET") {
+    globalThis.config.FETCHER_CONFIGS.infinityPoolContract && content.unshift(globalThis.config.FETCHER_CONFIGS.infinityPoolContract);
+    globalThis.config.FETCHER_CONFIGS.alterStakingContract && content.push(globalThis.config.FETCHER_CONFIGS.alterStakingContract);
+  }
 
   // if it's in the zeroPools list, set the zero flag
   for(let pool of content) {
@@ -335,3 +361,42 @@ export const getScrtProof = async (addr): Promise<{ proof: IClaimProofDocument }
 
   return res.body;
 };
+
+export const getFetcherConfigs = async () => {
+  if(Object.keys(globalThis.config['FETCHER_CONFIGS']).length === 0){
+    const fetcherConfigs = await axios({
+      method: 'get',
+      url: 'https://data.secretswap.net/apps/ss/config_' + (globalThis.config.NETWORK_TYPE === 'TESTNET' ? 'testnet' : 'mainnet') + '.json',
+    });
+    //console.log(fetcherConfigs.data);
+
+    globalThis.config['FETCHER_CONFIGS'] = fetcherConfigs.data;
+
+    infinityRewardTokenInfo[1].info.address = globalThis.config.FETCHER_CONFIGS.alterTokenContract?.src_address
+    infinityRewardTokenInfo[0].info.numStaked = globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.total_locked
+  }
+};
+
+// some variables are static, need to be changed to dynamic
+export let infinityRewardTokenInfo = [{
+  info: {
+    address: globalThis.config.SCRT_GOV_TOKEN_ADDRESS,
+    numStaked: 0,
+    multiplier: '20',
+    decimals: 6,
+    symbol: 'SEFI',
+    price: 0,
+    img: '/static/token-images/sefi.svg'
+  }
+},
+{
+  info: {
+    address: "",
+    numStaked: 0,
+    multiplier: '',
+    decimals: 6,
+    symbol: 'ALTER',
+    price: 1.1,
+    img: '/static/tokens/alter.svg'
+  }
+}]

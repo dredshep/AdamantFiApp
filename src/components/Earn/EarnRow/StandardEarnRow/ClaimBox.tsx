@@ -1,8 +1,8 @@
 import cn from 'classnames';
-import styles from './styles.styl';
+import styles from '../styles.styl';
 import ClaimButton from './ClaimButton';
 import React from 'react';
-import { UserStoreEx } from '../../../stores/UserStore';
+import { UserStoreEx } from '../../../../stores/UserStore';
 
 const ClaimBox = (props: {
   balance: string;

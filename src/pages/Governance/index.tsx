@@ -72,11 +72,11 @@ export const Governance = observer(() => {
 
     //Hotfix of big % number
     const apyWOCommas = apyStr.replace(/,/g, '');
-    const MAX_LENGHT = 6;
-    if (apyWOCommas.length > MAX_LENGHT) {
-      const abrev = apyWOCommas?.substring(0, MAX_LENGHT);
+    const MAX_LENGTH = 6;
+    if (apyWOCommas.length > MAX_LENGTH) {
+      const abrev = apyWOCommas?.substring(0, MAX_LENGTH);
       const abrevFormatted = zeroDecimalsFormatter.format(Number(abrev));
-      const elevation = apyWOCommas.length - MAX_LENGHT;
+      const elevation = apyWOCommas.length - MAX_LENGTH;
 
       return `${abrevFormatted}e${elevation} %`;
     }

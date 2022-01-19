@@ -10,7 +10,8 @@ import { Rewards } from './RewardsStore';
 import { SecretSwapPairs } from './SecretSwapPairs';
 import { SignerHealthStore } from './SignerHealthStore';
 import { SecretSwapPools } from './SecretSwapPools';
-import Theme  from 'themes';
+import Theme from 'themes';
+import axios from 'axios';
 
 export interface IStores {
   routing?: RouterStore;

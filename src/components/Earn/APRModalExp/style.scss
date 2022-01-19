@@ -113,7 +113,10 @@
 
 .earn_center_ele {
   display: flex;
-  justify-content: center;
+  //justify-content: center;
   align-items: center;
   flex-direction: row;
+
+  text-align: left;
+  justify-content: left;
 }

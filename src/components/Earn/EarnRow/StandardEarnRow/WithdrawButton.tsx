@@ -1,11 +1,11 @@
-import { emergencyRedeem, Redeem } from '../../../blockchain-bridge/scrt';
+import { emergencyRedeem, Redeem } from '../../../../blockchain-bridge/scrt';
 import React, { useState } from 'react';
-import { valueToDecimals } from '../../../utils';
-import styles from './styles.styl';
+import { valueToDecimals } from '../../../../utils';
+import styles from '../styles.styl';
 import { Button } from 'semantic-ui-react';
 import { useStores } from 'stores';
-import { GAS_FOR_EARN_WITHDRAW } from '../../../utils/gasPrices';
-import { getGasFee } from './gasFunctions';
+import { GAS_FOR_EARN_WITHDRAW } from '../../../../utils/gasPrices';
+import { getGasFee } from '../gasFunctions';
 
 const WithdrawButton = ({ props, value, changeValue }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,6 +16,7 @@ const WithdrawButton = ({ props, value, changeValue }) => {
     <Button
       loading={loading}
       className={`${styles.button} ${styles[theme.currentTheme]}`}
+      disabled={Number(value) <= 0 || isNaN(value)}
       onClick={async () => {
         setLoading(true);
         let redeemTask = props.token.deprecated

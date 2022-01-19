@@ -1,0 +1,52 @@
+.apr-modal {
+  &.popup {
+    display: grid !important;
+    padding: 24px !important;
+    border-radius: 16px !important;
+    min-width: 431px;
+    min-height: 543px;
+    flex-direction: row;
+    row-gap: 26px;
+  }
+  .extra-content {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+  }
+  td {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 140%;
+    letter-spacing: 0.01em;
+    text-align: end;
+    padding: 5px 0;
+  }
+  tr {
+    td {
+      &:first-child {
+        text-align: start;
+      }
+    }
+  }
+  .apr-base {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+    p {
+      margin: 0;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+}
