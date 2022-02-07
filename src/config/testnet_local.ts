@@ -50,4 +50,5 @@ export const config = {
   AMM_ROUTER_CONTRACT: 'secret15zy0lx84v7t9hhfkmxvmavwft9x2js35ldxd0k',
 
   FETCHER_CONFIGS: {}, // comes from the services/index.ts => getFetcherConfigs function
+  PRICE_DATA: {},      // comes from the services/index.ts => getPriceData function
 };
