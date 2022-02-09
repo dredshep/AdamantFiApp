@@ -364,16 +364,20 @@ export const getScrtProof = async (addr): Promise<{ proof: IClaimProofDocument }
 
 export const getFetcherConfigs = async () => {
   if(Object.keys(globalThis.config['FETCHER_CONFIGS']).length === 0){
-    const fetcherConfigs = await axios({
-      method: 'get',
-      url: 'https://data.secretswap.net/apps/ss/config_' + (globalThis.config.NETWORK_TYPE === 'TESTNET' ? 'testnet' : 'mainnet') + '.json',
-    });
-    //console.log(fetcherConfigs.data);
+    try{
+      const fetcherConfigs = await axios({
+        method: 'get',
+        url: 'https://data.secretswap.net/apps/ss/config_' + (globalThis.config.NETWORK_TYPE === 'TESTNET' ? 'testnet' : 'mainnet') + '.json',
+      });
+      //console.log(fetcherConfigs.data);
 
-    globalThis.config['FETCHER_CONFIGS'] = fetcherConfigs.data;
+      globalThis.config['FETCHER_CONFIGS'] = fetcherConfigs.data;
 
-    infinityRewardTokenInfo[1].info.address = globalThis.config.FETCHER_CONFIGS.alterTokenContract?.src_address
-    infinityRewardTokenInfo[0].info.numStaked = globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.total_locked
+      infinityRewardTokenInfo[1].info.address = globalThis.config.FETCHER_CONFIGS.alterTokenContract?.src_address
+      infinityRewardTokenInfo[0].info.numStaked = globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.total_locked
+    } catch(e) {
+      console.log(e)
+    }
   }
 };
 
