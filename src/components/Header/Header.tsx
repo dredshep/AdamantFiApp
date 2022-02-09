@@ -112,6 +112,16 @@ const Header = observer(({forceUpdate}:{forceUpdate:any}) =>{
                         </div>
                     </div>
                 </nav>
+                <div>
+                    <p style={{padding: '0 18px', backgroundColor: theme.currentTheme == 'light' ? 'black' : 'white', color: theme.currentTheme == 'light' ? '#ececec' : 'black'}}>Feb 2022: This <b>secretswap.net</b> is your new <b>official</b> SecretSwap home to <b>bookmark </b>
+                        and for the only official <b>Telegram</b>
+                            {(theme.currentTheme == 'light')?
+                                <img width="24" style={{margin:'0 3px', verticalAlign:"middle"}} src="/static/icon-telegram-white.svg" />
+                                :
+                                <img width="24" style={{margin:'0 3px', verticalAlign:"middle"}} src="/static/icon-telegram-white.svg" />
+                            }
+                            channel <b>join</b> <a style={{textDecoration:'none', color: theme.currentTheme == 'light' ? 'white' : '#3ba246'}} href="https://t.me/secretswapnet"> secretswapnet</a></p>
+                </div>
             </div>
         </>
     )
