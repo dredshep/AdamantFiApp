@@ -1,5 +1,6 @@
 import { ITokenInfo } from '../../../stores/interfaces';
 import { Snip20TokenInfo, validateBech32Address } from '../../../blockchain-bridge';
+import { tokenImages } from '../../../components/Earn/EarnRow';
 
 export type SwapTokenMap = Map<string, SwapToken>;
 
@@ -52,7 +53,7 @@ export const TokenMapfromITokenInfo = (tokens: ITokenInfo[]): SwapTokenMap => {
     const swapToken: SwapToken = {
       identifier: secretAddress,
       symbol: symbol,
-      logo: t.display_props.image,
+      logo: t.display_props.symbol.startsWith("lp-") ? t.display_props.image : tokenImages[t.display_props.symbol.toUpperCase()],
       decimals: Number(t.decimals),
       name: t.name,
       address: secretAddress,
