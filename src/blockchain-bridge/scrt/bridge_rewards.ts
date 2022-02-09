@@ -86,7 +86,6 @@ export const DepositRewards = async (params: {
     msg: 'eyJkZXBvc2l0Ijp7fX0K', // '{"deposit":{}}' -> base64
     ...params,
   });
-  console.log(tx);
   return 'yooyoo';
 };
 

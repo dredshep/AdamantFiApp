@@ -1,12 +1,12 @@
-import { DepositRewards } from '../../../blockchain-bridge/scrt';
+import { DepositRewards } from '../../../../blockchain-bridge/scrt';
 import React, { useState } from 'react';
-import { valueToDecimals } from '../../../utils';
-import styles from './styles.styl';
+import { valueToDecimals } from '../../../../utils';
+import styles from '../styles.styl';
 import { Button } from 'semantic-ui-react';
-import { unlockToken } from '../../../utils';
+import { unlockToken } from '../../../../utils';
 import { useStores } from 'stores';
-import { GAS_FOR_EARN_DEPOSIT } from '../../../utils/gasPrices';
-import { getGasFee } from './gasFunctions';
+import { GAS_FOR_EARN_DEPOSIT } from '../../../../utils/gasPrices';
+import { getGasFee } from '../gasFunctions';
 
 // todo: add failed toast or something
 const EarnButton = ({ props, value, changeValue, togglePulse, setPulseInterval }) => {
@@ -18,14 +18,13 @@ const EarnButton = ({ props, value, changeValue, togglePulse, setPulseInterval }
     <Button
       loading={loading}
       className={`${styles.button} ${styles[theme.currentTheme]}`}
-      disabled={Number(value) === 0 || isNaN(value)}
+      disabled={Number(value) <= 0 || isNaN(value)}
       onClick={async () => {
         setLoading(true);
         await DepositRewards({
           secretjs: props.userStore.secretjsSend,
           recipient: props.token.rewardsContract,
           address: props.token.lockedAssetAddress,
-          // maximum precision for the contract is 6 decimals
           amount: amount,
           fee: getGasFee(GAS_FOR_EARN_DEPOSIT, props.token.rewardsContract, user.numOfActiveProposals),
         })

@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const config = {
   NETWORK_TYPE: 'TESTNET',
 
@@ -46,4 +48,6 @@ export const config = {
   SCRT_DIST_TOKEN_ADDRESS: 'secret1dlr4zpzmylycfvcakq97gc45j8vjnefkcf39c4',
 
   AMM_ROUTER_CONTRACT: 'secret15zy0lx84v7t9hhfkmxvmavwft9x2js35ldxd0k',
+
+  FETCHER_CONFIGS: {}, // comes from the services/index.ts => getFetcherConfigs function
 };

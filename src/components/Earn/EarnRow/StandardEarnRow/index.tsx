@@ -1,298 +1,40 @@
 import React, { Component } from 'react';
-import styles from './styles.styl';
+import styles from '../styles.styl';
 import cn from 'classnames';
 import { Accordion, Grid, Icon, Image, Segment } from 'semantic-ui-react';
-import SoftTitleValue from '../SoftTitleValue';
-import EarnButton from './StandardEarnRow/EarnButton';
-import DepositContainer from './DepositContainer';
-import ClaimBox from './StandardEarnRow/ClaimBox';
-import { UserStoreEx } from '../../../stores/UserStore';
+import SoftTitleValue from '../../SoftTitleValue';
+import EarnButton from './EarnButton';
+import DepositContainer from '../DepositContainer';
+import ClaimBox from './ClaimBox';
+import { UserStoreEx } from '../../../../stores/UserStore';
 import { observer } from 'mobx-react';
-import WithdrawButton from './StandardEarnRow/WithdrawButton';
-import { divDecimals, formatWithTwoDecimals, zeroDecimalsFormatter, formatZeroDecimals } from '../../../utils';
-import { Text } from '../../Base';
+import WithdrawButton from './WithdrawButton';
+import { formatZeroDecimals } from '../../../../utils';
+import { Text } from '../../../Base';
 import stores from 'stores';
 import Theme from 'themes';
-import MigrateAssets from '../MigrateTokens';
-import { ModalExplanation, ModalMultiplierTip } from '../APRModalExp';
-import { InfoIcon } from 'components/Base/components/Icons/tsx_svg_icons';
-import numeral from 'numeral';
-import { infinityRewardTokenInfo } from 'services';
+import MigrateAssets from '../../MigrateTokens';
+import {ModalExplanation, ModalMultiplierTip} from '../../APRModalExp';
+import { aprString, multipliers, tokenImages, RewardsToken } from '..';
 
-
-export const calculateAPY = (token: RewardsToken, price: number, priceUnderlying: number) => {
-  // console.log(Math.round(Date.now() / 1000000))
-  // deadline - current time, 6 seconds per block
-  const timeRemaining = (Math.min(token.deadline, 7916452) - 427936) * 6.2 + 1634215386 - Math.round(Date.now() / 1000);
-
-  // (token.deadline - Math.round(Date.now() / 1000000) );
-  const pending = Number(divDecimals(token.remainingLockedRewards, token.rewardsDecimals)) * price;
-
-  // this is already normalized
-  const locked = Number(token.totalLockedRewards);
-
-  //console.log(`pending - ${pending}; locked: ${locked}, time remaining: ${timeRemaining}`)
-  const apr = Number((((pending * 100) / locked) * (3.154e7 / timeRemaining)).toFixed(0));
-  const apy = Number((Math.pow(1 + apr / 100 / 365, 365) - 1) * 100);
-
-  return apy;
-};
-export interface StatsAPR {
-  roi: {
-    d1: number;
-    d7: number;
-    d30: number;
-    d365: number;
-  };
-  sefiP1000: {
-    d1: number;
-    d7: number;
-    d30: number;
-    d365: number;
-  };
-  usdP1000: {
-    d1: number;
-    d7: number;
-    d30: number;
-    d365: number;
-  };
-  apr: number;
-  apy: number;
-}
-export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?: boolean): StatsAPR => {
-
-  // deadline - current time, 6 seconds per block
-  const timeRemaining = (Math.min(token.deadline, 7916452) - 427936) * 6.2 + 1634215386 - Math.round(Date.now() / 1000);
-
-
-  // (token.deadline - Math.round(Date.now() / 1000000) );
-  const pending = Number(divDecimals(token.remainingLockedRewards, token.rewardsDecimals)) * price;
-
-  // this is already normalized
-  const locked = Number(token.totalLockedRewards);
-  //console.log(`pending - ${pending}; locked: ${locked}, time remaining: ${timeRemaining}`)
-
-  let apr_raw = (pending * 100.0 / locked) * (3.154e7 / timeRemaining);
-
-  // infinity pool apr's use different calculation
-  if (token.rewardsContract === globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.pool_address) {
-    const dripPerBlock = 0.3846
-
-    const numStaked = infinityRewardTokenInfo[0].info.numStaked
-    const sefiPrice = infinityRewardTokenInfo[0].info.price
-
-    if (isSefiInfinity) {
-      try {
-        apr_raw = (365 * 78916.44) / (numStaked / 1000000)
-      } catch (err) {
-        console.log(err);
-        apr_raw = 0
-      }
-    } else {
-      try {
-        if (globalThis.config.FETCHER_CONFIGS.showAlterAPR) {
-          apr_raw = ((100000 * 2) * 0.86) / ((numStaked / 1000000) * sefiPrice)
-        } else {
-          apr_raw = 0;
-        }
-      } catch (err) {
-        console.log(err);
-        apr_raw = 0
-      }
-    }
-
-    apr_raw *= 100
-
-  }
-  else if (token.name === 'ALTER') {
-    if (globalThis.config.FETCHER_CONFIGS.showAlterAPR) {
-      apr_raw = ((54000 * 4.0) / Number(token.totalLockedRewards)) * 100;
-    } else {
-      apr_raw = 0;
-    }
-  }
-
-  let apr = apr_raw / 100.0;
-  const apy = Number((Math.pow(1 + apr / 100 / 365, 365) - 1) * 100);
-  const daysOfYear = 365;
-  const roi = {
-    d1: apr / daysOfYear,
-    d7: Math.pow(1 + apr / daysOfYear, 7) - 1,
-    d30: Math.pow(1 + apr / daysOfYear, 30) - 1,
-    d365: Math.pow(1 + apr / daysOfYear, daysOfYear) - 1,
-  };
-  const sefiP1000 = {
-    d1: (1000 * roi.d1) / price,
-    d7: (1000 * roi.d7) / price,
-    d30: (1000 * roi.d30) / price,
-    d365: (1000 * roi.d365) / price,
-  };
-  const usdP1000 = {
-    d1: sefiP1000.d1 * price,
-    d7: sefiP1000.d7 * price,
-    d30: sefiP1000.d30 * price,
-    d365: sefiP1000.d365 * price,
-  };
-  const result: StatsAPR = {
-    roi,
-    sefiP1000,
-    usdP1000,
-    apy,
-    apr,
-  };
-  return result;
-};
-
-export const multipliers = {
-  'SEFI STAKING (V2)': '20',
-  'sUSDC - sUSDC(BSC)': '20',
-  'sETH - sETH(BSC)': '12',
-  'sSCRT - sUSDT': '28',
-  'sSCRT - sETH': '36',
-  'sSCRT - sWBTC': '36',
-  'sSCRT - SEFI': '52',
-  'SEFI - sXMR': '12',
-  'SEFI - sUSDC': '24',
-  'sETH - sWBTC': '12',
-  'sSCRT - sBNB(BSC)': '12',
-  'SEFI - sATOM': '8',
-  'SEFI - sLUNA': '12',
-  'SEFI - sOSMO': '4',
-  'SEFI - sDVPN': '4',
-  'sSCRT - sRUNE': '2',
-  'sSCRT - ALTER': '9',
-  'ALTER - sUSDC': '5'
-};
-
-export const tokenImages = {
-  'AAVE': '/static/token-images/aave_ethereum.svg',
-  'ADA(BSC)': '/static/token-images/ada_binance.svg',
-  'ALPHA': '/static/token-images/alpha_ethereum.svg',
-  'ALTER': '/static/tokens/alter.svg',
-  'ATOM': '/static/atom.png',
-  'BAC': '/static/token-images/bac_ethereum.svg',
-  'BAKE': '/static/token-images/bake_binance.svg',
-  'BAND': '/static/token-images/band_ethereum.svg',
-  'BAT': '/static/token-images/bat_ethereum.svg',
-  'BCH(BSC)': '/static/token-images/bch_binance.svg',
-  'BNB(BSC)': '/static/token-images/bnb_binance.svg',
-  'BUNNY': '/static/token-images/bunny_binance.svg',
-  'BUSD(BSC)': '/static/token-images/busd_binance.svg',
-  'CAKE': '/static/token-images/cake_binance.svg',
-  'COMP': '/static/token-images/comp_ethereum.svg',
-  'DAI': '/static/token-images/dai_ethereum.svg',
-  'DOGE(BSC)': '/static/token-images/doge_binance.svg',
-  'DOT(BSC)': '/static/token-images/dot_binance.svg',
-  'DPI': '/static/token-images/dpi_ethereum.svg',
-  'DVPN': '/static/dvpn.png',
-  'ENJ': '/static/token-images/enj_ethereum.svg',
-  'ETH': '/static/token-images/eth_ethereum.svg',
-  'ETH(BSC)': '/static/token-images/eth_binance.svg',
-  'FINE': '/static/token-images/fine_binance.svg',
-  'KNC': '/static/token-images/knc_ethereum.svg',
-  'LINA': '/static/token-images/lina_binance.svg',
-  'LINK': '/static/token-images/link_ethereum.svg',
-  'LINK(BSC)': '/static/token-images/link_binance.svg',
-  'LTC(BSC)': '/static/token-images/ltc_binance.svg',
-  'LUNA': '/static/luna.png',
-  'MANA': '/static/token-images/mana_ethereum.svg',
-  'MKR': '/static/token-images/mkr_ethereum.svg',
-  'OCEAN': '/static/token-images/ocean_ethereum.svg',
-  'OSMO': '/static/osmo.png',
-  'REN': '/static/token-images/ren_ethereum.svg',
-  'RENBTC': '/static/token-images/renbtc_ethereum.svg',
-  'RSR': '/static/token-images/rsr_ethereum.svg',
-  'RUNE': '/static/token-images/rune_ethereum.svg',
-  'SEFI': '/static/token-images/sefi.svg',
-  'SIENNA': '/static/token-images/sienna.svg',
-  'SNX': '/static/token-images/snx_ethereum.svg',
-  'SSCRT': '/static/token-images/sscrt.svg',
-  'SUSHI': '/static/token-images/sushi_ethereum.svg',
-  'TORN': '/static/token-images/torn_ethereum.svg',
-  'TRX(BSC)': '/static/token-images/trx_binance.svg',
-  'TUSD': '/static/token-images/tusd_ethereum.svg',
-  'UNI': '/static/token-images/uni_ethereum.svg',
-  'UNILP-WSCRT-ETH': '/static/token-images/unilp_ethereum.svg',
-  'USDC': '/static/token-images/usdc_ethereum.svg',
-  'USDC(BSC)': '/static/token-images/usdc_binance.svg',
-  'USDT': '/static/token-images/usdt_ethereum.svg',
-  'USDT(BSC)': '/static/token-images/usdt_binance.svg',
-  'WBTC': '/static/token-images/wbtc_ethereum.svg',
-  'XMR': '/static/sXMR.png',
-  'XRP(BSC)': '/static/token-images/xrp_binance.svg',
-  'XVS': '/static/token-images/xvs_binance.svg',
-  'YFI': '/static/token-images/yfi_ethereum.svg',
-  'YFL': '/static/token-images/yfl_ethereum.svg',
-  'ZRX': '/static/token-images/zrx_ethereum.svg'
-};
-
-export const apyString = (token: RewardsToken) => {
-  const apy = Number(calculateAPY(token, Number(token.rewardsPrice), Number(token.price)));
-  if (isNaN(apy) || 0 > apy) {
-    return `∞%`;
-  }
-  const apyStr = zeroDecimalsFormatter.format(Number(apy));
-
-  //Hotfix of big % number
-  const apyWOCommas = apyStr.replace(/,/g, '');
-  const MAX_LENGTH = 9;
-  if (apyWOCommas.length > MAX_LENGTH) {
-    const abrev = apyWOCommas?.substring(0, MAX_LENGTH);
-    const abrevFormatted = zeroDecimalsFormatter.format(Number(abrev));
-    const elevation = apyWOCommas.length - MAX_LENGTH;
-
-    return `${abrevFormatted}e${elevation} %`;
-  }
-  return `${apyStr}%`;
-};
-
-export const aprString = (token: RewardsToken) => {
-  const { apr } = getAPRStats(token, Number(token.rewardsPrice));
-  return numeral(apr).format('0,0%');
-};
-export interface RewardsToken {
-  name: string;
-  decimals: string;
-  display_props: {
-    image: string;
-    label: string;
-    symbol: string;
-  };
-  price: string;
-  rewardsPrice: string;
-  balance: string;
-  deposit: string;
-  rewards: string;
-  rewardsContract: string;
-  rewardsDecimals: string;
-  lockedAsset: string;
-  lockedAssetAddress: string;
-  totalLockedRewards: string;
-  remainingLockedRewards: string;
-  deadline: number;
-  rewardsSymbol?: string;
-  deprecated?: boolean;
-  deprecated_by?: string;
-  zero?: boolean;
-}
 @observer
-class EarnRow extends Component<
-{
-  userStore: UserStoreEx;
-  token: RewardsToken;
-  notify: Function;
-  callToAction: string;
-  theme: Theme;
-  isSefiStaking?: boolean;
-},
-{
-  activeIndex: Number;
-  depositValue: string;
-  withdrawValue: string;
-  claimButtonPulse: boolean;
-  pulseInterval: number;
-  secondary_token: any;
-}
+class StandardEarnRow extends Component<
+  {
+    userStore: UserStoreEx;
+    token: RewardsToken;
+    notify: Function;
+    callToAction: string;
+    theme: Theme;
+    isSefiStaking?: boolean;
+  },
+  {
+    activeIndex: Number;
+    depositValue: string;
+    withdrawValue: string;
+    claimButtonPulse: boolean;
+    pulseInterval: number;
+    secondary_token: any;
+  }
 > {
   state = {
     activeIndex: -1,
@@ -346,6 +88,10 @@ class EarnRow extends Component<
     if (typeof s !== 'string') {
       return '';
     }
+
+    if(s === 'SEFI' || s.charAt(0) !== 'S')
+      return s; // Do not uncapitalize in this case
+
     return s.charAt(0).toLowerCase() + s.slice(1);
   };
   getBaseTokenName = (tokenName: string): string => {
@@ -373,7 +119,7 @@ class EarnRow extends Component<
     const _symbols = this.props.token.lockedAsset?.toUpperCase().split('-');
     let image_primaryToken, image_secondaryToken;
 
-    if (_symbols.length > 1) {
+    if(_symbols.length > 1) {
       let tokenName1 = this.getBaseTokenName(_symbols[1]);
       let tokenName2 = this.getBaseTokenName(_symbols[2]);
 
@@ -389,14 +135,8 @@ class EarnRow extends Component<
       image_secondaryToken = null;
     }
 
-    let tokenName;
-    if (_symbols[1] == 'SEFI') {
-      tokenName = _symbols[1] + ' - ' + this.unCapitalize(_symbols[2]);
-    } else if (_symbols[2] == 'SEFI') {
-      tokenName = this.unCapitalize(_symbols[1]) + ' - ' + _symbols[2];
-    } else {
-      tokenName = this.unCapitalize(_symbols[1]) + ' - ' + this.unCapitalize(_symbols[2]);
-    }
+    let tokenName = this.unCapitalize(_symbols[1]) + ' - ' + this.unCapitalize(_symbols[2]);
+
     const isDeprecated = this.props.token.deprecated && this.props.token.deprecated_by !== '';
     let title = '';
     if (isDeprecated) {
@@ -449,25 +189,34 @@ class EarnRow extends Component<
               subTitle={'TVL'}
             />
           </div>
+          {/* <div className={cn(styles.title_item__container)}>
+              <SoftTitleValue
+                title={`$${formatWithTwoDecimals(Number(this.props.token.balance))}`}
+                subTitle={this.props.token.display_props.label}
+              />
+            </div>
+            <div className={cn(styles.title_item__container)}>
+              <SoftTitleValue title={formatWithTwoDecimals(this.props.token.rewards)} subTitle={this.props.callToAction} />
+            </div> */}
 
           {/undefined/.test(multipliers[title]) ? (
             <div />
           ) : (
-            <div className={cn(styles.title_item__container)}>
-              <SoftTitleValue
-                title={
-                  <div className="earn_center_ele">
-                    {multipliers[title] + 'x'}
-                    <p style={{ marginLeft: '5px', fontFamily: 'poppins', fontSize: '17px' }}>
-                      <ModalMultiplierTip multiplier={multipliers[title]} theme={this.props.theme}>
-                        <img width="14px" src="/static/info.svg" alt="" />
-                      </ModalMultiplierTip>
-                    </p>
-                  </div>
-                }
-                subTitle={'Multiplier'}
-              />
-            </div>
+          <div className={cn(styles.title_item__container)}>
+            <SoftTitleValue
+              title={
+                <div className="earn_center_ele">
+                  {multipliers[title] + 'x'}
+                  <p style={{ marginLeft: '5px', fontFamily: 'poppins', fontSize: '17px' }}>
+                    <ModalMultiplierTip multiplier={multipliers[title]} theme={this.props.theme}>
+                      <img width="14px" src="/static/info.svg" alt="" />
+                    </ModalMultiplierTip>
+                  </p>
+                </div>
+              }
+              subTitle={'Multiplier'}
+            />
+          </div>
           )}
 
           <Icon
@@ -616,4 +365,4 @@ class EarnRow extends Component<
   }
 }
 
-export default EarnRow;
+export default StandardEarnRow;

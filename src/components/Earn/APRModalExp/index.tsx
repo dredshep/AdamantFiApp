@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import React, { ReactChild, useState, useEffect } from 'react';
 import { Modal, Popup } from 'semantic-ui-react';
 import Theme from 'themes';
-import { getAPRStats, RewardsToken, StastsAPR } from '../EarnRow';
+import { getAPRStats, RewardsToken, StatsAPR } from '../EarnRow';
 import './style.scss';
 import { ExitIcon } from 'ui/Icons/ExitIcon';
 import numeral from 'numeral';
@@ -11,6 +11,8 @@ interface ModalExplanationProps {
   token: RewardsToken;
   theme: Theme;
   children?: ReactChild;
+  infinityPoolPrice?: number;
+  infinityPoolSymbol?: String;
 }
 interface ModalMultiplierTipProps {
   multiplier: String;
@@ -20,20 +22,23 @@ interface ModalMultiplierTipProps {
 const getLabel = (n: string): string => {
   switch (n) {
     case 'd1':
-      return '1 D';
+      return '1 d';
     case 'd7':
-      return '7 D';
+      return '7 d';
     case 'd30':
-      return '30 D';
+      return '30 d';
     case 'd365':
-      return '365 D(APY)';
+      return '365 d(APY)';
     default:
       return '';
   }
 };
 
-export const ModalExplanation = observer(({ token, theme, children }: ModalExplanationProps) => {
-  const stats = getAPRStats(token, Number(token.rewardsPrice));
+export const ModalExplanation = observer(({ token, theme, children, infinityPoolPrice, infinityPoolSymbol }: ModalExplanationProps) => {
+  let stats = getAPRStats(token, Number(token.rewardsPrice));
+  if (infinityPoolPrice !== undefined) {
+    stats = getAPRStats(token, infinityPoolPrice, infinityPoolSymbol === 'SEFI');
+  }
 
   return (
     <Popup position="bottom center" className={`apr-modal ${theme.currentTheme}`} trigger={children}>
@@ -51,11 +56,11 @@ export const ModalExplanation = observer(({ token, theme, children }: ModalExpla
           <tr>
             <td>Timeframe</td>
             <td>ROI</td>
-            <td>SEFI per $1000</td>
+            <td>{`${infinityPoolSymbol === undefined ? token.display_props.symbol : infinityPoolSymbol} per $1000`}</td>
           </tr>
         </thead>
         <tbody>
-          {stats ? (
+          {(stats && stats?.apr < 100) ? (
             Object.keys(stats?.roi).map((key, i) => (
               <tr key={key + i}>
                 <td>{getLabel(key)}</td>
@@ -64,17 +69,21 @@ export const ModalExplanation = observer(({ token, theme, children }: ModalExpla
               </tr>
             ))
           ) : (
-            <></>
+            Object.keys(stats?.roi).map((key, i) => (
+              <tr key={key + i}>
+                <td>{getLabel(key)}</td>
+                <td>{`${getLabel(key) === '1 d' ? formatRoi(stats?.roi[key]) : '-'}`}</td>
+                <td>{`${getLabel(key) === '1 d' ? `${format(stats?.sefiP1000[key])} ($${format(stats?.usdP1000[key])})` : '- ($-)'}`}</td>
+              </tr>
+            ))
           )}
         </tbody>
       </table>
       <div className="extra-content">
         <ul>
-          <li>Calculated based on current rates.</li>
-          <li>Compounding 1x daily.</li>
-          <li>
-            All figures are estimates provided for your convenience only, and by no means represent guaranteed returns.
-          </li>
+          <li>Calculations are based on current rates</li>
+          <li>Compounding 1x daily</li>
+          <li>All figures are estimates and do not represent guaranteed returns</li>
         </ul>
       </div>
     </Popup>
@@ -92,7 +101,10 @@ export const ModalMultiplierTip = observer(({ multiplier, theme, children }: Mod
   );
 });
 
-const formatRoi = (n: string | number): string => {
+export const formatRoi = (n: string | number, noDecimals?: boolean): string => {
+  if (noDecimals) {
+    return numeral(n).format('0,0%');
+  }
   return numeral(n).format('0,0.00%');
 };
 

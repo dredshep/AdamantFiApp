@@ -1187,7 +1187,7 @@ export class UserStoreEx extends StoreConstructor {
       await stores.user.refreshTokenBalanceByAddress(tokenAddress);
       const reward_tokens = mappedRewards
         .slice()
-        .filter(rewardToken => (globalThis.config.TEST_COINS ? true : !rewardToken.reward.hidden))
+        .filter(rewardToken => (globalThis.config.TEST_COINS || !rewardToken.reward.hidden))
         //@ts-ignore
         .map(rewardToken => {
           const rewardsToken: RewardsToken = {
@@ -1209,7 +1209,7 @@ export class UserStoreEx extends StoreConstructor {
             display_props: rewardToken.token.display_props,
             remainingLockedRewards: rewardToken.reward.pending_rewards,
             deadline: Number(rewardToken.reward.deadline),
-            rewardsSymbol: 'SEFI',
+            rewardsSymbol: rewardToken.reward.rewards_token.symbol,
           };
 
           if (rewardsToken.rewardsContract === tokenAddress) {
@@ -1221,5 +1221,12 @@ export class UserStoreEx extends StoreConstructor {
       console.error(error);
       return undefined;
     }
+  }
+
+  public async getTVL(contractAddress: string): Promise<any> {
+    const client = this.secretjs || this.initSecretJS(globalThis.config.SECRET_LCD, false);
+    const locked = (await client.queryContractSmart(contractAddress, { total_locked: {} })).amount;
+
+    return locked || 100000000000;
   }
 }

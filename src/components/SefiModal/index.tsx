@@ -39,6 +39,17 @@ import { useStores } from 'stores';
 import cogoToast from 'cogo-toast';
 import { RewardsToken } from 'components/Earn/EarnRow';
 
+export async function getSefiPrice() {
+  const time = new Date().getTime();
+
+  const statsData = await axios({
+    method: 'get',
+    // url: 'https://storage.googleapis.com/astronaut/sefi.json?time=' + time,
+    url: 'https://data.secretswap.net/apps/ss/sefi_comment.json',
+  });
+  return parseFloat(statsData.data['SEFI/USDT'].price);
+}
+
 export const SefiModal = (props: { user: UserStoreEx; tokens: Tokens; metaMask: UserStoreMetamask }) => {
   const [open, setOpen] = React.useState(false);
   const [status, setStatus] = React.useState<SefiModalState>(SefiModalState.GENERAL);
@@ -111,23 +122,14 @@ export const SefiModal = (props: { user: UserStoreEx; tokens: Tokens; metaMask: 
 
     return userBalancePromise;
   }
-  async function getSefiPrice() {
-    const time = new Date().getTime();
 
-    const statsData = await axios({
-      method: 'get',
-      // url: 'https://storage.googleapis.com/astronaut/sefi.json?time=' + time,
-      url: 'https://data.secretswap.io/apps/ss/sefi_comment.json',
-    });
-    return parseFloat(statsData.data['SEFI/USDT'].price);
-  }
   async function getCirculationSEFI() {
 
     let result = 0;
     try {
       const statsData = await axios({
         method: 'get',
-        url: 'https://data.secretswap.io/apps/ss/sefi_comment.json'
+        url: 'https://data.secretswap.net/apps/ss/sefi_comment.json'
       });
       result = parseFloat(statsData.data.sefi_circulating.value);
     } catch (error) {
@@ -388,7 +390,7 @@ export const SefiModal = (props: { user: UserStoreEx; tokens: Tokens; metaMask: 
           display_props: token.display_props,
           remainingLockedRewards: reward.pending_rewards,
           deadline: Number(reward.deadline),
-          rewardsSymbol: 'SEFI',
+          rewardsSymbol: reward.rewards_token.symbol,
         };
         return rewardsToken;
       });

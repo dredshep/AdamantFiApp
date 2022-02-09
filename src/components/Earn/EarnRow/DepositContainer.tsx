@@ -47,6 +47,7 @@ const changeInput = (balance, percentage, onChange) => {
   onChange(event);
 };
 const DepositContainer = props => {
+
   const createViewingKey = () => {
     if(props.deprecated){
       return <></>

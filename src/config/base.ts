@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const baseConfig = {
   ETH_GAS_LIMIT: 75000,
   SWAP_FEE: 750000,
@@ -12,7 +14,7 @@ const baseConfig = {
 const networkConfig = require('./' + process.env.REACT_APP_NETWORK).config;
 
 // Merge the baseConfig and the networkConfig into Typescript's global scope
-globalThis.config = {...baseConfig, ...networkConfig};
+globalThis.config = { ...baseConfig, ...networkConfig };
 
 // Necessary because create-react-app enforces isolatedModules
-export {}
+export {};

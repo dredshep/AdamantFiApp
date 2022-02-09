@@ -221,7 +221,7 @@ export const SeFiStakingPage = observer(() => {
                   display_props: rewardToken.token.display_props,
                   remainingLockedRewards: rewardToken.reward.pending_rewards,
                   deadline: Number(rewardToken.reward.deadline),
-                  rewardsSymbol: 'SEFI',
+                  rewardsSymbol: rewardToken.reward.rewards_token.symbol,
                 };
 
                 if(rewardToken.reward.pool_address === globalThis.config.SEFI_STAKING_CONTRACT){
