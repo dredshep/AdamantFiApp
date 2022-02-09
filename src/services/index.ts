@@ -197,7 +197,11 @@ export const getTokensInfo = async (params: any): Promise<{ content: ITokenInfo[
     }),
   );
 
-  await getFetcherConfigs();
+  try {
+    await Promise.all([getFetcherConfigs(),getPriceData()])
+  } catch(e) {
+    console.log(e.message)
+  }
 
   let tokenArray: ITokenInfo[] = tokens.flatMap(t => t.body.tokens);
   // Add hardcoded alter token here
@@ -381,6 +385,16 @@ export const getFetcherConfigs = async () => {
   }
 };
 
+export async function getPriceData() {
+  const statsData = await axios({
+    method: 'get',
+    url: 'https://data.secretswap.net/apps/ss/sefi_comment.json',
+  });
+  infinityRewardTokenInfo[1].info.price = statsData.data["ALTER/USD"].price
+  infinityRewardTokenInfo[0].info.price = statsData.data["SEFI/USDT"].price
+  return globalThis.config['PRICE_DATA'] = statsData.data;
+}
+
 // some variables are static, need to be changed to dynamic
 export let infinityRewardTokenInfo = [{
   info: {
@@ -389,7 +403,7 @@ export let infinityRewardTokenInfo = [{
     multiplier: '20',
     decimals: 6,
     symbol: 'SEFI',
-    price: 0,
+    price: 0.04,
     img: '/static/token-images/sefi.svg'
   }
 },
@@ -400,7 +414,7 @@ export let infinityRewardTokenInfo = [{
     multiplier: '',
     decimals: 6,
     symbol: 'ALTER',
-    price: 1.1,
+    price: 1,
     img: '/static/tokens/alter.svg'
   }
 }]

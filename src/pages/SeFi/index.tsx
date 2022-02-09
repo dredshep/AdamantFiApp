@@ -24,7 +24,6 @@ import { ethMethodsSefi, web3 } from '../../blockchain-bridge/eth';
 import BigNumber from 'bignumber.js';
 import { notify } from '../../blockchain-bridge/scrt/utils';
 import ToggleButton from '../../components/Earn/ToggleButton';
-import { getSefiPrice } from 'components/SefiModal';
 import { infinityRewardTokenInfo } from 'services';
 
 const Web3 = require('web3');
@@ -184,7 +183,7 @@ export const SeFiPage = observer(() => {
 
       try {
 
-        infinityRewardTokenInfo[infinityOrder['SEFI']].info.price = await getSefiPrice()
+        infinityRewardTokenInfo[infinityOrder['SEFI']].info.price = globalThis.config['PRICE_DATA']["SEFI/USDT"] ? globalThis.config['PRICE_DATA']["SEFI/USDT"].price : "0.04";
 
         infinityRewardTokenInfo[infinityOrder['SEFI']].info.numStaked = await getInfinityPoolNumStaked()
       } catch (err) {

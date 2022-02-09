@@ -39,17 +39,6 @@ import { useStores } from 'stores';
 import cogoToast from 'cogo-toast';
 import { RewardsToken } from 'components/Earn/EarnRow';
 
-export async function getSefiPrice() {
-  const time = new Date().getTime();
-
-  const statsData = await axios({
-    method: 'get',
-    // url: 'https://storage.googleapis.com/astronaut/sefi.json?time=' + time,
-    url: 'https://data.secretswap.net/apps/ss/sefi_comment.json',
-  });
-  return parseFloat(statsData.data['SEFI/USDT'].price);
-}
-
 export const SefiModal = (props: { user: UserStoreEx; tokens: Tokens; metaMask: UserStoreMetamask }) => {
   const [open, setOpen] = React.useState(false);
   const [status, setStatus] = React.useState<SefiModalState>(SefiModalState.GENERAL);
@@ -256,7 +245,7 @@ export const SefiModal = (props: { user: UserStoreEx; tokens: Tokens; metaMask: 
       // } catch (error) {
       //   console.error('Error at fetch unclaimed SEFI', error);
       // }
-      const price = await getSefiPrice();
+      const price = globalThis.config['PRICE_DATA']["SEFI/USDT"] ? globalThis.config['PRICE_DATA']["SEFI/USDT"].price : "0.04";
       const price_formatted = numeral(price).format('$0.000000');
       const sefi_circulation = await getCirculationSEFI();
       const total_sefi_circulation = numeral(sefi_circulation)

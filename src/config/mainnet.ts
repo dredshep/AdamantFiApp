@@ -53,4 +53,5 @@ export const config = {
   SIG_THRESHOLD: 3,
 
   FETCHER_CONFIGS: {}, // comes from the services/index.ts => getFetcherConfigs function
+  PRICE_DATA: {},      // comes from the services/index.ts => getPriceData function
 };

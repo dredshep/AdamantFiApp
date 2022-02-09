@@ -90,8 +90,8 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
       }
     } else {
       try {
-        if (globalThis.config.FETCHER_CONFIGS.showAlterAPR) {
-          apr_raw = ((100000 * 2) * 0.86) / ((numStaked / 1000000) * sefiPrice)
+        if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']["ALTER/USD"]) {
+          apr_raw = ((100000 * 2) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((numStaked / 1000000) * sefiPrice)
         } else {
           apr_raw = 0;
         }
@@ -100,13 +100,11 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
         apr_raw = 0
       }
     }
-
     apr_raw *= 100
-
   }
   else if (token.name === 'ALTER') {
-    if (globalThis.config.FETCHER_CONFIGS.showAlterAPR) {
-      apr_raw = ((54000 * 4.0) / Number(token.totalLockedRewards)) * 100;
+    if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']["ALTER/USD"]) {
+      apr_raw = (((54000 * 4.0) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((Number(token.totalLockedRewards)) * globalThis.config['PRICE_DATA']["ALTER/USD"].price)) * 100
     } else {
       apr_raw = 0;
     }
