@@ -95,13 +95,6 @@ export class DetailsTab extends React.Component<
                   </>)}
               </div>
             })}
-          <div key={'Shhh!'} className={`${styles.detail} ${styles[this.props.theme.currentTheme]}`}>
-            <Image className={`${styles.image}`} src={'/static/infinity-icon.png'} rounded size="mini" />
-            <div className={`${styles.symbol}`}>Shhh! </div>
-            <div className={`${styles.apr}`}></div>
-            <div className={`${styles.tvl}`}></div>
-            <div className={`${styles.multiplier}`}></div>
-          </div>
         </Grid>
       </Container>
     );
