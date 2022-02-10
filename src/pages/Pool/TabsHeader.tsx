@@ -4,7 +4,8 @@ import {useStores} from '../../stores';
 const Tab: React.FC<{ name: string }> = ({ name }) => {
   const isSelected = window.location.hash === `#${name}`;
   const { theme } = useStores();
-  const opacity = theme.currentTheme === 'dark' ? '0.8' : '0.2'
+  const opacity = theme.currentTheme === 'dark' ? '0.8' : '0.2';
+  const leftTab = 'Provide' === name;
 
   return (
     <strong
@@ -12,10 +13,11 @@ const Tab: React.FC<{ name: string }> = ({ name }) => {
         padding: '8px',
         fontSize: '16px',
         cursor: 'pointer',
-        borderRadius: '10px',
+        borderRadius: leftTab ? '10px 0 0 10px' : '0 10px 10px 0',
+        border: '2px solid #3ba246',
         width: '224px',
-        background: isSelected ? 'rgba(23,63,27,' + opacity + ')' : null,
-        color: isSelected ? '#3ba246' : '#5F5F6B',
+        background: isSelected ? '#3ba246' : 'rgba(23,63,27,' + opacity + ')',
+        color: isSelected ? '#eee' : '#888',
         textAlign: 'center'
       }}
       onClick={() => {
@@ -39,7 +41,7 @@ export class TabsHeader extends React.Component {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           paddingBottom: '1em',
         }}
       >
