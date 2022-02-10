@@ -10,12 +10,13 @@ import { Button, Popup } from 'semantic-ui-react';
 import { ProposalRow } from 'components/ProposalRow';
 import SpinnerLineHor from '../../ui/Spinner/SpinnerLineHor';
 import './style.scss';
-import { calculateAPY, RewardsToken } from 'components/Earn/EarnRow';
+import { calculateAPY, getAPRStats, RewardsToken } from 'components/Earn/EarnRow';
 import { unlockJsx } from 'pages/Swap/utils';
 import { unlockToken, zeroDecimalsFormatter } from 'utils';
 import { rewardsDepositKey } from 'stores/UserStore';
 import { numberFormatter } from '../../utils/formatNumber';
 import { HowItWorksModal } from './HowItWorksModal';
+import { formatRoi } from 'components/Earn/APRModalExp';
 
 export const Governance = observer(() => {
   const newRewardsContract = globalThis.config.SEFI_STAKING_CONTRACT;
@@ -63,24 +64,25 @@ export const Governance = observer(() => {
     }
   };
 
-  const apyString = (token: RewardsToken) => {
-    const apy = Number(calculateAPY(token, Number(token.rewardsPrice), Number(token.price)));
-    if (isNaN(apy) || 0 > apy) {
-      return `∞%`;
-    }
-    const apyStr = zeroDecimalsFormatter.format(Number(apy));
+  const aprString = (token: RewardsToken) => {
+    // const apy = Number(calculateAPY(token, Number(token.rewardsPrice), Number(token.price)));
+    // if (isNaN(apy) || 0 > apy) {
+    //   return `∞%`;
+    // }
+    // const apyStr = zeroDecimalsFormatter.format(Number(apy));
 
-    //Hotfix of big % number
-    const apyWOCommas = apyStr.replace(/,/g, '');
-    const MAX_LENGTH = 6;
-    if (apyWOCommas.length > MAX_LENGTH) {
-      const abrev = apyWOCommas?.substring(0, MAX_LENGTH);
-      const abrevFormatted = zeroDecimalsFormatter.format(Number(abrev));
-      const elevation = apyWOCommas.length - MAX_LENGTH;
+    // //Hotfix of big % number
+    // const apyWOCommas = apyStr.replace(/,/g, '');
+    // const MAX_LENGTH = 6;
+    // if (apyWOCommas.length > MAX_LENGTH) {
+    //   const abrev = apyWOCommas?.substring(0, MAX_LENGTH);
+    //   const abrevFormatted = zeroDecimalsFormatter.format(Number(abrev));
+    //   const elevation = apyWOCommas.length - MAX_LENGTH;
 
-      return `${abrevFormatted}e${elevation} %`;
-    }
-    return `${apyStr}%`;
+    //   return `${abrevFormatted}e${elevation} %`;
+    // }
+    // return `${apyStr}%`;
+    return formatRoi(getAPRStats(token, 0, true)?.apr, true)
   };
 
   async function createSefiViewingKey() {
@@ -154,7 +156,7 @@ export const Governance = observer(() => {
     //eslint-disable-next-line
   }, [selectedFilter]);
 
-  //fetch total locked and Staking APY
+  //fetch infinity pool reward token and total locked
   useEffect(() => {
     (async () => {
       const sefi_reward_token = await user.getRewardToken(globalThis.config.SEFI_STAKING_CONTRACT);
@@ -203,12 +205,15 @@ export const Governance = observer(() => {
           style={{ alignItems: 'center' }}
         >
           <div className="governance ">
+            <div className="column content-governance__note">
+              <h3>To participate in governance, stake SEFI to the Infinity Pool on the Earn page</h3>
+            </div>
             <div className="hero-governance">
               <div className="column-stats">
                 <div className="stats-apy">
-                  {rewardToken ? <h1>{apyString(rewardToken)}</h1> : <SpinnerLineHor />}
+                  {rewardToken ? <h1>{aprString(rewardToken)}</h1> : <SpinnerLineHor />}
                   <div>
-                    <p>Staking APY</p>
+                    <p>Staking APR</p>
                   </div>
                 </div>
                 <div
@@ -251,7 +256,7 @@ export const Governance = observer(() => {
 
               <div className="buttons">
                 <div className="buttons-container">
-                  {votingPower === undefined || votingPower === '0' ? (
+                  {/* {votingPower === undefined || votingPower === '0' ? (
                     <>
                       <Popup
                         // className="icon-info__popup"
@@ -269,7 +274,7 @@ export const Governance = observer(() => {
                     <Link to="/sefistaking">
                       <Button className="g-button">Participate in Governance</Button>
                     </Link>
-                  )}
+                  )} */}
                   {amounts.minimumStake > amounts.balance || votingPower === undefined ? (
                     <Popup
                       style={{ color: 'red' }}
