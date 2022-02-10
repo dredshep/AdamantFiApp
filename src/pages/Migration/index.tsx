@@ -16,8 +16,8 @@ import SpinnerDashes from 'ui/Spinner/SpinnerDashes';
 const MIGRATED_AMOUNT_KEY = '___sw_migrated_amount';
 
 export const Migration = observer(() => {
-  const newRewardsContract = globalThis.config.SEFI_STAKING_CONTRACT;
-  const oldRewardsContract = globalThis.config.SEFI_STAKING_OLD_CONTRACT;
+  const newRewardsContract = globalThis.config.SEFI_STAKING_V2_CONTRACT;
+  const oldRewardsContract = globalThis.config.SEFI_STAKING_V1_CONTRACT;
 
   const { theme, user, rewards } = useStores();
 

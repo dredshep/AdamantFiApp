@@ -9,7 +9,7 @@
     $color-gray: #5F5F6B;
     .g-button{
         background: $background-button;
-        color: $color-button; 
+        color: $color-button;
         &--outline{
             background: transparent;
             border: $background-button 1px solid;
@@ -25,13 +25,16 @@
         }
         span,p{
             color: $color-gray;
-            &.pink{   
+            &.pink{
                 color: $color-pink;
             }
         }
     }
     .content-governance{
         &__title{
+            color: $color-gray;
+        }
+        &__note{
             color: $color-gray;
         }
     }
@@ -54,7 +57,7 @@
     $color-gray: #fff;
     .g-button{
         background: $background-button;
-        color: $color-button; 
+        color: $color-button;
         &--outline{
             background: transparent;
             border: $background-button 1px solid;
@@ -70,13 +73,16 @@
         }
         span,p{
             color: $color-gray;
-            &.pink{   
+            &.pink{
                 color: $color-pink;
             }
         }
     }
     .content-governance{
         &__title{
+            color: $color-gray;
+        }
+        &__note{
             color: $color-gray;
         }
     }
@@ -164,7 +170,7 @@
             font-size: 12px;
         }
     }
-    
+
     h1{
         font-weight: 600;
         size: 36px;
@@ -172,21 +178,32 @@
     span,p{
         font-weight: 600;
         font-size: 16px;
-        
+
     }
 }
 .content-governance{
     width: 100%;
     &__title{
         h3{
-            font-size: 28px;   
+            font-size: 28px;
             margin: 0;
             letter-spacing: 0.01em;
-            font-weight: 600;         
+            font-weight: 600;
         }
         width: 100%;
         display: grid;
         grid-template-columns: 50% 50%;
+    }
+    &__note{
+        h3{
+            font-size: 28px;
+            margin: 0;
+            letter-spacing: 0.01em;
+            font-weight: 600;
+        }
+        width: 100%;
+        display: grid;
+        grid-template-columns: 100%;
     }
     .filters{
         justify-content: flex-end;
@@ -195,7 +212,7 @@
     }
 
 }
-.row{ 
+.row{
     display: grid;
     grid-auto-flow: row;
 }

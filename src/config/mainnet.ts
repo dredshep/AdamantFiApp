@@ -35,8 +35,9 @@ export const config = {
   SIENNA_CONTRACT: 'secret1rgm2m5t530tdzyd99775n6vzumxa5luxcllml4',
   SIENNA_PROXY_CONTRACT_ETH: 'secret1vq0gc5wdjqnalvtgra3dr4m07kaxkhq2st3hzx',
   SIENNA_PROXY_CONTRACT_BSC: '',
-  SEFI_STAKING_CONTRACT: 'secret1knars62aly28xkqxe8xeqtf7ans8hqxgm6a05k',
-  SEFI_STAKING_OLD_CONTRACT: 'secret1y9z3ck449a46r4ku7klkhdxnlq07zh4shc7cuy',
+  SEFI_STAKING_CONTRACT: 'secret1t32sqak9mr844p0vwhmt4c23nsw8t03vexk4xv',
+  SEFI_STAKING_V2_CONTRACT: 'secret1knars62aly28xkqxe8xeqtf7ans8hqxgm6a05k',
+  SEFI_STAKING_V1_CONTRACT: 'secret1y9z3ck449a46r4ku7klkhdxnlq07zh4shc7cuy',
   FACTORY_CONTRACT: 'secret1yzmqf06vcrzdz3str4xa3ncf7ndxq732s4vvjl',
 
   LEADER_ACCOUNT_BSC: '0x08E54C84d61E9dB2ED7ea53e2216276d75B5b426',

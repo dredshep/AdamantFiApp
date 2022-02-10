@@ -35,8 +35,9 @@ export const config = {
   MASTER_CONTRACT: 'secret13hqxweum28nj0c53nnvrpd23ygguhteqggf852',
   MINTER_CONTRACT: 'secret1lxvgkwnur05cysvfl8gsggkffuelqgp6egm06j',
   WSCRT_PROXY_CONTRACT: 'secret1tdllu7t4g6fr43hdny8zcynwfkaykpkt9j60lu',
-  SEFI_STAKING_CONTRACT: 'secret1472ypxurwvlmudk9je4rugnsgj66urhhyfsztq',
-  SEFI_STAKING_OLD_CONTRACT: 'secret1fvkjzcqqc8nj2utttxle6muer6ncpuavfk4j9p',
+  SEFI_STAKING_CONTRACT: 'secret1t9m2u947ynq0rc4m59jthsyfy6vrnhmegjp9qx',
+  SEFI_STAKING_V2_CONTRACT: 'secret1472ypxurwvlmudk9je4rugnsgj66urhhyfsztq',
+  SEFI_STAKING_V1_CONTRACT: 'secret1fvkjzcqqc8nj2utttxle6muer6ncpuavfk4j9p',
   FACTORY_CONTRACT: 'secret1973k52hxagfnnmzzdhxkflzg4d5wd990zaffl7',
 
   ETH_GOV_TOKEN_ADDRESS: '0x30a48bC639dCE91604fBFA823743cA83E8fbdbCc',

@@ -903,7 +903,7 @@ export class UserStoreEx extends StoreConstructor {
   };
 
   // Query Proposal Normal Vote
-  public async userVote(contractAddress: string): Promise<any> {
+  public async userVote(contractAddress: string, viewingKeyAddress: string): Promise<any> {
     // TODO This is not supposed to be here, but was neccesary, cuz, the way it is
     // right now, doesn't work. Please be kind, do not remove this line :).
     await this.prepareDeps();
@@ -911,7 +911,7 @@ export class UserStoreEx extends StoreConstructor {
     const viewingKey = await getViewingKey({
       keplr: this.keplrWallet,
       chainId: this.chainId,
-      address: globalThis.config.SEFI_STAKING_CONTRACT,
+      address: viewingKeyAddress,
     });
 
     if (!viewingKey) return;

@@ -163,14 +163,22 @@ export const DetailProposal = observer((props) => {
     }
 
     const getRollingHash = async () => {
-        const result = await user.rollingHash(contractAddress);
-        setRollingHash(result);
+        try {
+            const result = await user.rollingHash(contractAddress);
+            setRollingHash(result);
+        } catch (err) {
+            console.log('Rolling Hash Error:', err.message);
+        }
     }
 
     const getUserVote = async () => {
         if (!contractAddress) return;
         try {
-            const result = await user.userVote(contractAddress);
+            // check if end date is later than Feb 17, 2022
+            // If so, use infinity pool contract as the viewing key
+            // If the end date is earlier than the date, use the V2 SEFI staking contract
+            const viewingKeyAddress = proposal.end_date > 1645060000 ? globalThis.config.SEFI_STAKING_CONTRACT : globalThis.config.SEFI_STAKING_V2_CONTRACT
+            const result = await user.userVote(contractAddress, viewingKeyAddress);
             if (result) {
                 setUserResult(result);
             }
