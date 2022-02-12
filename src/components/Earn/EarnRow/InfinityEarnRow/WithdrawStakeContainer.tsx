@@ -147,12 +147,12 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
                 <ModalInfinityViewingKey theme={theme}>
                   <img width="14px" src="/static/info.svg" alt="" />
                 </ModalInfinityViewingKey></div> :
-              (<div style={{float: 'left'}} className={`${styles.claim_label} ${styles[theme.currentTheme]} ${styles.withdrawAmount}`}>
+              (<div style={{float: 'left', overflow: 'hidden'}} className={`${styles.claim_label} ${styles[theme.currentTheme]} ${styles.withdrawAmount}`}>
                 {withdrawAmount === '' ?
                   <strong>0</strong> :
                   <strong>{`${withdrawAmount}`}</strong>
                 }
-                <span style={{ marginLeft: '10px' }}>{currency}</span>
+                <span className={`${styles.withdrawCurrency}`}>{currency}</span>
               </div>)}
               <ModalInfinityWithdraw theme={theme}>
                 <img width="14px" src="/static/info.svg" alt="" style={{ paddingTop: '16px' }}/>
@@ -166,7 +166,7 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
               </Grid>}
         </div>
         <div>
-          {<Grid columns={1}>
+          {<Grid>
             <Grid.Row verticalAlign='top'>
               {expiringCount > 0 ?
               <><Grid.Column width={6} textAlign='left' >
@@ -177,7 +177,7 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
                   <span>Unlock countdown</span>
                 </div>
               </Grid.Column>
-              <Grid.Column width={3} textAlign='left' style={{marginLeft: '-25px'}}>
+              <Grid.Column width={6} textAlign='left'>
                 {balance !== undefined &&
                 <ul style={{listStyleType:'none', padding:'0', margin:'0'}}>
                   {balance.pending_lockup_redeems
@@ -192,7 +192,7 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
                         })}
                 </ul>}
               </Grid.Column>
-                  <Grid.Column width={6} textAlign='left' verticalAlign='top' style={{ marginLeft: '-25px' }}>
+                  <Grid.Column width={4} textAlign='left' verticalAlign='top'>
                     {balance !== undefined &&
                       <ul className={`${styles.pendingWithdraw} ${styles[props.theme.currentTheme]}`} style={{ listStyleType: 'none', padding: '0', margin: '0' }}>
                         {balance.pending_lockup_redeems
