@@ -695,7 +695,7 @@ export class UserStoreEx extends StoreConstructor {
         },
         '',
         [],
-        getFeeForExecute(GAS_FOR_CREATE_VOTE),
+        getFeeForExecute(GAS_FOR_VOTE),
       );
 
       return result;
@@ -742,9 +742,10 @@ export class UserStoreEx extends StoreConstructor {
       },
       '',
       [],
-      getFeeForExecute(GAS_FOR_VOTE),
+      getFeeForExecute(GAS_FOR_CREATE_VOTE),
     );
 
+    if(!result.logs) throw Error(result.raw_log);
     const newPoll = result.logs[0]?.events[1]?.attributes.find(e => e.key === 'new_poll').value;
     if (newPoll) {
       await axios.post(`${globalThis.config.BACKEND_URL}/secret_votes/${newPoll}`);
