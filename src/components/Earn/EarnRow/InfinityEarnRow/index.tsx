@@ -12,11 +12,12 @@ import stores, { useStores } from 'stores';
 import Theme from 'themes';
 import MigrateAssets from '../../MigrateTokens';
 import { DetailsTab } from './DetailsTab';
-import { RewardsTab } from './RewardsTab';
-import { notify } from '../../../../blockchain-bridge';
+import RewardsTab from './RewardsTab';
+import { getViewingKey, notify } from '../../../../blockchain-bridge';
 import UnstakeButton from './UnstakeButton';
 import StakeButton from './StakeButton';
 import { RewardsToken } from '..';
+import { unlockJsx } from 'components/SefiModal/utils';
 
 @observer
 class InfinityEarnRow extends Component<
@@ -37,6 +38,7 @@ class InfinityEarnRow extends Component<
     claimButtonPulse: boolean;
     pulseInterval: number;
     secondary_token: any;
+    vkey: any;
   }
 > {
   state = {
@@ -51,15 +53,31 @@ class InfinityEarnRow extends Component<
       image: '',
       symbol: '',
     },
+    vkey: undefined,
   };
 
-  componentDidMount() {
+  _isMounted = false;
+
+  async componentDidMount() {
+    this._isMounted = true;
     //auto open for SEFI STAKING page
     if (this.props.isSefiStaking) {
       setTimeout(() => {
         this.handleClick('', { index: 0 });
       }, 100);
     }
+    const viewingKey = await getViewingKey({
+      keplr: this.props.userStore.keplrWallet,
+      chainId: this.props.userStore.chainId,
+      address: this.props.token.rewardsContract,
+    });
+
+    if (this._isMounted)
+      this.setState({ vkey: viewingKey })
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   handleChangeStake = event => {
@@ -121,6 +139,39 @@ class InfinityEarnRow extends Component<
       }
     }
   };
+
+  createViewingKey = (noun?: string) => {
+    return unlockJsx({
+      onClick: async () => {
+        try {
+          let currency;
+          if (this.props.token.rewardsSymbol == 'SEFI') {
+            currency = this.props.token.rewardsSymbol;
+          } else {
+            currency = this.props.token.rewardsSymbol.toLowerCase();
+          }
+
+          await this.props.userStore?.keplrWallet?.suggestToken(this.props.userStore?.chainId, this.props.token.rewardsContract);
+          this.props.userStore.refreshTokenBalanceByAddress(this.props.token.rewardsContract);
+          this.props.userStore.refreshRewardsBalances('', this.props.token.rewardsContract);
+          this.props.userStore.updateScrtBalance();
+
+          const viewingKey = await getViewingKey({
+            keplr: this.props.userStore.keplrWallet,
+            chainId: this.props.userStore.chainId,
+            address: this.props.token.rewardsContract,
+          });
+
+          this.setState({ vkey: viewingKey })
+
+        } catch (error) {
+          console.error('failed');
+        }
+      },
+      noun: noun
+    });
+  };
+
   render() {
 
     const isDetails = window.location.hash === '#Details';
@@ -286,6 +337,8 @@ class InfinityEarnRow extends Component<
                     tokenAddress={this.props.token.rewardsContract}
                     userStore={this.props.userStore}
                     theme={this.props.theme}
+                    createKey={this.createViewingKey}
+                    vkey={this.state.vkey}
                   />
                 </Grid.Column>
               </Grid>
@@ -305,6 +358,8 @@ class InfinityEarnRow extends Component<
                     userStore={this.props.userStore}
                     theme={this.props.theme}
                     token={this.props.token}
+                    createKey={this.createViewingKey}
+                    vkey={this.state.vkey}
                     />
                 </Grid.Column>
               </Grid>
@@ -339,6 +394,8 @@ class InfinityEarnRow extends Component<
                     token={this.props.token}
                     userStore={this.props.userStore}
                     theme={this.props.theme}
+                    createKey={this.createViewingKey}
+                    vkey={this.state.vkey}
                   />
                 )}
           </Grid.Column>

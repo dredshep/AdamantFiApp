@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import styles from './styles.styl';
 import { Button, Icon, Input, Popup } from 'semantic-ui-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { unlockToken } from '../../../utils';
 import ScrtTokenBalanceSingleLine from './ScrtTokenBalanceSingleLine';
 import BigNumber from 'bignumber.js';
@@ -48,6 +48,12 @@ const changeInput = (balance, percentage, onChange) => {
 };
 const DepositContainer = props => {
 
+  useEffect(() => {
+    const asyncWrapper = async () => {
+    }
+    asyncWrapper().then(() => { });
+  }, [, props.balance, props.vkey])
+
   const createViewingKey = () => {
     if(props.deprecated){
       return <></>
@@ -88,7 +94,11 @@ const DepositContainer = props => {
               selected={false}
               balanceText={props.balanceText}
               popupText={props.unlockPopupText}
-              createKey={createViewingKey}
+              // if a createKey function is passed as a prop, use it
+              // if not, use the default function above
+              // only time passed as prop right now is from infinity row
+              // to share same function across multiple infinity row components
+              createKey={props?.createKey ? props?.createKey : createViewingKey}
             />
             {props.balance?.includes(unlockToken) && !props.deprecated && (
               <Popup

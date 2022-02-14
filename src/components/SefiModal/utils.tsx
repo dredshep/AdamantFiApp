@@ -18,7 +18,7 @@ export async function getNativeBalance(walletAddress: string, secretjs: CosmWasm
   });
 }
 
-export const unlockJsx = (props: { onClick: any }) =>
+export const unlockJsx = (props: { onClick: any , noun?: String}) =>
   Style.it(
     `.view-token-button {
       cursor: pointer;
@@ -31,7 +31,7 @@ export const unlockJsx = (props: { onClick: any }) =>
       background: rgba(23,63,27,0.2);
     }`,
     <span role="img" aria-label={'view'} className="view-token-button" onClick={props.onClick}>
-      🔍 View Balance
+      {`🔍 View ${props.noun === undefined ? 'Balance' : props.noun}`}
     </span>,
   );
 
