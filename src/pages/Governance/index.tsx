@@ -82,7 +82,8 @@ export const Governance = observer(() => {
     //   return `${abrevFormatted}e${elevation} %`;
     // }
     // return `${apyStr}%`;
-    return formatRoi(getAPRStats(token, 0, true)?.apr, true)
+
+    return formatRoi(getAPRStats(token, 0, true)?.apr + getAPRStats(token, 0, false)?.apr, true)
   };
 
   async function createSefiViewingKey() {
