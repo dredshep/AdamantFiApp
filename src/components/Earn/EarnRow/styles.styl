@@ -498,17 +498,22 @@
   &.withdrawAmount {
     margin-top: .2em;
     margin-right: .25em;
-    width: 70%;
+    width: calc(100% - 135px);
   }
 
-  @media only screen and (max-width: 1200px) {
+  >.withdrawCurrency {
+    margin-left: .25em;
+  }
+
+  @media only screen and (max-width: 1200px) and (min-width:900px) {
     &.withdrawAmount {
-      width: calc(100% - 135px);
+      font-size: 18px;
     }
   }
-  @media only screen and (max-width: 425px) {
+
+  @media only screen and (max-width: 900px) and (min-width:767px) {
     &.withdrawAmount {
-      width: 65%;
+      font-size: 14px;
     }
   }
 

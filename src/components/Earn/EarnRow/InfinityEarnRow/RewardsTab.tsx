@@ -126,7 +126,7 @@ const RewardsTab = ({ notify, userStore, theme, token, createKey, vkey }) => {
                     <div className={cn(styles.name)}>
                       <SoftTitleValue title={tokenInfo.info.symbol} subTitle="    " />
                     </div>
-                    <div className={`${styles.label} ${styles[theme.currentTheme]}`}>
+                    <div style={{overflow: 'hidden'}} className={`${styles.label} ${styles[theme.currentTheme]}`}>
                       {reward.length !== 0
                         ? <strong>{`${divDecimals(reward[0].rewards, tokenInfo.info.decimals)}`}</strong>
                         : <strong>0</strong>
