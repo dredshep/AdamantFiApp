@@ -1,12 +1,14 @@
 import cn from 'classnames';
 import styles from '../styles.styl';
 import { Button, Grid, Icon, Input, Popup } from 'semantic-ui-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import WithdrawStakeButton from './WithdrawStakeButton';
 import { getViewingKey } from '../../../../blockchain-bridge';
 import { divDecimals, unlockToken } from '../../../../utils';
 import moment from 'moment';
 import { ModalInfinityCountdown, ModalInfinityViewingKey, ModalInfinityWithdraw } from './InfinityPoolModals';
+import ScrtTokenBalanceSingleLine from '../ScrtTokenBalanceSingleLine';
+import { unlockJsx } from 'pages/Swap/utils';
 
 const buttonStyle = {
   borderRadius: '15px',
@@ -32,23 +34,37 @@ export interface balanceQuery {
   }
 }
 
-const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, currency, balanceText, unlockPopupText, tokenAddress, userStore, theme, token }) => {
+const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, currency, balanceText, unlockPopupText, tokenAddress, userStore, theme, token, createKey, vkey }) => {
 
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [balance, setBalance] = useState(undefined)
-  const [vkey, setVkey] = useState(undefined)
   const [expiringCount, setExpiringCount] = useState(0)
+  const [changed, setChanged] = useState(false)
+  const _isMounted = useRef(true);
+
+  useEffect(() => {
+    handleUpdate()
+    return () => { // ComponentWillUnmount in Class Component
+        _isMounted.current = false;
+    }
+  }, [])
 
   useEffect(() => {
     const asyncWrapper = async () => {
       const res = await getBalance()
 
-      if (res !== undefined) {
-        setBalance(res.balance)
+      if (_isMounted.current) {
+        if (res !== undefined) {
+          setBalance(res.balance)
+        }
       }
     }
     asyncWrapper().then(() => { });
-  }, [, updateWithdrawStake, token.deposit])
+  }, [changed, updateWithdrawStake, vkey])
+
+  const handleUpdate = () => {
+    setChanged(!changed)
+  }
 
   useEffect(() => {
     const amount = getWithdrawAmount()
@@ -63,28 +79,20 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [, expiringCount, withdrawAmount]);
+  }, [expiringCount, withdrawAmount]);
 
   const getBalance = async () => {
 
     try {
 
-      const viewingKey = await getViewingKey({
-        keplr: props.userStore.keplrWallet,
-        chainId: props.userStore.chainId,
-        address: globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.pool_address,
-      });
-
-      setVkey(viewingKey)
-
-      if (viewingKey === undefined) {
+      if (vkey === undefined) {
         return undefined
       }
 
       const res = await props.userStore.secretjs.queryContractSmart(globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.pool_address, {
         balance: {
           address: props.userStore.address, // address of the user that wants to see his balance
-          key: viewingKey, // viewing key of the user that wants to see his balance
+          key: vkey, // viewing key of the user that wants to see his balance
         },
       }) as balanceQuery;
 
@@ -126,8 +134,16 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
           {<Grid className={cn(styles.withdrawStake)} verticalAlign='middle' floated='right'>
             <Grid.Column className={cn(styles.inputRow)}>
               {vkey === undefined
-              ? <div className={`${styles.claim_label} ${styles[theme.currentTheme]} ${styles.vkey} ${styles.withdrawAmount}`}>
-                <strong>Create viewing key</strong>
+              ? <div className={`${styles.claim_label} ${styles.vkey} ${styles.withdrawAmount}`}>
+                <ScrtTokenBalanceSingleLine
+                  value={props.token.rewards}
+                  currency={props.currency}
+                  price={props.price}
+                  selected={false}
+                  balanceText={props.balanceText}
+                  popupText={props.unlockPopupText}
+                  createKey={createKey}
+                />
                 <ModalInfinityViewingKey theme={theme}>
                   <img width="14px" src="/static/info.svg" alt="" />
                 </ModalInfinityViewingKey></div> :
