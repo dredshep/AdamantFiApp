@@ -48,7 +48,7 @@ export const CreateProposal = observer((props) => {
         notify('error', message, 10, result.txhash, true)
         setLoading(false);
       } else {
-        notify('success', 'Proposal created successfully', 10, '', true)
+        notify('success', 'Proposal created successfully. This will take aprox. 5 mins to show on the proposal list, please do not create a duplicate', 10, '', true)
         await sleep(3000)
         setLoading(false);
         history.push('/governance')

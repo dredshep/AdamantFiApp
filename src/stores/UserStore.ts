@@ -746,10 +746,11 @@ export class UserStoreEx extends StoreConstructor {
     );
 
     if(!result.logs) throw Error(result.raw_log);
-    const newPoll = result.logs[0]?.events[1]?.attributes.find(e => e.key === 'new_poll').value;
-    if (newPoll) {
-      await axios.post(`${globalThis.config.BACKEND_URL}/secret_votes/${newPoll}`);
-    }
+    // const newPoll = result.logs[0]?.events[1]?.attributes.find(e => e.key === 'new_poll').value;
+    // if (newPoll) {
+    //   // Was this endpoint removed from SLABs? 2022-02-16
+    //   await axios.post(`${globalThis.config.BACKEND_URL}/secret_votes/${newPoll}`);
+    // }
 
     return result;
   }
