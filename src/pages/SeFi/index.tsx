@@ -88,6 +88,7 @@ const order = [
   'LP-SSCRT-SWBTC',
   'LP-SSCRT-SEFI',
   'LP-SSCRT-ALTER',
+  'LP-SSCRT-SHD',
   'LP-ALTER-SUSDC',
   'LP-SEFI-SXMR',
   'LP-SEFI-SUSDC',

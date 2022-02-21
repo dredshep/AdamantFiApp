@@ -46,6 +46,8 @@ export const TokenMapfromITokenInfo = (tokens: ITokenInfo[]): SwapTokenMap => {
       symbol = t.display_props.symbol.toUpperCase();
     } else if (t.display_props.symbol.toLowerCase() === 'alter') {
       symbol = t.display_props.symbol.toUpperCase();
+    } else if (t.display_props.symbol.toLowerCase() === 'shd') {
+      symbol = t.display_props.symbol.toUpperCase();
     } else {
       symbol = 's' + t.display_props.symbol;
     }
