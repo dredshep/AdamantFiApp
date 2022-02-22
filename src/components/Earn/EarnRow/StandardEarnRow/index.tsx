@@ -89,7 +89,7 @@ class StandardEarnRow extends Component<
       return '';
     }
 
-    if(s === 'SEFI' || s.charAt(0) !== 'S')
+    if(s === 'SEFI' || s === 'SHD' || s.charAt(0) !== 'S')
       return s; // Do not uncapitalize in this case
 
     return s.charAt(0).toLowerCase() + s.slice(1);
@@ -101,7 +101,7 @@ class StandardEarnRow extends Component<
 
     tokenName = tokenName.toUpperCase();
 
-    if (tokenName == 'SSCRT' || tokenName == 'SEFI' || tokenName == 'SCRT' || tokenName == 'ALTER') {
+    if (tokenName == 'SSCRT' || tokenName == 'SEFI' || tokenName == 'SCRT' || tokenName == 'ALTER' || tokenName == 'SHD') {
       return tokenName;
     } else {
       if (tokenName.charAt(0) == 'S') {

@@ -24,6 +24,7 @@ import axios from 'axios';
 const tokenImages = {
   'SSCRT': '/static/token-images/sscrt.svg',
   'SEFI': '/static/token-images/sefi.svg',
+  'SHD': '/static/tokens/shade.svg',
   'SIENNA': '/static/token-images/sienna.svg',
   'BAC': '/static/token-images/bac_ethereum.svg',
   'RENBTC': '/static/token-images/renbtc_ethereum.svg',
