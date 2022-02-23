@@ -83,7 +83,7 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
 
     if (isSefiInfinity) {
       try {
-        apr_raw = (365 * 78916.44) / (numStaked / 1000000)
+        apr_raw = (365 * 141369.86) / (numStaked / 1000000)
       } catch (err) {
         console.log(err);
         apr_raw = 0
