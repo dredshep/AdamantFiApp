@@ -401,7 +401,7 @@ export let infinityRewardTokenInfo = [{
   info: {
     address: globalThis.config.SCRT_GOV_TOKEN_ADDRESS,
     numStaked: 0,
-    multiplier: '24',
+    multiplier: '43',
     decimals: 6,
     symbol: 'SEFI',
     price: 0.04,

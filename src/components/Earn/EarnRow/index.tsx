@@ -142,8 +142,8 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
 };
 
 export const multipliers = {
-  'SEFI STAKING (V2)': '20',
-  'sUSDC - sUSDC(BSC)': '20',
+  'SEFI STAKING (V2)': '10',
+  'sUSDC - sUSDC(BSC)': '10',
   'sETH - sETH(BSC)': '12',
   'sSCRT - sUSDT': '28',
   'sSCRT - sETH': '36',
@@ -152,12 +152,12 @@ export const multipliers = {
   'sSCRT - SHD': '4',
   'SEFI - sXMR': '12',
   'SEFI - sUSDC': '24',
-  'sETH - sWBTC': '12',
+  'sETH - sWBTC': '10',
   'sSCRT - sBNB(BSC)': '12',
   'SEFI - sATOM': '8',
   'SEFI - sLUNA': '12',
   'SEFI - sOSMO': '4',
-  'SEFI - sDVPN': '4',
+  'SEFI - sDVPN': '3',
   'sSCRT - sRUNE': '2',
   'sSCRT - ALTER': '9',
   'ALTER - sUSDC': '5'
