@@ -16,7 +16,7 @@ const WithdrawButton = ({ props, value, changeValue }) => {
     <Button
       loading={loading}
       className={`${styles.button} ${styles[theme.currentTheme]}`}
-      disabled={Number(value) <= 0 || isNaN(value)}
+      disabled={(Number(value) <= 0 || isNaN(value)) && !props.token.deprecated}
       onClick={async () => {
         setLoading(true);
         let redeemTask = props.token.deprecated
