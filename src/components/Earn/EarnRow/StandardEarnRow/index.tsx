@@ -13,7 +13,6 @@ import { formatZeroDecimals } from '../../../../utils';
 import { Text } from '../../../Base';
 import stores from 'stores';
 import Theme from 'themes';
-import MigrateAssets from '../../MigrateTokens';
 import {ModalExplanation, ModalMultiplierTip} from '../../APRModalExp';
 import { aprString, multipliers, tokenImages, RewardsToken } from '..';
 
@@ -234,106 +233,116 @@ class StandardEarnRow extends Component<
           {this.props.token.deprecated ? (
             <div className="maintenance-warning">
               <h3>
-                <Icon name="warning circle" />A new version of this earn pool is live. You can migrate by clicking the
-                button below
+                <Icon name="warning circle" />A new version of this earn pool is live. Withdraw by
+                 clicking the button below and then stake to the new pool to earn rewards!
               </h3>
             </div>
           ) : (
             <></>
           )}
 
-          <div>
+          {isDeprecated ? (
+            <div>
+              <Segment basic>
+            <Grid className={cn(styles.content2)}>
+            <Grid.Column textAlign='center'>
+              <h3 style={{ textAlign:'center', color: this.props.theme.currentTheme == 'dark' ? 'white' : '#1B1B1B' }}>
+                Withdraw from the old pool!
+              </h3>
+              <WithdrawButton
+                props={this.props}
+                value={this.state.withdrawValue}
+                changeValue={this.handleChangeWithdraw}
+              />
+              <Text
+                size="medium"
+                style={{
+                  marginTop: '20px',
+                  cursor: 'auto',
+                  textAlign: 'center',
+                  fontFamily: 'Poppins,Arial',
+                  color: this.props.theme.currentTheme == 'dark' ? 'white' : '#1B1B1B',
+                }}
+              >
+                * When you withdraw from the old pool contract, you will automagically claim any rewards!
+              </Text>
+          </Grid.Column>
+          </Grid>
+          </Segment>
+          </div>) : (
+          <>
+            <div>
             <Segment basic>
-              <Grid className={cn(styles.content2)} columns={2} relaxed="very" stackable>
-                <Grid.Column>
-                  {isDeprecated ? (
-                    <>
-                      <h1 style={{ color: this.props.theme.currentTheme == 'dark' ? 'white' : '#1B1B1B' }}>
-                        Earn on the new pool!
-                      </h1>
-                      <MigrateAssets
-                        balance={this.props.token.deposit}
-                        oldRewardsContract={this.props.token.rewardsContract}
-                        newRewardsContract={this.props.token.deprecated_by}
-                        lockedAsset={this.props.token.lockedAsset}
-                        lockedAssetAddress={this.props.token.lockedAssetAddress}
+            <Grid className={cn(styles.content2)} columns={2} relaxed="very" stackable>
+            <Grid.Column>
+            <DepositContainer
+              title="Earn"
+              value={this.state.depositValue}
+              action={
+                !isDeprecated && (
+                  <>
+                    <Grid columns={1} stackable relaxed={'very'}>
+                      <Grid.Column
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-start',
+                        }}
                       >
-                        <p style={{ color: this.props.theme.currentTheme == 'dark' ? 'white' : '#1B1B1B' }}>
-                          Migrate your tokens here.
-                          <button className={`migrate-solid-button ${stores.theme.currentTheme}`}>Migrate</button>
-                        </p>
-                      </MigrateAssets>
-                    </>
-                  ) : (
-                    <DepositContainer
-                      title="Earn"
-                      value={this.state.depositValue}
-                      action={
-                        !isDeprecated && (
-                          <>
-                            <Grid columns={1} stackable relaxed={'very'}>
-                              <Grid.Column
-                                style={{
-                                  display: 'flex',
-                                  justifyContent: 'flex-start',
-                                }}
-                              >
-                                <EarnButton
-                                  props={this.props}
-                                  value={this.state.depositValue}
-                                  changeValue={this.handleChangeDeposit}
-                                  togglePulse={this.togglePulse}
-                                  setPulseInterval={this.setPulseInterval}
-                                />
-                              </Grid.Column>
-                            </Grid>
-                          </>
-                        )
-                      }
-                      onChange={this.handleChangeDeposit}
-                      balance={this.props.token.balance}
-                      currency={this.props.token.lockedAsset}
-                      price={this.props.token.price}
-                      balanceText="Available"
-                      unlockPopupText="Staking balance and rewards require an additional viewing key."
-                      tokenAddress={this.props.token.lockedAssetAddress}
-                      userStore={this.props.userStore}
-                      theme={this.props.theme}
-                    />
-                  )}
-                </Grid.Column>
-                <Grid.Column>
-                  <DepositContainer
-                    title="Withdraw"
+                        <EarnButton
+                          props={this.props}
+                          value={this.state.depositValue}
+                          changeValue={this.handleChangeDeposit}
+                          togglePulse={this.togglePulse}
+                          setPulseInterval={this.setPulseInterval}
+                        />
+                      </Grid.Column>
+                    </Grid>
+                  </>
+                )
+              }
+              onChange={this.handleChangeDeposit}
+              balance={this.props.token.balance}
+              currency={this.props.token.lockedAsset}
+              price={this.props.token.price}
+              balanceText="Available"
+              unlockPopupText="Staking balance and rewards require an additional viewing key."
+              tokenAddress={this.props.token.lockedAssetAddress}
+              userStore={this.props.userStore}
+              theme={this.props.theme}
+            />
+        </Grid.Column>
+        <Grid.Column>
+          <DepositContainer
+            title="Withdraw"
+            value={this.state.withdrawValue}
+            onChange={this.handleChangeWithdraw}
+            action={
+              <Grid columns={1} stackable relaxed={'very'}>
+                <Grid.Column
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <WithdrawButton
+                    props={this.props}
                     value={this.state.withdrawValue}
-                    onChange={this.handleChangeWithdraw}
-                    action={
-                      <Grid columns={1} stackable relaxed={'very'}>
-                        <Grid.Column
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                          }}
-                        >
-                          <WithdrawButton
-                            props={this.props}
-                            value={this.state.withdrawValue}
-                            changeValue={this.handleChangeWithdraw}
-                          />
-                        </Grid.Column>
-                      </Grid>
-                    } //({props: this.props, value: this.state.withdrawValue})}
-                    balance={this.props.token.deposit}
-                    currency={this.props.token.lockedAsset}
-                    price={this.props.token.price}
-                    balanceText="Staked"
-                    unlockPopupText="Staking balance and rewards require an additional viewing key."
-                    tokenAddress={this.props.token.rewardsContract}
-                    userStore={this.props.userStore}
-                    theme={this.props.theme}
+                    changeValue={this.handleChangeWithdraw}
                   />
                 </Grid.Column>
               </Grid>
+            } //({props: this.props, value: this.state.withdrawValue})}
+            balance={this.props.token.deposit}
+            currency={this.props.token.lockedAsset}
+            price={this.props.token.price}
+            balanceText="Staked"
+            unlockPopupText="Staking balance and rewards require an additional viewing key."
+            tokenAddress={this.props.token.rewardsContract}
+            userStore={this.props.userStore}
+            theme={this.props.theme}
+          />
+            </Grid.Column>
+          </Grid>
             </Segment>
           </div>
           <ClaimBox
@@ -359,6 +368,7 @@ class StandardEarnRow extends Component<
           >
             * Every time you deposit, withdraw or claim the contract will automagically claim your rewards for you!
           </Text>
+          </>)}
         </Accordion.Content>
       </Accordion>
     );
