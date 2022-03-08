@@ -35,7 +35,7 @@ const EarnButton = ({ props, value, changeValue, togglePulse, setPulseInterval }
               },
             });
             props.userStore.updateScrtBalance();
-            props.notify('success', `Staked ${amount} s${props.token.display_props.symbol} in the rewards contract`);
+            props.notify('success', `Staked ${value} ${props.token.lockedAsset} in the rewards contract`);
             if (props.token.deposit === unlockToken) {
               togglePulse();
               const interval = setInterval(togglePulse, 700);
