@@ -7,8 +7,8 @@ import { useStores } from 'stores';
 import styles from '../EthBridge/styles.styl';
 // import { IColumn, Table } from '../../components/Table';
 // import { ERC20Select } from '../Exchange/ERC20Select';
-import EarnRow from '../../components/Earn/EarnRow';
-import { calculateAPY } from '../../components/Earn/EarnRow';
+import StandardEarnRow from '../../components/Earn/EarnRow/StandardEarnRow/';
+import { calculateAPY } from '../../components/Earn/EarnRow/';
 import { rewardsDepositKey, rewardsKey } from '../../stores/UserStore';
 import { divDecimals, sleep, zeroDecimalsFormatter } from '../../utils';
 import { InfoModalEarn } from '../../components/InfoModalEarn';
@@ -203,7 +203,7 @@ export const EarnRewards = observer((props: any) => {
               .map(rewardToken => {
 
                 return (
-                  <EarnRow
+                  <StandardEarnRow
                     notify={notify}
                     key={rewardToken.lockedAsset}
                     userStore={user}

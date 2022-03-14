@@ -7,7 +7,7 @@ import { useStores } from 'stores';
 import styles from '../EthBridge/styles.styl';
 // import { IColumn, Table } from '../../components/Table';
 // import { ERC20Select } from '../Exchange/ERC20Select';
-import EarnRow from '../../components/Earn/EarnRow';
+import StandardEarnRow from '../../components/Earn/EarnRow/StandardEarnRow/';
 import { rewardsDepositKey, rewardsKey } from '../../stores/UserStore';
 import {
   displayHumanizedBalance,
@@ -226,7 +226,7 @@ export const SeFiStakingPage = observer(() => {
 
                 if(rewardToken.reward.pool_address === globalThis.config.SEFI_STAKING_CONTRACT){
                     return (
-                      <EarnRow
+                      <StandardEarnRow
                         notify={notify}
                         key={`${rewardToken.reward.inc_token.symbol}-${i}`}
                         userStore={user}
