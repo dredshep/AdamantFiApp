@@ -39,20 +39,23 @@ const ClaimButton = (props: {
             },
           })}
           {props.balance?.includes(unlockToken) && (
-            <Popup
-              content={props.unlockPopupText}
-              className={styles.iconinfo__popup}
-              trigger={<Icon className={styles.icon_info} name="info" circular size="tiny" />}
-            />
+              <Popup
+                content={props.unlockPopupText}
+                className={styles.iconinfo__popup}
+                trigger={<Icon className={styles.icon_info} name="info" circular size="tiny" />}
+              />
           )}
         </div>
       );
     } else {
       return props.available ? (
-        <strong>{formatSignificantFigures(props.available, 6)}</strong>
+        <>
+          <strong>{formatSignificantFigures(props.available, 6)}</strong>
+          <span style={{ marginLeft: '10px' }}>{props.rewardsToken}</span>
+        </>
       ) : (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Loader type="ThreeDots" color="#3ba246" height="0.2em" />
+          <Loader type="ThreeDots" color="#cb9b51" height="0.2em" />
         </div>
       );
     }
@@ -62,7 +65,6 @@ const ClaimButton = (props: {
     <>
       <div className={`${styles.claim_label} ${styles[theme.currentTheme]}`}>
         {displayAvailable()}
-        <span style={{ marginLeft: '10px' }}>{props.rewardsToken}</span>
       </div>
       <Button
         loading={loading}

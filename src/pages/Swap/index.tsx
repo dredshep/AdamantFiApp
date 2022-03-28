@@ -680,7 +680,7 @@ export class SwapRouter extends React.Component<
         <PageContainer>
           <Box
             className={styles.faqContainer}
-            pad={{ horizontal: 'large', top: 'large' }}
+            pad={{ top: 'large' }}
             style={{ alignItems: 'center' }}
           >
             <Box

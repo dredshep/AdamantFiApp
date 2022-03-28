@@ -77,3 +77,101 @@
     width: 100%
   }
 }
+
+.filterOptions {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin: 1rem 0;
+}
+
+.poolToggles {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1rem 0rem;
+  > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 1rem;
+  }
+}
+
+.earnSearch {
+  border-radius: 9px;
+  width: 45%;
+  height: 46px;
+  padding: 16px;
+  font-size: 18px;
+  outline: none;
+  &.light{
+    color: #5F5F6B;
+    background-color: #F9FAFA;
+    border: 1px solid#5F5F6B;
+  }
+  &.dark{
+    color: white;
+    background-color: #363636;
+    border: 1px solid white;
+  }
+
+  &:focus {
+    border: 1px solid rgba(179, 134, 57,.6);
+  }
+  &::placeholder{
+    font-family: 'Poppins',Arial, Helvetica, sans-serif;
+    font-size: 16px;
+  }
+}
+
+.filterButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 45%;
+
+  > button > i {
+    margin: 0 !important;
+  }
+}
+
+.noneFilter {
+  &.light {
+    background-color: #bbb !important;
+  }
+  &.dark {
+    background-color: #999 !important;
+  }
+}
+
+.descFilter {
+  background-color: #5fb869 !important;
+}
+
+.ascFilter {
+  background-color: #dc5955 !important;
+}
+
+@media only screen and (max-width: 768px) {
+  .filterOptions {
+    flex-direction: column-reverse;
+    margin-top: 1rem;
+  }
+
+  .poolToggles {
+    display: none;
+  }
+
+  .earnSearch {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .filterButtons {
+    width: 100%;
+  }
+}

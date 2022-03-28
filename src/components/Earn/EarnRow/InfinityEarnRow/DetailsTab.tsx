@@ -58,10 +58,10 @@ export class DetailsTab extends React.Component<
                   <SoftTitleValue
                     title={
                       <div className="earn_center_ele">
-                        {formatRoi(getAPRStats(this.props.token, tokenInfo.info.price, tokenInfo.info.symbol === 'SEFI')?.apr, true)}
+                        {formatRoi(getAPRStats(this.props.token, tokenInfo.info.price, tokenInfo.info.symbol)?.apr, true)}
                         {<p style={{ marginLeft: '4px', fontFamily: 'poppins', fontSize: '10px', zIndex: '10' }}>
-                          <ModalExplanation token={this.props.token} theme={this.props.theme} infinityPoolPrice={tokenInfo.info.price} infinityPoolSymbol={tokenInfo.info.symbol}>
-                            <img width="14px" src="/static/info.svg" alt="" />
+                          <ModalExplanation token={this.props.token} theme={this.props.theme} infinityPoolSymbol={tokenInfo.info.symbol}>
+                            <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
                           </ModalExplanation>
                         </p>}
                       </div>
@@ -81,7 +81,7 @@ export class DetailsTab extends React.Component<
                           {tokenInfo.info.multiplier}x
                           <p style={{ marginLeft: '4px', fontFamily: 'poppins', fontSize: '10px' }}>
                             <ModalMultiplierTip multiplier={tokenInfo.info.multiplier} theme={this.props.theme}>
-                              <img width="14px" src="/static/info.svg" alt="" />
+                              <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
                             </ModalMultiplierTip>
                           </p>
                         </div>

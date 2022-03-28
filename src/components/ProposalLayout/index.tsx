@@ -16,10 +16,9 @@ const ProposalLayout = (props: {
             <PageContainer>
                 <Box
                     className={`proposal-layout ${theme.currentTheme}`}
-                    pad={{ horizontal: '136px', top: 'small' }}
                     style={{ alignItems: 'center' }}
                 >
-                    <div style={{ width: props.width || '90%',maxWidth: props.maxWidth || '90%' }}>
+                    <div className='proposal-layout-container'>
                         <div className='go-back'>
                             <Link className='go-back' to='/governance' >
                                 <img src="/static/arrow-left.svg" alt="go-back" />

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import styles from '../styles.styl';
+import '../style.scss'
 import cn from 'classnames';
-import { Accordion, Grid, Icon, Image, Input, Segment } from 'semantic-ui-react';
+import { Accordion, Grid, Icon, Image, Input, Segment, Rating } from 'semantic-ui-react';
 import SoftTitleValue from '../../SoftTitleValue';
 import DepositContainer from '../DepositContainer';
 import WithdrawStakeContainer from './WithdrawStakeContainer';
@@ -16,8 +17,10 @@ import RewardsTab from './RewardsTab';
 import { getViewingKey, notify } from '../../../../blockchain-bridge';
 import UnstakeButton from './UnstakeButton';
 import StakeButton from './StakeButton';
-import { RewardsToken } from '..';
+import { aprString, multipliers, RewardsToken } from '..';
 import { unlockJsx } from 'components/SefiModal/utils';
+import { formatRoi, ModalExplanation, ModalMultiplierTip } from 'components/Earn/APRModalExp';
+import { formatZeroDecimals } from 'utils';
 
 @observer
 class InfinityEarnRow extends Component<
@@ -28,6 +31,8 @@ class InfinityEarnRow extends Component<
     callToAction: string;
     theme: Theme;
     isSefiStaking?: boolean;
+    favPools?: string[];
+    setFavPools?: React.Dispatch<React.SetStateAction<string[]>>;
   },
   {
     activeIndex: Number;
@@ -198,6 +203,7 @@ class InfinityEarnRow extends Component<
     let title = 'INFINITY POOL';
 
     return (
+      <div className={`${styles.standard_row}`}>
       <Accordion className={cn(style)}>
         <Accordion.Title
           active={activeIndex === 0}
@@ -205,6 +211,16 @@ class InfinityEarnRow extends Component<
           onClick={this.handleClick}
           className={`${styles.assetRow} ${styles.responsive_row}`}
         >
+          {this.props.favPools &&
+          <Rating onRate={(e) => {
+            e.stopPropagation()
+            let newFavPools = this.props.favPools
+            if (newFavPools.includes(this.props.token.rewardsContract)) {
+              this.props.setFavPools(newFavPools.filter((t) => {return t !== this.props.token.rewardsContract}))
+            } else {
+              this.props.setFavPools([...newFavPools, this.props.token.rewardsContract])
+            }
+          }} size='huge' defaultRating={Number(this.props.favPools.includes(this.props.token.rewardsContract))} className={`title_star ${this.props.theme.currentTheme}`}/>}
           {
             <div className={cn(styles.assetIcon)}>
               <Image src={'/static/token-images/sefi.svg'} rounded size="mini" />
@@ -212,18 +228,56 @@ class InfinityEarnRow extends Component<
             </div>
           }
 
-          <div className={cn(styles.title_item__container)}>
+          <div className={cn(styles.title_item__container, styles.title_name)}>
             <SoftTitleValue title={title} subTitle="    " />
           </div>
-          <div></div>
-          <div></div>
-          <Icon
-            className={`${styles.arrow}`}
-            style={{
-              color: this.props.theme.currentTheme == 'dark' ? 'white' : '',
-            }}
-            name="dropdown"
-          />
+          <div className={cn(styles.title_item__container, styles.title_apr)}>
+            <SoftTitleValue
+              title={
+                <div className="earn_center_ele">
+                  {aprString(this.props.token)}
+                  {!isDeprecated && !this.props.token.zero && (
+                    <p style={{ marginLeft: '5px', fontFamily: 'poppins', fontSize: '17px' }}>
+                      <ModalExplanation token={this.props.token} theme={this.props.theme}>
+                        <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
+                      </ModalExplanation>
+                    </p>
+                  )}
+                </div>
+              }
+              subTitle={'APR'}
+            />
+          </div>
+          <div className={cn(styles.title_item__container, styles.title_tvl)}>
+            <SoftTitleValue
+              title={`$${formatZeroDecimals(Number(this.props.token.totalLockedRewards) || 0)}`}
+              subTitle={'TVL'}
+            />
+          </div>
+          <div className={cn(styles.title_item__container, styles.title_multiplier)}>
+            <SoftTitleValue
+              title={
+                <div className="earn_center_ele">
+                  {multipliers['INFINITY POOL'] + 'x'}
+                  <p style={{ marginLeft: '5px', fontFamily: 'poppins', fontSize: '17px' }}>
+                    <ModalMultiplierTip multiplier={multipliers['INFINITY POOL']} theme={this.props.theme}>
+                      <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
+                    </ModalMultiplierTip>
+                  </p>
+                </div>
+              }
+              subTitle={'Multiplier'}
+            />
+          </div>
+          <div className={cn(styles.title_item__container, styles.title_arrow)}>
+            <Icon
+              className={`${styles.arrow}`}
+              style={{
+                color: this.props.theme.currentTheme == 'dark' ? 'white' : '',
+              }}
+              name="dropdown"
+            />
+          </div>
         </Accordion.Title>
         <Accordion.Content
           className={`${styles.content} ${styles[this.props.theme.currentTheme]}`}
@@ -342,10 +396,10 @@ class InfinityEarnRow extends Component<
                   />
                 </Grid.Column>
               </Grid>
-              <Grid className={cn(styles.content2)} columns={2} relaxed="very" stackable>
+              <Grid className={`${styles.content2} withdraw-content`} columns={2} relaxed="very" stackable>
                 <Grid.Column>
                 </Grid.Column>
-                <Grid.Column>
+                <Grid.Column className='withdraw-content-col'>
                     <WithdrawStakeContainer
                     props={this.props}
                     value={this.state.withdrawValue}
@@ -363,8 +417,8 @@ class InfinityEarnRow extends Component<
                     />
                 </Grid.Column>
               </Grid>
-              <Grid className={cn(styles.content2)} columns={2} relaxed="very" stackable>
-                <Grid.Column>
+              <Grid className={`${styles.content2} infinity-info-content`} columns={2} relaxed="very" stackable>
+                <Grid.Column className='infinity-info-col'>
                 <Image style={{marginBottom: '15px'}} src={'/static/infinity-pool.png'}/>
                   <Text
                     size="medium"
@@ -379,7 +433,7 @@ class InfinityEarnRow extends Component<
             Every time you Stake, Unstake, or Claim the contract will automagically claim your rewards for you
           </Text>
           </Grid.Column>
-          <Grid.Column>
+          <Grid.Column className='infinity-info-col infinity-details'>
               {isDetails && (
                   <DetailsTab
                     notify={notify}
@@ -404,6 +458,7 @@ class InfinityEarnRow extends Component<
           </div>
         </Accordion.Content>
       </Accordion>
+      </div>
     );
   }
 }

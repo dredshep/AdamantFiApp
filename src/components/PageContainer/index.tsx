@@ -14,9 +14,9 @@ export const PageContainer: React.FC<IStyledChildrenProps<BoxProps>> = withTheme
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            // backgroundColor: theme.palette.Basic100,
             justifyContent: 'normal',
-            padding: '0px 10px',
+            padding: '0 3vw',
+            minWidth: '100%',
           }}
         >
           {children}

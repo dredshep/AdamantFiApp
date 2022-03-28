@@ -12,8 +12,8 @@ class Theme{
   constructor (){
     this.currentTheme = localStorage.getItem('currentTheme');
     if(!this.currentTheme){
-      this.currentTheme = LIGHT;
-      localStorage.setItem('currentTheme',LIGHT);
+      this.currentTheme = DARK;
+      localStorage.setItem('currentTheme',DARK);
     }
   }
 

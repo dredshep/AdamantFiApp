@@ -21,7 +21,7 @@
     width: 100%;
     a {
       text-align: start;
-      color: #3ba246;
+      color: #cb9b51;
     }
   }
   .contenas {
@@ -47,9 +47,15 @@
 .dark {
   &.convert-wrapper {
     color: white;
-    background: #0e0e10;
+    background: #000;
     .description {
       color: #999;
     }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .convert-wrapper {
+    width: 100%;
   }
 }

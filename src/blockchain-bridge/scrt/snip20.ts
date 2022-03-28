@@ -57,7 +57,7 @@ export const Snip20GetBalance = async (params: {
         console.error(e)
         return unlockToken;
       }
-      sleep(1000)
+      await sleep(1000)
     }
   }
 

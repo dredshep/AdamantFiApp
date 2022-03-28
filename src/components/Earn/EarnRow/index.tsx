@@ -59,7 +59,7 @@ export interface StatsAPR {
   apr: number;
   apy: number;
 }
-export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?: boolean): StatsAPR => {
+export const getAPRStats = (token: RewardsToken, price: number, sefiInfinityToken?: String, infinityTotal?: boolean): StatsAPR => {
 
   // total sefi being distributed each day to lp providers in the form of rewards
   const totalDailySefi = 657534.25
@@ -81,20 +81,28 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
     const numStaked = infinityRewardTokenInfo[0].info.numStaked
     const sefiPrice = infinityRewardTokenInfo[0].info.price
 
-    if (isSefiInfinity) {
+    if (sefiInfinityToken === 'SEFI') {
       try {
         apr = (365 * 103561.64) / (numStaked / 1000000)
       } catch (err) {
         console.log(err);
         apr = 0
       }
-    } else {
+    } else if (sefiInfinityToken === 'ALTER') {
       try {
         if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']["ALTER/USD"]) {
           apr = ((100000 * 2) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((numStaked / 1000000) * sefiPrice)
         } else {
-          apr = 0;
+          apr = 0
         }
+      } catch (err) {
+        console.log(err);
+        apr = 0
+      }
+    } else {
+      try {
+        apr = (365 * 103561.64) / (numStaked / 1000000)
+        apr += ((100000 * 2) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((numStaked / 1000000) * sefiPrice)
       } catch (err) {
         console.log(err);
         apr = 0
@@ -191,7 +199,8 @@ export const multipliers = {
   'SEFI - sDVPN': '3',
   'sSCRT - sRUNE': '0',
   'sSCRT - ALTER': '9',
-  'ALTER - sUSDC': '5'
+  'ALTER - sUSDC': '5',
+  'INFINITY POOL': infinityRewardTokenInfo[0].info.multiplier
 };
 
 export const tokenImages = {

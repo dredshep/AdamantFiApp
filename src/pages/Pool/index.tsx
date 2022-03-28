@@ -142,7 +142,6 @@ export class SwapRouter extends React.Component<
     }
 
     if (selectedToken0 !== prevState.selectedToken0 && selectedToken0 !== prevState.selectedToken1) {
-      console.log('hello world');
       updateState = true;
       newBalances[selectedToken0] = await this.refreshTokenBalance(selectedToken0);
     }
@@ -639,7 +638,7 @@ export class SwapRouter extends React.Component<
         <PageContainer>
           <Box
             className={styles.faqContainer}
-            pad={{ horizontal: 'large', top: 'large' }}
+            pad={{ top: 'large' }}
             style={{ alignItems: 'center' }}
           >
             <Box

@@ -2,14 +2,16 @@
   &.swapContainerStyle {
     z-index: 10;
     border-radius: 16px;
-    background: white;
+    background-image: url(../../src_imgs/swap-bg-light.png);
+    background-position: 50% 50%;
+    background-size: 110%;
     padding: 26px;
     box-shadow: 4px 4px 32px rgba(140, 140, 140, 0.25);
-
+    border: 1px solid #cb9b51;
   }
 
   .tokenInfoRow {
-    border-radius: 20px; 
+    border-radius: 20px;
     height: 62px;
     display: flex;
     justify-content: space-between;
@@ -63,9 +65,9 @@
     margin-bottom: 0.2em;
 
     &:focus {
-      border: 1px solid rgba(0, 191, 255, 0.9);
+      border: 1px solid rgba(179, 134, 57,.6);
     }
-  } 
+  }
 
   .spin {
     -webkit-animation-name: spin;
@@ -88,39 +90,41 @@
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
 
-    @-ms-keyframes spin { 
-        80%,100% { 
-          -ms-transform: rotate(360deg); 
+    @-ms-keyframes spin {
+        80%,100% {
+          -ms-transform: rotate(360deg);
         }
     }
-    @-moz-keyframes spin { 
-        80%,100%{ 
-          -moz-transform: rotate(360deg); 
+    @-moz-keyframes spin {
+        80%,100%{
+          -moz-transform: rotate(360deg);
         }
     }
-    @-webkit-keyframes spin { 
-        80%,100% { 
-          -webkit-transform: rotate(360deg); 
+    @-webkit-keyframes spin {
+        80%,100% {
+          -webkit-transform: rotate(360deg);
         }
     }
-    @keyframes spin { 
-        80%,100% { 
-          transform: rotate(360deg); 
+    @keyframes spin {
+        80%,100% {
+          transform: rotate(360deg);
         }
     }
-  }  
+  }
 }
 .dark{
   &.swapContainerStyle {
     z-index: 10;
     border-radius: 16px;
-    background: #0E0E10;
+    background-image: url(../../src_imgs/swap-bg-dark.png);
+    background-position: 50% 50%;
+    background-size: 110%;
     padding: 26px;
-
+    border: 1px solid #cb9b51;
   }
 
   .tokenInfoRow {
-    border-radius: 20px; 
+    border-radius: 20px;
     height: 62px;
     display: flex;
     justify-content: space-between;
@@ -174,9 +178,9 @@
     margin-bottom: 0.2em;
 
     &:focus {
-      border: 1px solid rgba(0, 191, 255, 0.9);
+      border: 1px solid rgba(179, 134, 57,.6);
     }
-  } 
+  }
   .spin {
     -webkit-animation-name: spin;
     -webkit-animation-duration: 1500ms;
@@ -198,101 +202,93 @@
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
 
-    @-ms-keyframes spin { 
-        80%,100% { 
-          -ms-transform: rotate(360deg); 
+    @-ms-keyframes spin {
+        80%,100% {
+          -ms-transform: rotate(360deg);
         }
     }
-    @-moz-keyframes spin { 
-        80%,100%{ 
-          -moz-transform: rotate(360deg); 
+    @-moz-keyframes spin {
+        80%,100%{
+          -moz-transform: rotate(360deg);
         }
     }
-    @-webkit-keyframes spin { 
-        80%,100% { 
-          -webkit-transform: rotate(360deg); 
+    @-webkit-keyframes spin {
+        80%,100% {
+          -webkit-transform: rotate(360deg);
         }
     }
-    @keyframes spin { 
-        80%,100% { 
-          transform: rotate(360deg); 
+    @keyframes spin {
+        80%,100% {
+          transform: rotate(360deg);
         }
     }
-  }  
+  }
 }
 
-.light{
-  &.additionalInfo_container{
-    margin-top: -2rem;
-    border-bottom-left-radius:  20px;
-    border-bottom-right-radius:  20px;
-    background: rgba(255, 255, 255, 0.4);;
-    padding: calc(16px + 2rem) 2rem 1rem 2rem; 
-    display: flex;
-    flex-direction: column;
+.additionalInfo_container {
+  display: flex;
+  flex-direction: column;
+  &.light {
     span,strong{
       color:#1b1b1b;
-      font-family: Poppins,Arial, Helvetica, sans-serif;
-      i{
+      i {
         background: whitesmoke;
         &:before{
           color: gray;
         }
       }
-    } 
-
-    div{
-      margin: .1rem 0;
     }
   }
-}
-.dark{
-  &.additionalInfo_container{
-    margin-top: -2rem;
-    border-bottom-left-radius:  20px;
-    border-bottom-right-radius:  20px;
-    background:  rgba(0, 0, 0, 0.4);
-    padding: calc(16px + 2rem) 2rem 1rem 2rem; 
-    display: flex;
-    flex-direction: column;
+  &.dark {
     span,strong{
       color:#F9FAFA;
-      font-family: Poppins,Arial, Helvetica, sans-serif;
-      i{
+      i {
         background: rgba(255, 255, 255, 0.1);
         &:before{
           color: #F9FAFA;
         }
       }
-    } 
-
-    div{
-      margin: .1rem 0;
     }
+  }
+  span,strong{
+    font-family: Poppins,Arial, Helvetica, sans-serif;
+  }
+
+  div{
+    margin: .1rem 0;
   }
 }
 
 .box_container{
-  max-width: 500px;
-  min-width: 500px;  
-  @media only screen and (max-width: 1024px) and (min-width: 754px) {
-   max-width: 60%; 
-   min-width: 60%; 
-  }
+  width: 500px;
   @media only screen and (max-width: 753px) {
-   max-width: 115%; 
-   min-width: 100%; 
+   max-width: 500px;
+   width: 100%;
   }
 }
 .swapContainerStyle{
   @media only screen and (max-width: 753px) {
    padding: 26px 13px !important
   }
-  
 }
+
+.swap_middle_row {
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.swapper_img {
+  &.light {
+    filter: invert(1);
+  }
+}
+
 .swap_button{
   color: white !important;
-  background: rgb(23,63,27) !important;
+  background: #cb9b51 !important;
   margin: 1em 0px 0px  !important;
   border-radius: 4px !important;
   padding: 11px 42px !important;
@@ -303,13 +299,13 @@
     &:disabled{
       color: #d9d9d9 !important;
       background: #585858 !important;
-    } 
+    }
   }
   &.light{
     &:disabled{
       color: rgb(95, 95, 107) !important;
       background: rgb(222, 222, 222) !important;
-    } 
+    }
   }
 }
 
@@ -323,7 +319,7 @@
   font-weight: 400;
   min-width: 395px !important;
   a {
-    color: #3ba246 !important;
+    color: #cb9b51 !important;
     text-decoration: underline;
     font-size: 12px;
   }
@@ -338,14 +334,14 @@
   }
 }
 .icon_info {
-  color: #3ba246 !important;
-  border: 0.1px solid #3ba246 !important;
+  color: #cb9b51 !important;
+  border: 0.1px solid #cb9b51 !important;
 
   &::before {
     display: flex;
     justify-content: center;
     height: 100%;
     align-items: center;
-    color: #3ba246 !important;
+    color: #cb9b51 !important;
   }
 }

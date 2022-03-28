@@ -131,8 +131,7 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
           <div className={cn(styles.title)}>{balanceText}</div>
         </div>
         <div>
-          {<Grid className={cn(styles.withdrawStake)} verticalAlign='middle' floated='right'>
-            <Grid.Column className={cn(styles.inputRow)}>
+          {<div className={cn(styles.withdrawStake)}>
               {vkey === undefined
               ? <div className={`${styles.claim_label} ${styles.vkey} ${styles.withdrawAmount}`}>
                 <ScrtTokenBalanceSingleLine
@@ -145,7 +144,7 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
                   createKey={createKey}
                 />
                 <ModalInfinityViewingKey theme={theme}>
-                  <img width="14px" src="/static/info.svg" alt="" />
+                  <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
                 </ModalInfinityViewingKey></div> :
               (<div style={{float: 'left', overflow: 'hidden'}} className={`${styles.claim_label} ${styles[theme.currentTheme]} ${styles.withdrawAmount}`}>
                 {withdrawAmount === '' ?
@@ -154,16 +153,17 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
                 }
                 <span className={`${styles.withdrawCurrency}`}>{currency}</span>
               </div>)}
-              <ModalInfinityWithdraw theme={theme}>
-                <img width="14px" src="/static/info.svg" alt="" style={{ paddingTop: '16px' }}/>
-              </ModalInfinityWithdraw>
-              <WithdrawStakeButton
-                      props={props}
-                      value={withdrawAmount}
-                      onUpdate={onUpdate}
+              <div className={cn(styles.withdrawStakeRight)}>
+                <ModalInfinityWithdraw theme={theme}>
+                  <img width="14px" src="/static/info.svg" alt="" style={{ margin: '0 0.5rem', filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
+                </ModalInfinityWithdraw>
+                <WithdrawStakeButton
+                        props={props}
+                        value={withdrawAmount}
+                        onUpdate={onUpdate}
                     />
-              </Grid.Column>
-              </Grid>}
+              </div>
+              </div>}
         </div>
         <div>
           {<Grid>
@@ -172,7 +172,7 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
               <><Grid.Column width={6} textAlign='left' >
                 <div className={`${styles.pendingRedeem} ${styles[props.theme.currentTheme]}`}>
                   <ModalInfinityCountdown theme={theme}>
-                        <img width="14px" style={{marginRight:'4px'}} src="/static/info.svg" alt="" />
+                        <img width="14px" style={{marginRight:'4px', filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}} src="/static/info.svg" alt="" />
                   </ModalInfinityCountdown>
                   <span>Unlock countdown</span>
                 </div>

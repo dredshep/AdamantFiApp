@@ -1,0 +1,159 @@
+.max_button.ui.basic.button, .half_button.ui.basic.button {
+  border-radius: 15px !important;
+  border: 1px solid;
+  font-size: 12px;
+  font-weight: 700;
+  width: 50px;
+  height: 20px;
+  padding: 2px 8px !important;
+  margin: 0;
+  &:active {
+    background: transparent none !important;
+  }
+  &.light {
+    border-color: #0E0E10;
+    background-color: #fff !important;
+    span{
+      color: #0E0E10 !important;
+    }
+    &:hover {
+      background-color: #0E0E10 !important;
+      > span {
+        color: #fff !important;
+      }
+    }
+    &:active > span {
+      color: #0E0E10 !important;
+    }
+  }
+
+  &.dark {
+    border-color: #fff;
+    background-color: #0E0E10 !important;
+    span{
+      color: #fff !important;
+    }
+    &:hover {
+      background-color: #DEDEDE !important;
+      > span {
+        color: #0E0E10 !important;
+      }
+    }
+    &:active > span {
+      color: #fff !important;
+    }
+  }
+}
+
+.half_button.ui.basic.button {
+  margin-right: 0.5rem;
+}
+
+#SwapAssetRow_container{
+  padding: 1rem;
+}
+
+.balance-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  &.no-label {
+    justify-content: flex-end;
+  }
+}
+
+.balance-value > span {
+  margin-right: 0.25rem;
+}
+
+.swap_row_container {
+  border-radius: 20px;
+  border: 1px solid;
+  width: 100%;
+
+  &.light {
+    background: #ffffff;
+    border-color: #0E0E10;
+  }
+
+  &.dark {
+    background: #0E0E10;
+    border-color: #ffffff;
+  }
+}
+
+.swap_row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.swap_label {
+  display: flex;
+  padding-bottom: 0.75rem;
+  > span {
+    text-align: right;
+    font-weight: 500;
+    font-size: 14px;
+    &.light {
+      color: #5F5F6B;
+    }
+    &.dark {
+      color: #DEDEDE;
+    }
+  }
+}
+
+.swap_balance {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.swap_inputs {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.swap_input_value {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  padding-left: 1rem;
+}
+
+.swap_input_price {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  &.dark {
+    color: white;
+  }
+  &.light {
+    color: black;
+  }
+
+  > span {
+    margin-right: 0.3rem;
+  }
+}
+
+.swap_input_btns {
+  margin: -0.3rem 0 0.5rem 0.5rem;
+}

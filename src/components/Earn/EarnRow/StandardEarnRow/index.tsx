@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import styles from '../styles.styl';
+import '../style.scss';
 import cn from 'classnames';
-import { Accordion, Grid, Icon, Image, Segment } from 'semantic-ui-react';
+import { Accordion, Grid, Icon, Image, Segment, Rating } from 'semantic-ui-react';
 import SoftTitleValue from '../../SoftTitleValue';
 import EarnButton from './EarnButton';
 import DepositContainer from '../DepositContainer';
@@ -16,6 +17,17 @@ import Theme from 'themes';
 import {ModalExplanation, ModalMultiplierTip} from '../../APRModalExp';
 import { aprString, multipliers, tokenImages, RewardsToken } from '..';
 
+export const unCapitalize = s => {
+  if (typeof s !== 'string') {
+    return '';
+  }
+
+  if(s === 'SEFI' || s === 'SHD' || s.charAt(0) !== 'S')
+    return s; // Do not uncapitalize in this case
+
+  return s.charAt(0).toLowerCase() + s.slice(1);
+};
+
 @observer
 class StandardEarnRow extends Component<
   {
@@ -25,6 +37,8 @@ class StandardEarnRow extends Component<
     callToAction: string;
     theme: Theme;
     isSefiStaking?: boolean;
+    favPools?: string[];
+    setFavPools?: React.Dispatch<React.SetStateAction<string[]>>;
   },
   {
     activeIndex: Number;
@@ -83,16 +97,6 @@ class StandardEarnRow extends Component<
 
   setPulseInterval = interval => this.setState({ pulseInterval: interval });
 
-  unCapitalize = s => {
-    if (typeof s !== 'string') {
-      return '';
-    }
-
-    if(s === 'SEFI' || s === 'SHD' || s.charAt(0) !== 'S')
-      return s; // Do not uncapitalize in this case
-
-    return s.charAt(0).toLowerCase() + s.slice(1);
-  };
   getBaseTokenName = (tokenName: string): string => {
     if (!tokenName) {
       return '';
@@ -134,7 +138,7 @@ class StandardEarnRow extends Component<
       image_secondaryToken = null;
     }
 
-    let tokenName = this.unCapitalize(_symbols[1]) + ' - ' + this.unCapitalize(_symbols[2]);
+    let tokenName = unCapitalize(_symbols[1]) + ' - ' + unCapitalize(_symbols[2]);
 
     const isDeprecated = this.props.token.deprecated && this.props.token.deprecated_by !== '';
     let title = '';
@@ -149,6 +153,7 @@ class StandardEarnRow extends Component<
     }
 
     return (
+      <div className={`${styles.standard_row}`}>
       <Accordion className={cn(style)}>
         <Accordion.Title
           active={activeIndex === 0}
@@ -156,16 +161,26 @@ class StandardEarnRow extends Component<
           onClick={this.handleClick}
           className={`${styles.assetRow} ${styles.responsive_row}`}
         >
+          {this.props.favPools &&
+          <Rating onRate={(e) => {
+            e.stopPropagation()
+            let newFavPools = this.props.favPools
+            if (newFavPools.includes(this.props.token.rewardsContract)) {
+              this.props.setFavPools(newFavPools.filter((t) => {return t !== this.props.token.rewardsContract}))
+            } else {
+              this.props.setFavPools([...newFavPools, this.props.token.rewardsContract])
+            }
+          }} size='huge' defaultRating={Number(this.props.favPools.includes(this.props.token.rewardsContract))} className={`title_star ${this.props.theme.currentTheme}`}/>}
           <div className={cn(styles.assetIcon)}>
             <Image src={image_primaryToken} rounded size="mini" />
             {image_secondaryToken && <Image src={image_secondaryToken} rounded size="mini" />}
           </div>
 
-          <div className={cn(styles.title_item__container)}>
+          <div className={cn(styles.title_item__container, styles.title_name)}>
             <SoftTitleValue title={title} subTitle="    " />
           </div>
 
-          <div className={cn(styles.title_item__container)}>
+          <div className={cn(styles.title_item__container, styles.title_apr)}>
             <SoftTitleValue
               title={
                 <div className="earn_center_ele">
@@ -173,7 +188,7 @@ class StandardEarnRow extends Component<
                   {!isDeprecated && !this.props.token.zero && (
                     <p style={{ marginLeft: '5px', fontFamily: 'poppins', fontSize: '17px' }}>
                       <ModalExplanation token={this.props.token} theme={this.props.theme}>
-                        <img width="14px" src="/static/info.svg" alt="" />
+                        <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
                       </ModalExplanation>
                     </p>
                   )}
@@ -182,7 +197,7 @@ class StandardEarnRow extends Component<
               subTitle={'APR'}
             />
           </div>
-          <div className={cn(styles.title_item__container)}>
+          <div className={cn(styles.title_item__container, styles.title_tvl)}>
             <SoftTitleValue
               title={`$${formatZeroDecimals(Number(this.props.token.totalLockedRewards) || 0)}`}
               subTitle={'TVL'}
@@ -201,14 +216,14 @@ class StandardEarnRow extends Component<
           {/undefined/.test(multipliers[title]) ? (
             <div />
           ) : (
-          <div className={cn(styles.title_item__container)}>
+          <div className={cn(styles.title_item__container, styles.title_multiplier)}>
             <SoftTitleValue
               title={
                 <div className="earn_center_ele">
                   {multipliers[title] + 'x'}
                   <p style={{ marginLeft: '5px', fontFamily: 'poppins', fontSize: '17px' }}>
                     <ModalMultiplierTip multiplier={multipliers[title]} theme={this.props.theme}>
-                      <img width="14px" src="/static/info.svg" alt="" />
+                      <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
                     </ModalMultiplierTip>
                   </p>
                 </div>
@@ -217,14 +232,15 @@ class StandardEarnRow extends Component<
             />
           </div>
           )}
-
-          <Icon
+          <div className={cn(styles.title_item__container, styles.title_arrow)}>
+              <Icon
             className={`${styles.arrow}`}
             style={{
               color: this.props.theme.currentTheme == 'dark' ? 'white' : '',
             }}
             name="dropdown"
           />
+          </div>
         </Accordion.Title>
         <Accordion.Content
           className={`${styles.content} ${styles[this.props.theme.currentTheme]}`}
@@ -371,6 +387,7 @@ class StandardEarnRow extends Component<
           </>)}
         </Accordion.Content>
       </Accordion>
+      </div>
     );
   }
 }

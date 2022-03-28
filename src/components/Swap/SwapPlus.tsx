@@ -8,7 +8,7 @@ export const SwapPlus = (props: any) => {
       height="16"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#3ba246"
+      stroke="#cb9b51"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

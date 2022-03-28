@@ -166,7 +166,7 @@ const RewardsTab = ({ notify, userStore, theme, token, createKey, vkey }) => {
                 </Grid.Column>
               </Grid.Row>
             </>
-            : <Grid.Row verticalAlign='middle' centered> <Loader className={cn(styles.loader)} /></Grid.Row>} </>)}
+            : <Grid.Row verticalAlign='middle' centered> <Loader className={cn(styles.loader)} color="#cb9b51" /></Grid.Row>} </>)}
       </Grid>
     </Container>
   );

@@ -12,7 +12,7 @@
     $background-active:#E5F3FB;
     $background-failed:#FAE6E6;
     $shadow-card:4px 4px 32px rgba(140, 140, 140, 0.25);
-    
+
     &.proposal-row{
         background: $background-card;
         box-shadow: $shadow-card;
@@ -61,17 +61,17 @@
 .dark {
     //Colors
     $color-primary : white;
-    $color-secondary : #b8b8b8;
-    $color-success:#3EA248;
+    $color-secondary : #c9c9c9;
+    $color-success:#5fb869;
     $color-active:#42A8E1;
-    $color-failed:#D94C48;
+    $color-failed:#dc5955;
     //Backgrounds
-    $background-card:#0e0e10;
+    $background-card:#000;
     $background-success:#E9F7EA;
     $background-active:#E5F3FB;
     $background-failed:#FAE6E6;
     // $shadow-card:4px 2px 32px rgba(77, 74, 74, 0.25);
-    
+
     &.proposal-row{
         background: $background-card;
         // box-shadow: $shadow-card;
@@ -104,7 +104,7 @@
         &-active{
             background: $background-active;
             color: $color-active;
-            
+
         }
         &-failed{
             background: $background-failed;
@@ -122,7 +122,6 @@
     grid-auto-flow: column;
     padding: 26px;
     width: 100%;
-    column-gap: 52px;
     grid-template-columns: 5% 40% 22% 20%;
     p{
         font-weight: 600;
@@ -143,7 +142,7 @@
 }
 .proposal-status{
     max-width: 200px;
-    font-size: 22px; 
+    font-size: 22px;
     padding: 14px;
     border-radius: 4px;
     font-weight: 600;

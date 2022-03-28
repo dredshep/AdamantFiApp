@@ -12,6 +12,7 @@ import { FlexRowSpace } from '../../components/Swap/FlexRowSpace';
 import { PairMap, SwapPair } from '../TokenModal/types/SwapPair';
 import cn from 'classnames';
 import styles from './styles.styl';
+import './style.scss'
 import { RouteOutput, RouteRow } from 'components/Swap/RouteRow';
 import { AsyncSender } from '../../blockchain-bridge/scrt/asyncSender';
 import { UserStoreEx } from '../../stores/UserStore';
@@ -31,10 +32,10 @@ const baseButtonStyle = {
   height: '46px',
 };
 const disableButtonStyle = { ...baseButtonStyle, color: '#5F5F6B', background: '#DEDEDE' };
-const enableButtonStyle = { ...baseButtonStyle, color: '#FFFFFF', background: '#3ba246' };
+const enableButtonStyle = { ...baseButtonStyle, color: '#FFFFFF', background: '#cb9b51' };
 const errorButtonStyle = {
   ...baseButtonStyle,
-  color: '#3ba246',
+  color: '#cb9b51',
   background: 'transparent',
   opacity: '1',
   cursor: 'default',
@@ -442,7 +443,7 @@ export class SwapTab extends React.Component<
       buttonMessage = BUTTON_MSG_SELECT_TOKEN;
     } else if (this.state.loadingPriceData) {
       buttonMessage = BUTTON_MSG_LOADING_PRICE;
-    } else if (this.props.isLoadingSupportedTokens) {
+    } else if (this.props.isLoadingSupportedTokens || !this.props.user.isKeplrWallet) {
       buttonMessage = BUTTON_CONNECTING_TO_CHAIN;
     } else if (this.state.loadingBestRoute) {
       buttonMessage = BUTTON_MSG_FINDING_ROUTE;
@@ -497,13 +498,13 @@ export class SwapTab extends React.Component<
 
     return (
       <>
-        <Container className={`${styles.swapContainerStyle} ${styles[stores.theme.currentTheme]}`}>
-          {/* <TabsHeader /> */}
+        <Container className={`${styles.swapContainerStyle} ${styles[stores.theme.currentTheme]} swap-container-style`}>
           <SwapAssetRow
             secretjs={this.props.secretjs}
             label="From"
             disabled={this.state.isFromEstimated && this.state.loadingBestRoute}
             maxButton={true}
+            halfButton={true}
             balance={fromBalance}
             tokens={this.props.tokens}
             token={this.state.fromToken}
@@ -518,19 +519,14 @@ export class SwapTab extends React.Component<
             error={btnError}
           />
           <div
-            style={{
-              padding: '1em',
-              display: 'flex',
-              alignItems: 'center',
-            }}
+            className={`${styles.swap_middle_row} ${styles[stores.theme.currentTheme]}`}
           >
-            <FlexRowSpace />
             {this.state.loadingSwap ? (
-              <span>
+              <div>
                 <img className={cn(styles.spin)} width="28" height="23" src="/static/logoIcon.svg" alt="Secret Swap" />
-              </span>
+              </div>
             ) : (
-              <span
+              <div
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   // switch
@@ -554,17 +550,16 @@ export class SwapTab extends React.Component<
                   );
                 }}
               >
-                <img src="/static/exchange-arrows.svg" alt="exchange arrows" />
-              </span>
+                <img src="/static/exchange-arrows.svg" alt="exchange arrows" style={{width: "40px"}} className={`${styles.swapper_img} ${styles[stores.theme.currentTheme]}`}/>
+              </div>
             )}
-
-            <FlexRowSpace />
           </div>
           <SwapAssetRow
             secretjs={this.props.secretjs}
             label="To"
             disabled={this.state.isToEstimated && this.state.loadingBestRoute}
             maxButton={false}
+            halfButton={false}
             balance={toBalance}
             tokens={this.props.tokens}
             token={this.state.toToken}
@@ -585,15 +580,6 @@ export class SwapTab extends React.Component<
               price={price}
             />
           )}
-          {(this.state.bestRoute || this.state.loadingBestRoute) && (
-            <RouteRow
-              tokens={this.props.tokens}
-              isLoading={this.state.loadingBestRoute}
-              route={this.state.bestRoute}
-              allRoutesOutputs={this.state.allRoutesOutputs}
-              cachedGasFeesUSD={this.state.cachedGasFeesUSD}
-            />
-          )}
           {btnError ? (
             <Button fluid style={errorButtonStyle}>
               {buttonMessage}
@@ -610,31 +596,31 @@ export class SwapTab extends React.Component<
               {buttonMessage}
             </Button>
           )}
-        </Container>
-
-        {!hidePriceRow && (
-          <div style={this.state.loadingSwap ? { opacity: '0.4' } : {}}>
-            <AdditionalInfo
-              fromToken={this.props.tokens.get(this.state.fromToken).symbol}
-              toToken={this.props.tokens.get(this.state.toToken).symbol}
-              liquidityProviderFee={liquidityProviderFee}
-              priceImpact={this.state.priceImpact}
-              minimumReceived={new BigNumber(this.state.toInput).multipliedBy(
-                new BigNumber(1).minus(this.state.slippageTolerance),
-              )}
-              pairAddress={this.state.bestRoute && this.props.selectedPair?.contract_addr}
-              isSupported={this.props.isSupported}
-              /*
-              maximumSold={
-                this.state.isFromEstimated
-                  ? Number(this.state.fromInput) *
-                    (1 + this.state.slippageTolerance)
-                  : null
-              }
-              */
+          {(!hidePriceRow && (this.state.bestRoute || this.state.loadingBestRoute)) && (
+            <RouteRow
+              tokens={this.props.tokens}
+              isLoading={this.state.loadingBestRoute}
+              route={this.state.bestRoute}
+              allRoutesOutputs={this.state.allRoutesOutputs}
+              cachedGasFeesUSD={this.state.cachedGasFeesUSD}
             />
-          </div>
-        )}
+          )}
+          {!hidePriceRow && (
+            <div style={this.state.loadingSwap ? { opacity: '0.4' } : {}}>
+              <AdditionalInfo
+                fromToken={this.props.tokens.get(this.state.fromToken).symbol}
+                toToken={this.props.tokens.get(this.state.toToken).symbol}
+                liquidityProviderFee={liquidityProviderFee}
+                priceImpact={this.state.priceImpact}
+                minimumReceived={new BigNumber(this.state.toInput).multipliedBy(
+                  new BigNumber(1).minus(this.state.slippageTolerance),
+                )}
+                pairAddress={this.state.bestRoute && this.props.selectedPair?.contract_addr}
+                isSupported={this.props.isSupported}
+              />
+            </div>
+          )}
+        </Container>
       </>
     );
   }

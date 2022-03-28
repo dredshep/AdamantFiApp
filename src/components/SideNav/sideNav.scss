@@ -1,0 +1,77 @@
+$primary-color: #cb9b51;
+$dark-primary-font-color: #ffffff;
+$dark-sidenav-background-color: linear-gradient(to right, #000000, #242424);;
+$light-primary-font-color: #242424;
+$light-sidenav-background-color: linear-gradient(#ffffff, #fcf5eb);
+
+.sidenav {
+  height: 100%;
+  width: 15vw;
+  min-width: 150px;
+  max-width: 200px;
+  border-right: 1px solid $primary-color;
+  position: fixed;
+  z-index: 9995;
+  top: 0;
+  left: 0;
+  transition: .5s ease;
+  overflow: hidden;
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  ul {
+    list-style-type: none;
+    text-align: center;
+    padding: 0rem;
+  }
+
+  ul > li {
+
+    margin-bottom: 3rem;
+
+    a, h3 {
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      margin: 1rem 0rem;
+      text-align: center;
+    }
+  }
+  ul > .active {
+    a {
+      color: $primary-color;
+    }
+  }
+}
+
+.light.sidenav {
+  background-image: $light-sidenav-background-color;
+  ul > li:not(.active) {
+    a, h3 {
+      color: $light-primary-font-color;
+    }
+    a:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+.dark.sidenav {
+  background-image: $dark-sidenav-background-color;
+  ul > li:not(.active) {
+    a, h3 {
+      color: $dark-primary-font-color;
+    }
+    a:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .sidenav {
+    display: none;
+  }
+}

@@ -38,11 +38,11 @@ export const ProposalRow = (props: {
 
 
 
-    let colorResult = '#D94C48';
+    let colorResult = '#dc5955';
     if (props.currentStatus === 'failed') {
-        colorResult = '#D94C48';
+        colorResult = '#dc5955';
     } else if (props.currentStatus === 'passed') {
-        colorResult = 'green';
+        colorResult = '#5fb869';
     }
 
     return (
@@ -116,7 +116,7 @@ export function parseTallyResult(tally: string []) {
       negative: 0
     }
   };
-  
+
   return {
     positive: parseFloat(tally[0]) / 1e6,
     negative: parseFloat(tally[1]) / 1e6

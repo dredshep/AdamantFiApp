@@ -15,22 +15,9 @@ const ScrtTokenBalanceSingleLine = (props: {
   noun?: string;
 }) => {
   if (!props.value) {
-    return <Loader type="ThreeDots" color="#3ba246" height="1em" width="1em" />;
+    return <Loader type="ThreeDots" color="#cb9b51" height="1em" width="1em" style={{ display: 'flex', margin: '0 0.5rem' }}/>;
   } else if (props.value.includes(unlockToken)) {
     return props.createKey(props?.noun)
-    // (
-    //   <div>
-    //     <Popup
-    //       content={props.popupText}
-    //       trigger={
-    //         <div>
-    //           <Icon name="question circle outline" />
-    //           {props.currency}
-    //         </div>
-    //       }
-    //     />
-    //   </div>
-    // );
   } else {
     const valueBN = new BigNumber(props.value.replace(/,/g, '')).toFixed(6, BigNumber.ROUND_DOWN);
     return (

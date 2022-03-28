@@ -168,12 +168,12 @@ export const TokenSelector = (props: {
           background: theme.currentTheme == 'light' ? 'white' : '#0E0E10',
           color: theme.currentTheme == 'light' ? '#5F5F6B' : '#DEDEDE',
           display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
       >
         <ClearCustomTokensButton />
-        <div style={{ width: '700px', justifyContent: 'flex-start' }}>
-          <AddTokenModal tokens={props.tokens} token={props.token} addToken={address => setLocalToken(address)} />
-        </div>
+        <AddTokenModal tokens={props.tokens} token={props.token} addToken={address => setLocalToken(address)} />
       </Modal.Actions>
     </Modal>
   );

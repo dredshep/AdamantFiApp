@@ -1,17 +1,24 @@
 .tokenButton {
-  align-items: center;
   display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  height: 30px;
-  padding: 0 0.4rem;
-  width: 110px;
-  border-radius: 24px;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
   background-color: transparent;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
   transition: all 0.4s ease;
   outline: none;
+  min-width: 149px;
+}
+
+.swapTokenImg {
+  width: 35px;
+  box-shadow: rgba(0, 0, 0, 0.075) 0px 6px 10px;
+  margin-right: 0.5rem;
+  border-radius: 50%;
 }
 
 .ripple {
@@ -46,16 +53,20 @@
 .selectATokenButton {
   border-radius: 10px;
   font-family: 'Poppins',Arial, Helvetica, sans-serif;
-  height: 44px;
-  width: 200px;
+  padding: 0.5rem 1rem;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   border: none;
   cursor: pointer;
   transition: all 0.8s ease;
   outline: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  > span {
+    width: 60px;
+  }
   @media only screen and (max-width: 753px) {
-    width:100px;
     font-size: 14px;
   }
 
@@ -64,9 +75,25 @@
   }
 }
 
+.selectATokenButton , .tokenButton {
+  box-shadow: 0 0 6px 2px #cb9b51;
+}
+
+.selectATokenImg {
+  width: 35px;
+  margin-right: 0.5rem;
+}
+
+.selectATokenDownAngle {
+  width: 12px;
+  margin-left: 0.5rem;
+  &.dark {
+    filter: invert(1);
+  }
+}
+
 .clearTokenButton {
   @extend .selectATokenButton;
-  width: 300px;
 }
 .addCustomToken__button{
   @extend .selectATokenButton;
@@ -91,7 +118,7 @@
   }
 
   &:focus {
-    border: 1px solid rgba(23,63,27,9);
+    border: 1px solid rgba(179, 134, 57,.6);
   }
   &::placeholder{
     font-family: 'Poppins',Arial, Helvetica, sans-serif;
@@ -117,12 +144,9 @@
   margin: 0;
 }
 .light {
-  &.selectATokenButton{
-    background: rgba(23,63,27, 0.2);;
+  &.selectATokenButton, &.tokenButton {
+    // background: rgba(255, 255, 255, 0.1);
     color:#5F5F6B;
-  }
-  &.tokenButton{
-    color: #5F5F6B
   }
   &.clearTokenButton{
     background: rgba(255, 255, 255, 0.5);
@@ -133,12 +157,9 @@
 }
 
 .dark {
-  &.selectATokenButton{
+  &.selectATokenButton, &.tokenButton {
     background: rgba(255, 255, 255, 0.1);
     color:#DEDEDE;
-  }
-  &.tokenButton{
-    color: #dedede
   }
   &.clearTokenButton{
     background: rgba(255, 255, 255, 0.1);
@@ -158,7 +179,7 @@
   }
 }
 #modal_container{
-  width: 750px;
+  width: 450px;
   @media only screen and (max-width: 753px) {
     width: 90%;
   }

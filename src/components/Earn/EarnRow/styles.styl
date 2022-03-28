@@ -1,16 +1,10 @@
-
 .accordion {
-  width: 1168px;
+  width: 100%;
   border: none;
   margin: 13px 0;
   position: relative;
   border-radius: 16px;
   .title {
-  }
-
-  @media only screen and (max-width: 1200px) {
-    width: calc(100vw - 24px);
-    min-width: auto;
   }
 
   @media only screen and (max-width: 425px) {
@@ -22,43 +16,22 @@
     display: grid;
     grid-auto-flow: column;
     justify-content: space-between;
-    grid-template-columns: 100px 1fr 1fr 1fr 1fr;
+    grid-template-columns: 50px 150px 2fr 1fr 1fr 1fr;
     justify-self: center;
-    @media only screen and (max-width: 768px) {
-      grid-template-columns: 100px 1fr 1fr 1fr;
+    @media only screen and (max-width: 1200px) {
+      grid-template-columns: 50px 130px 2fr 1fr 1fr;
+    }
+    @media only screen and (max-width: 900px) {
+      grid-template-columns: auto;
+      grid-template-rows: auto;
+      row-gap: 1rem;
       pointer-events: none;
     }
     @media only screen and (max-width: 425px) {
       pointer-events: none;
-      grid-template-columns: repeat(2, 1fr);
       grid-auto-flow: row;
       gap: 16px;
-      padding: 26px 26px 26px 26px !important;
-      div {
-        padding-left: 6px;
-        padding-bottom: 6px;
-        &:nth-child(1){
-          order:0;
-        }
-        &:nth-child(2){
-          order:2;
-        }
-        &:nth-child(3){
-          order:2;
-        }
-      }
-    }
-    .arrow {
-      justify-self: end;
-      @media only screen and (max-width: 768px) {
-        display: none !important;
-        // position: absolute;
-        // right: 16px;
-        // top: 0;
-        // bottom: 0;
-        // margin-bottom: auto !important;
-        // margin-top: auto !important;
-      }
+      padding: 16px 16px 16px 16px !important;
     }
   }
 
@@ -73,7 +46,13 @@
   }
 }
 
-
+.standard_row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
 
 .containerStyle {
   z-index: 10;
@@ -84,7 +63,7 @@
     box-shadow: 4px 4px 32px rgba(140, 140, 140, 0.25);
   }
   &.dark{
-    background: #0E0E10;
+    background: #0f0f0f;
   }
 }
 
@@ -255,7 +234,7 @@
     background: transparent;
     &.light {
       span {
-          color: #3ba246;
+          color: #cb9b51;
           margin: 0 4px 0 2px;
       }
     }
@@ -275,11 +254,20 @@
 .withdrawStake {
   display: flex;
   justify-content: space-between;
+  width: 100%;
+  flex-direction: row;
+  margin-bottom: 1rem;
 
   .tipleft {
     padding-left:0px !important;
     margin-left:-15px;
   }
+}
+
+.withdrawStakeRight {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
 }
 
 .withdrawStakeDetails {
@@ -297,16 +285,20 @@
   font-weight: normal;
   display: flex;
   align-items: center;
+  padding: 0.25rem;
+  margin-right: 0.25rem;
 
   &.light {
     color: black;
+  }
+
+  &.dark {
+    color: white;
   }
 }
 
 .assetRow {
   width: 100%;
-  // height: calc(100% - 48px);
-  flex: available;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -324,9 +316,10 @@
 .assetIcon {
   width: 100px;
   height: 40px;
-  margin-right: 24px;
+  margin: 0 1rem;
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   img {
     margin: 0 5px;
@@ -344,7 +337,44 @@
 .title_item__container {
   display: flex;
   align-items: center;
-  padding: 0 26px;
+  padding-right: 26px;
+
+  &.title_arrow {
+    padding-right: 0;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .title_item__container {
+    padding-right: 0;
+    justify-content: center;
+  }
+  .assetIcon {
+    width: 100%;
+    margin: 0;
+    justify-content: center;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .title_name {
+    grid-column: 2;
+    grid-row 1;
+  }
+  .title_apr {
+    grid-column: 1;
+    grid-row 2;
+  }
+  .title_tvl {
+    grid-column: 2;
+    grid-row 2;
+  }
+  .title_multiplier {
+    grid-column: 3;
+    grid-row 2;
+  }
+  .title_arrow {
+    display: none;
+  }
 }
 
 .totalRewards {
@@ -384,6 +414,16 @@
 
   &.light {
     color: #1B1B1B;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .title_name {
+    grid-column: 2 / 4;
+    > div {
+      width: 100%;
+      text-align: left;
+    }
   }
 }
 
@@ -450,6 +490,9 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   float: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .h3 {
@@ -480,7 +523,9 @@
 }
 
 .claim_label {
-  display: inline-block;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
   border: 1px solid #DEDEDE;
   box-sizing: border-box;
   border-radius: 4px;
@@ -498,7 +543,7 @@
   &.withdrawAmount {
     margin-top: .2em;
     margin-right: .25em;
-    width: calc(100% - 135px);
+    width: 100%;
   }
 
   >.withdrawCurrency {
@@ -519,7 +564,7 @@
 
   &.light {
     background: white;
-    color: #3ba246;
+    color: #cb9b51;
 
     strong {
       color: #0D1017;
@@ -628,7 +673,7 @@
   font-weight: 400;
 
   a {
-    color: #3ba246 !important;
+    color: #cb9b51 !important;
     text-decoration: underline;
     font-size: 12px;
   }
@@ -646,8 +691,8 @@
 }
 
 .icon_info {
-  color: #3ba246;
-  border: 0.1px solid #3ba246;
+  color: #cb9b51;
+  border: 0.1px solid #cb9b51;
   margin: 0 !important;
 
   &::before {
@@ -659,7 +704,7 @@
 }
 .here{
   cursor: pointer;
-  color: #3ba246;
+  color: #cb9b51;
   &:hover{
     text-decoration: underline
   }

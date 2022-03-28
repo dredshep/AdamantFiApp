@@ -10,10 +10,11 @@ export const TokenSelectorButton = (props: { token?: SwapToken; onClick?: any })
   const isEmpty = !props?.token;
   const {theme} = useStores();
   return isEmpty ? (
-    <button className={`${styles.selectATokenButton} ${styles[theme.currentTheme]} `} onClick={props.onClick}>
-      Select a token &nbsp;
-      <ExpandIcon />
-    </button>
+    <div className={`${styles.selectATokenButton} ${styles[theme.currentTheme]}`} onClick={props.onClick}>
+      <img src="/static/select_token_logo.png" alt="Select" className={`${styles.selectATokenImg}`}/>
+      <span>Select a token</span>
+      <img src="/static/angle-down.svg" alt="Down" className={`${styles.selectATokenDownAngle} ${styles[theme.currentTheme]}`}/>
+    </div>
   ) : (
     <TokenButton token={props.token} onClick={props.onClick} />
   );

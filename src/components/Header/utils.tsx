@@ -30,7 +30,7 @@ export const unlockJsx = (props: { onClick: any }) =>
     }
 
     .view-token-button:hover {
-      background: whitesmoke;
+      background: #cb9b5150;
     }`,
     <span role="img" aria-label={'view'} className="view-token-button" onClick={props.onClick}>
       🔍 View Balance

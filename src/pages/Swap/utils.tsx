@@ -23,12 +23,13 @@ export const unlockJsx = (props: { onClick: any }) =>
     `.view-token-button {
       cursor: pointer;
       border-radius: 30px;
-      padding: 0 0.4em 0 0.3em;
+      padding: 0 0.25rem;
+      margin: 0;
       border: none;
     }
 
     .view-token-button:hover {
-      background: rgba(23,63,27,0.2);
+      background: #cb9b5150;
     }`,
     <span role="img" aria-label={'view'} className="view-token-button" onClick={props.onClick}>
       🔍 View Balance

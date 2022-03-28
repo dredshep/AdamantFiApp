@@ -2,8 +2,8 @@
   --font-p-color-neutral-01: #0E0E10;
   --font-p-color-neutral-03: #5F5F6B;
   --font-family: Poppins;
-  --font-p-color-green-01: #3EA248;
-  --font-p-color-pink-01: #3ba246;
+  --font-p-color-green-01: #cb9b51;
+  --font-p-color-pink-01: #cb9b51;
 }
 
 
@@ -24,15 +24,33 @@ h3{
 
 .proposal-container{
     display: grid;
-    grid-template-columns: repeat(2, 70% 30%);
+    grid-template-columns: repeat(2, 65% 35%);
     grid-gap: 16px;
     margin-top: 32px;
+}
+
+@media only screen and (max-width: 1150px) {
+    .proposal-container {
+        grid-template-columns: auto;
+        grid-template-rows: auto;
+        margin-top: 0;
+    }
+
+    .cards {
+        grid-row: 1;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .card-info {
+        margin-top: 1rem;
+    }
 }
 
 .proposal-detail{
     &.light{
 
-        
+
 
         box-shadow: 4px 4px 32px rgba(140, 140, 140, 0.25);
         $font-gray:#5F5F6B;
@@ -46,18 +64,18 @@ h3{
         }
         .proposal-content{
             .title,.description{
-                
+
                 p{
                     color: $font-gray;
                 }
-                
+
             }
         }
     }
     &.dark{
         // box-shadow: 4px 4px 32px rgba(140, 140, 140, 0.25);
         $font-gray:#ccc;
-        $card-background:#0e0e10;
+        $card-background:#000;
         background: $card-background;
         .vote-row{
             p{
@@ -127,7 +145,7 @@ h3{
             .wrap-space{
                 white-space: pre-line;
             }
-            
+
             h5{
                 font-size: 20px;
                 font-style: normal;
@@ -138,7 +156,7 @@ h3{
                 color: var(--font-p-color-neutral-03);
                 margin: 0;
             }
-            
+
             p{
                 font-size: 16px;
                 font-style: normal;
@@ -150,7 +168,7 @@ h3{
             }
         }
     }
-    
+
 }
 
 h5{
@@ -169,7 +187,7 @@ h5{
         .card{
             box-shadow: none;
             background: #0E0E10;
-            
+
             p{
                 color: #FFFFFF;
             }
@@ -202,7 +220,7 @@ h5{
         }
     }
 
-    
+
     .card{
         background-color: white;
         padding: 26px;
@@ -281,7 +299,7 @@ h5{
             }
         }
 
-        
+
     }
 
     .user-info{
@@ -339,7 +357,7 @@ h5{
         margin-bottom: 10px;
     }
 
-    
+
     p.description{
         font-family: var(--font-family);;
         font-size: 16px;
@@ -361,7 +379,7 @@ h5{
         grid-template-columns: 50% 50%;
         justify-items: center;
         margin-top: 16px;
-        
+
         h3{
             text-align: center;
         }
@@ -394,5 +412,3 @@ h5{
         cursor: pointer;
     }
 }
-
-

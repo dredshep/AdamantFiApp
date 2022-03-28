@@ -98,6 +98,7 @@ const DepositContainer = props => {
               // if not, use the default function above
               // only time passed as prop right now is from infinity row
               // to share same function across multiple infinity row components
+              // i.e. vkey for rewards tab, withdraw stake container, unstake container all same function
               createKey={props?.createKey ? props?.createKey : createViewingKey}
             />
             {props.balance?.includes(unlockToken) && !props.deprecated && (

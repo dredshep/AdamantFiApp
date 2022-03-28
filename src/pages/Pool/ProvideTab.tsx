@@ -224,6 +224,7 @@ export class ProvideTab extends React.Component<
 
       this.setState<never>({ [stateField]: allowance });
     } catch (error) {
+      await sleep(1000)
       sleep(1000)
       if (!numAttempt)
         this.updateAllowance(symbol, 0)
@@ -473,8 +474,8 @@ export class ProvideTab extends React.Component<
         <TabsHeader />
         <SwapAssetRow
           secretjs={this.props.secretjs}
-          label="From"
           maxButton={true}
+          halfButton={true}
           balance={balanceA}
           tokens={this.props.tokens}
           token={this.state.tokenA}
@@ -502,8 +503,8 @@ export class ProvideTab extends React.Component<
         </div>
         <SwapAssetRow
           secretjs={this.props.secretjs}
-          label="To"
           maxButton={true}
+          halfButton={true}
           balance={balanceB}
           tokens={this.props.tokens}
           token={this.state.tokenB}
