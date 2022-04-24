@@ -83,7 +83,7 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
 
     if (isSefiInfinity) {
       try {
-        apr_raw = (365 * 141369.86) / (numStaked / 1000000)
+        apr_raw = (365 * 161095.89) / (numStaked / 1000000)
       } catch (err) {
         console.log(err);
         apr_raw = 0
@@ -142,17 +142,17 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
 };
 
 export const multipliers = {
-  'SEFI STAKING (V2)': '10',
+  'SEFI STAKING (V2)': '0',
   'sUSDC - sUSDC(BSC)': '10',
-  'sETH - sETH(BSC)': '12',
+  'sETH - sETH(BSC)': '6',
   'sSCRT - sUSDT': '28',
-  'sSCRT - sETH': '36',
-  'sSCRT - sWBTC': '36',
-  'sSCRT - SEFI': '52',
+  'sSCRT - sETH': '41',
+  'sSCRT - sWBTC': '41',
+  'sSCRT - SEFI': '62',
   'sSCRT - SHD': '4',
   'SEFI - sXMR': '12',
   'SEFI - sUSDC': '24',
-  'sETH - sWBTC': '10',
+  'sETH - sWBTC': '0',
   'sSCRT - sBNB(BSC)': '12',
   'SEFI - sATOM': '8',
   'SEFI - sLUNA': '12',
