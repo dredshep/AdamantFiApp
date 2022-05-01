@@ -61,56 +61,54 @@ export interface StatsAPR {
 }
 export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?: boolean): StatsAPR => {
 
-  // deadline - current time, 6 seconds per block
-  const timeRemaining = (Math.min(token.deadline, 7916452) - 427936) * 6.2 + 1634215386 - Math.round(Date.now() / 1000);
+  // total sefi being distributed each day to lp providers in the form of rewards
+  const totalDailySefi = 657534.25
 
+  // using the mupltiplier for a given token, we find out the percentage of the total daily sefi
+  // it particularly distributes
+  const poolDailySefi = Number(multipliers[getTitle(token)]) * .0025 * totalDailySefi
 
-  // (token.deadline - Math.round(Date.now() / 1000000) );
-  const pending = Number(divDecimals(token.remainingLockedRewards, token.rewardsDecimals)) * price;
-
-  // this is already normalized
+  // dollar value of the liquidity pool
   const locked = Number(token.totalLockedRewards);
-  //console.log(`pending - ${pending}; locked: ${locked}, time remaining: ${timeRemaining}`)
 
-  let apr_raw = (pending * 100.0 / locked) * (3.154e7 / timeRemaining);
+  // calculate the value of sefi to be distributed as rewards across a whole year
+  // then find the annual percent return given the amount of assets locked to the pool
+  let apr = (365 * poolDailySefi * price) / locked
 
   // infinity pool apr's use different calculation
   if (token.rewardsContract === globalThis.config.FETCHER_CONFIGS.infinityPoolContract?.pool_address) {
-    const dripPerBlock = 0.3846
 
     const numStaked = infinityRewardTokenInfo[0].info.numStaked
     const sefiPrice = infinityRewardTokenInfo[0].info.price
 
     if (isSefiInfinity) {
       try {
-        apr_raw = (365 * 161095.89) / (numStaked / 1000000)
+        apr = (365 * 80547.95) / (numStaked / 1000000)
       } catch (err) {
         console.log(err);
-        apr_raw = 0
+        apr = 0
       }
     } else {
       try {
         if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']["ALTER/USD"]) {
-          apr_raw = ((100000 * 2) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((numStaked / 1000000) * sefiPrice)
+          apr = ((100000 * 2) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((numStaked / 1000000) * sefiPrice)
         } else {
-          apr_raw = 0;
+          apr = 0;
         }
       } catch (err) {
         console.log(err);
-        apr_raw = 0
+        apr = 0
       }
     }
-    apr_raw *= 100
   }
   else if (token.name === 'ALTER') {
     if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']["ALTER/USD"]) {
-      apr_raw = (((54000 * 4.0) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((Number(token.totalLockedRewards)) * globalThis.config['PRICE_DATA']["ALTER/USD"].price)) * 100
+      apr = (((54000 * 4.0) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((Number(token.totalLockedRewards)) * globalThis.config['PRICE_DATA']["ALTER/USD"].price))
     } else {
-      apr_raw = 0;
+      apr = 0;
     }
   }
 
-  let apr = apr_raw / 100.0;
   const apy = Number((Math.pow(1 + apr / 100 / 365, 365) - 1) * 100);
   const daysOfYear = 365;
   const roi = {
@@ -140,6 +138,39 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
   };
   return result;
 };
+
+export const unCapitalize = s => {
+  if (typeof s !== 'string') {
+    return '';
+  }
+
+  if(s === 'SEFI' || s === 'SHD' || s.charAt(0) !== 'S')
+    return s; // Do not uncapitalize in this case
+
+  return s.charAt(0).toLowerCase() + s.slice(1);
+};
+
+export const getTitle = (token) => {
+
+  const _symbols = token.lockedAsset?.toUpperCase().split('-');
+
+  let tokenName = unCapitalize(_symbols[1]) + ' - ' + unCapitalize(_symbols[2]);
+
+  const isDeprecated = token.deprecated && token.deprecated_by !== '';
+
+  let title = '';
+  if (isDeprecated) {
+    title = token.display_props.label === 'SEFI' ? 'SEFI STAKING (OLD)' : `${tokenName} (OLD)`;
+  } else if (token.display_props.label === 'SEFI') {
+    title = 'SEFI STAKING (V2)';
+  } else if (token.display_props.label === 'ALTER') {
+    title = 'ALTER STAKING';
+  } else {
+    title = tokenName;
+  }
+
+  return title
+}
 
 export const multipliers = {
   'SEFI STAKING (V2)': '0',
