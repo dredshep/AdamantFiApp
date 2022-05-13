@@ -169,7 +169,7 @@ class StandardEarnRow extends Component<
             <SoftTitleValue
               title={
                 <div className="earn_center_ele">
-                  {aprString(this.props.token)}
+                  {-1 === title.indexOf('LUNA') ? aprString(this.props.token) : '0%'}
                   {!isDeprecated && !this.props.token.zero && (
                     <p style={{ marginLeft: '5px', fontFamily: 'poppins', fontSize: '17px' }}>
                       <ModalExplanation token={this.props.token} theme={this.props.theme}>
