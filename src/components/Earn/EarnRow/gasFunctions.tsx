@@ -25,17 +25,17 @@ export function getGasFee(GAS_CONSTANT, rewardsContract, activeProposals): StdFe
 
 export function getGasFeeInfinityPool(action, activeProposals): StdFee {
   let rsAmount = 2; // TODO: Put this dynamic
-  let gas = 200_000;
+  let gas = 230_000;
 
   switch (action) {
     case 'deposit':
-      gas = (80_000 * rsAmount + 50_000 + 15_000 * activeProposals);
+      gas = (110_000 * rsAmount + 50_000 + 15_000 * activeProposals);
       break;
     case 'redeem_lockup':
-      gas = (80_000 * rsAmount + 40_000 + 15_000 * activeProposals);
+      gas = (110_000 * rsAmount + 40_000 + 15_000 * activeProposals);
       break;
     case 'redeem':
-      gas = 50_000
+      gas = 80_000
       break;
   }
 
