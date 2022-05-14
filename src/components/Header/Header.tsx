@@ -113,7 +113,7 @@ const Header = observer(({forceUpdate}:{forceUpdate:any}) =>{
                     </div>
                 </nav>
                 <div>
-                    <p style={{padding: '0 18px', backgroundColor: theme.currentTheme == 'light' ? 'black' : 'white', color: theme.currentTheme == 'light' ? '#ececec' : 'black'}}>Feb 2022: This <b>secretswap.net</b> is your new <b>official</b> SecretSwap home to <b>bookmark </b>
+                    <p style={{padding: '0 18px', backgroundColor: theme.currentTheme == 'light' ? 'black' : 'white', color: theme.currentTheme == 'light' ? '#ececec' : 'black'}}>This <b>secretswap.net</b> is your <b>official</b> SecretSwap home to <b>bookmark </b>
                         and for the only official <b>Telegram</b>
                             {(theme.currentTheme == 'light')?
                                 <img width="24" style={{margin:'0 3px', verticalAlign:"middle"}} src="/static/icon-telegram-white.svg" />
