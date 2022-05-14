@@ -119,10 +119,6 @@ export class Trade {
    * The mid price after the trade executes assuming no slippage.
    */
   public readonly price: number;
-  /**
-   * The percent difference between the mid price before the trade and the trade execution price.
-   */
-  //public readonly priceImpact: number
 
   //public readonly pair: string
 
@@ -139,6 +135,5 @@ export class Trade {
     this.outputAmount = outputAmount;
     this.tradeType = tradeType;
     //this.executionPrice = Number(outputAmount.amount) / Number(inputAmount.amount);
-    //this.priceImpact = calculatePriceImpact(this.midPrice, this.inputAmount, this.outputAmount)
   }
 }

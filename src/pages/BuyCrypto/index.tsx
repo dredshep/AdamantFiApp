@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BaseContainer, PageContainer } from 'components';
-import { ConvertCoin, Token } from './components';
+import { ConvertCoin } from './components';
 import { observer } from 'mobx-react';
 import { useStores } from 'stores';
 import { unlockToken, valueToDecimals } from 'utils';
 import { unlockJsx } from 'components/Header/utils';
 import { notify } from '../../blockchain-bridge/scrt/utils';
-import { getFeeForExecute } from '../../blockchain-bridge';
 import './style.scss';
-import { GAS_FOR_WRAP } from 'utils/gasPrices';
+import { serviceUnwrapToken, serviceWrapToken } from 'services/wrapToken';
+import { SwapToken } from 'pages/TokenModal/types/SwapToken';
 
-const SSCRT: Token = {
+const SSCRT: SwapToken = {
   address: globalThis.config.SSCRT_CONTRACT,
   symbol: 'SSCRT',
   decimals: 6,
@@ -23,9 +23,9 @@ export const BuyCrypto = observer(() => {
   const [amountUnwrap, setAmountUnwrap] = useState<string>('');
   const [unwrapLoading, setUnwrapLoading] = useState<boolean>(false);
   const [wrapLoading, setWrapLoading] = useState<boolean>(false);
-  const [tokenSelected, setTokenSelected] = useState<Token>(SSCRT);
+  const [tokenSelected, setTokenSelected] = useState<SwapToken>(SSCRT);
 
-  const SCRT: Token = {
+  const SCRT: SwapToken = {
     address: '',
     balance: user.balanceSCRT,
     symbol: 'SCRT',
@@ -41,7 +41,7 @@ export const BuyCrypto = observer(() => {
       '&themeColor=008800';
 
   useEffect(() => {
-    const SSCRT: Token = {
+    const SSCRT: SwapToken = {
       address: globalThis.config.SSCRT_CONTRACT,
       symbol: 'SSCRT',
       decimals: 6,
@@ -50,73 +50,31 @@ export const BuyCrypto = observer(() => {
     setTokenSelected(SSCRT);
   }, [user.balanceToken[globalThis.config.SSCRT_CONTRACT]]);
 
-  async function wrapToken(amount: string, token: Token, callback?: Function) {
-    try {
-      setWrapLoading(true);
-      //inputs 1 -> 1000000
-      const amount_convert = valueToDecimals(amount, token.decimals);
+  async function wrapToken(amount: string, token: SwapToken) {
+    setWrapLoading(true);
 
-      const res = await user.secretjsSend.asyncExecute(
-        token.address,
-        { deposit: { amount: amount_convert } },
-        '',
-        [{ denom: 'uscrt', amount: amount_convert }],
-        getFeeForExecute(GAS_FOR_WRAP)
-      );
+    //inputs 1 -> 1000000
+    const amount_convert = valueToDecimals(amount, token.decimals);
 
-      if (res.logs) {
-        notify('success', 'Converted'); // The transaction was successful
-      } else {
-        throw new Error(res.raw_log); // The transaction was mined, but failed
-      }
+    await serviceWrapToken(amount_convert, token, user);
 
-      await user.updateSScrtBalance();
-      await user.updateScrtBalance();
-      if ('function' === typeof (callback)) {
-        callback();
-      }
-    } catch (error) {
-      notify('error', error.message);
-    } finally {
-      setAmountWrap('');
-      setWrapLoading(false);
-    }
+    setAmountWrap('');
+    setWrapLoading(false);
   }
 
-  async function unWrapToken(amount: string, token: Token, callback?: Function) {
-    try {
-      setUnwrapLoading(true);
-      //inputs 1 -> 1000000
-      const amount_convert = valueToDecimals(amount, token.decimals);
+  async function unwrapToken(amount: string, token: SwapToken) {
+    setUnwrapLoading(true);
 
-      const res = await user.secretjsSend.asyncExecute(
-        token.address,
-        { redeem: { amount: amount_convert } },
-        '',
-        [],
-        getFeeForExecute(GAS_FOR_WRAP)
-      );
+    //inputs 1 -> 1000000
+    const amount_convert = valueToDecimals(amount, token.decimals);
 
-      if (res.logs) {
-        notify('success', 'Converted'); // The transaction was successful
-      } else {
-        throw new Error(res.raw_log); // The transaction was mined, but failed
-      }
+    await serviceUnwrapToken(amount_convert, token, user);
 
-      await user.updateSScrtBalance();
-      await user.updateScrtBalance();
-      if ('function' === typeof (callback)) {
-        callback();
-      }
-    } catch (error) {
-      notify('error', error.message);
-    } finally {
-      setAmountUnwrap('');
-      setUnwrapLoading(false);
-    }
+    setAmountUnwrap('');
+    setUnwrapLoading(false);
   }
 
-  const createVK = async (token: Token) => {
+  const createVK = async (token: SwapToken) => {
     try {
       await user.keplrWallet.suggestToken(user.chainId, token.address);
       await user.updateBalanceForRewardsToken(token.address);
@@ -183,7 +141,7 @@ export const BuyCrypto = observer(() => {
                 theme={theme.currentTheme}
                 learn_link=""
                 token={tokenSelected}
-                onSubmit={() => unWrapToken(amountUnwrap, tokenSelected)}
+                onSubmit={() => unwrapToken(amountUnwrap, tokenSelected)}
                 amount={amountUnwrap}
                 notify={notify}
                 loading={unwrapLoading}

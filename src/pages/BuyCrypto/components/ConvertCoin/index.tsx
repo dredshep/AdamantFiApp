@@ -1,17 +1,11 @@
 import { unlockJsx } from 'components/Header/utils';
+import { SwapToken } from 'pages/TokenModal/types/SwapToken';
 import React from 'react';
 import { Button, Input } from 'semantic-ui-react';
 import { formatWithSixDecimals, unlockToken } from 'utils';
 import './style.scss';
 
 const FEE = 0.04;
-
-export interface Token {
-  address: string;
-  symbol: string;
-  decimals: number;
-  balance: string;
-}
 
 const ConvertCoin = ({
   title,
@@ -109,7 +103,7 @@ interface ConvertCoinProps {
   theme: string;
   learn_link: string;
   loading: boolean;
-  token: Token;
+  token: SwapToken;
   amount: string;
   style?: {};
   createVK?: () => void;

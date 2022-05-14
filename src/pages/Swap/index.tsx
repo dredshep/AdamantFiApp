@@ -692,6 +692,7 @@ export class SwapRouter extends React.Component<
                 secretjs={this.props.user.secretjs}
                 secretjsSender={this.props.user.secretjsSend}
                 tokens={this.state.allTokens}
+                tokensStore={this.props.tokens}
                 balances={this.state.balances}
                 selectedPair={this.state.selectedPair}
                 selectedToken0={this.state.selectedToken0}

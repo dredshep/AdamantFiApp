@@ -509,7 +509,7 @@ export class ProvideTab extends React.Component<
           <PriceRow
             fromToken={this.props.tokens.get(this.state.tokenA)?.symbol}
             toToken={this.props.tokens.get(this.state.tokenB)?.symbol}
-            price={price.toNumber()}
+            price={price}
           />
         )}
         {lpTokenBalance !== undefined && (
