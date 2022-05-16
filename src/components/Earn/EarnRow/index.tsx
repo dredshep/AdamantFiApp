@@ -102,8 +102,8 @@ export const getAPRStats = (token: RewardsToken, price: number, isSefiInfinity?:
     }
   }
   else if (token.name === 'ALTER') {
-    if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']["ALTER/USD"]) {
-      apr = (((54000 * 4.0) * globalThis.config['PRICE_DATA']["ALTER/USD"].price) / ((Number(token.totalLockedRewards)) * globalThis.config['PRICE_DATA']["ALTER/USD"].price))
+    if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']['ALTER/USD']) {
+      apr = ((16500 * 12) / ((Number(token.totalLockedRewards) / globalThis.config['PRICE_DATA']['ALTER/USD'].price)))
     } else {
       apr = 0;
     }
