@@ -26,6 +26,7 @@ import { useStores } from 'stores';
 import Theme from 'themes';
 import { observer } from 'mobx-react';
 import { GAS_FOR_APPROVE, GAS_FOR_PROVIDE } from '../../utils/gasPrices';
+import { sleep } from 'blockchain-bridge/utils';
 
 enum TokenSelector {
   TokenA,
@@ -177,7 +178,7 @@ export class ProvideTab extends React.Component<
     return this.props.tokens.get(this.state.tokenA)?.decimals;
   }
 
-  async updateAllowance(symbol: string) {
+  async updateAllowance(symbol: string, numAttempt?: number) {
     if (!this.props.selectedPair) {
       //console.error('updateAllowance for non-existent pair');
       return;
@@ -198,29 +199,39 @@ export class ProvideTab extends React.Component<
       return;
     }
 
-    const result: {
-      allowance: {
-        owner: string;
-        spender: string;
-        allowance: string;
-        expiration: number;
-      };
-    } = await this.props.secretjs.queryContractSmart(this.props.tokens.get(symbol).address, {
-      allowance: {
-        owner: this.props.user.address,
-        spender: this.props.selectedPair.contract_addr,
-        key: 'SecretSwap',
-      },
-    });
+    try {
+      const result: {
+        allowance: {
+          owner: string;
+          spender: string;
+          allowance: string;
+          expiration: number;
+        };
+      } = await this.props.secretjs.queryContractSmart(this.props.tokens.get(symbol).address, {
+        allowance: {
+          owner: this.props.user.address,
+          spender: this.props.selectedPair.contract_addr,
+          key: 'SecretSwap',
+        },
+      });
 
-    let allowance = new BigNumber(result.allowance.allowance);
-    if (allowance.isNaN()) {
-      allowance = new BigNumber(0);
+      let allowance = new BigNumber(result.allowance.allowance);
+      if (allowance.isNaN()) {
+        allowance = new BigNumber(0);
+      }
+
+      // console.log(`Allowance for ${symbol} is ${allowance} (${result.allowance.allowance})`);
+
+      this.setState<never>({ [stateField]: allowance });
+    } catch (error) {
+      sleep(1000)
+      if (!numAttempt)
+        this.updateAllowance(symbol, 0)
+      else if (numAttempt < 3)
+        this.updateAllowance(symbol, numAttempt + 1)
+      else
+        return;
     }
-
-    console.log(`Allowance for ${symbol} is ${allowance} (${result.allowance.allowance})`);
-
-    this.setState<never>({ [stateField]: allowance });
   }
 
   async updateInputs() {
