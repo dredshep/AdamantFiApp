@@ -42,11 +42,11 @@ export const BaseContainer: React.FC<IStyledChildrenProps<BoxProps>> = withTheme
             id="base"
             {...props}
           >
-            {/* <p className={`${Theme.currentTheme} domain-p`}>
-                Feb 2022: This <b>secretswap.net</b> is your new <b>official</b> SecretSwap home to <b>bookmark </b> and for the only official <b>Telegram</b>
+            <p style={{display: 'none' /* remove this style to enable headline */}} className={`${Theme.currentTheme} headline`}>
+                + Feb 2022: This <b>secretswap.net</b> is your new <b>official</b> SecretSwap home to <b>bookmark </b> and for the only official <b>Telegram</b>
                 <img width="24" src="/static/icon-telegram-white.svg" />
                 channel <b>join</b> <a href="https://t.me/secretswapnet"> secretswapnet</a>
-            </p> */}
+            </p>
             <div id="notifications_container"></div>
             {children}
             <div className={`bridge_link__container`}><a href="https://bridge.scrt.network/">Bridge your assets to Secret Network</a></div>

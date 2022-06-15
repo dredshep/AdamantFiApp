@@ -174,7 +174,7 @@ export class WithdrawLiquidityPanel extends React.Component<
           margin: '.5rem 0',
           borderRadius: '16px',
           border: this.props.theme.currentTheme == 'light' ? '1px solid #DEDEDE' : '1px solid white',
-          backgroundColor: this.props.theme.currentTheme == 'light' ? 'white' : '',
+          backgroundColor: this.props.theme.currentTheme == 'light' ? 'white' : 'black',
         }}
       >
         <Accordion fluid>
@@ -221,7 +221,7 @@ export class WithdrawLiquidityPanel extends React.Component<
             ) : null}
             <div hidden={this.state.isLoadingBalance}>
               <div style={rowStyle}>
-                <span>Your Total Pool Tokens</span>
+                <span>Your total pool tokens</span>
                 <FlexRowSpace />
                 {lpTokenBalanceNum.isNaN()
                   ? lpTokenBalance
@@ -242,7 +242,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                     {getLogo(tokenB)}
                   </div>
                   <div style={rowStyle}>
-                    <span>Your Pool Share</span>
+                    <span>Your pool share</span>
                     <FlexRowSpace />
                     {lpShareJsxElement}
                   </div>

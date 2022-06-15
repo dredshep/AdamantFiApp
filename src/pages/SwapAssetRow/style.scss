@@ -12,14 +12,14 @@
   }
   &.light {
     border-color: #0E0E10;
-    background-color: #fff !important;
+    background-color: #eee !important;
     span{
       color: #0E0E10 !important;
     }
     &:hover {
       background-color: #0E0E10 !important;
       > span {
-        color: #fff !important;
+        color: #ddd !important;
       }
     }
     &:active > span {
@@ -28,7 +28,7 @@
   }
 
   &.dark {
-    border-color: #fff;
+    border-color: #ddd;
     background-color: #0E0E10 !important;
     span{
       color: #fff !important;
@@ -79,7 +79,7 @@
 
   &.dark {
     background: #0E0E10;
-    border-color: #ffffff;
+    border-color: #ddd;
   }
 }
 

@@ -82,7 +82,11 @@ const PageHeader = observer(({forceUpdate}:{forceUpdate:any}) =>{
                     <div className="page-header-left">
                         <img src="/static/menu-icon.svg" alt="Menu" id="hamburger-menu" onClick={showMobileMenu}/>
                         <a href="https://www.secretswap.net/">
-                            <img src='/static/secret-swap.png' alt="brand logo"/>
+                            {(theme.currentTheme === 'light')
+                                ? <img src='/static/secret-swap-dark.png' alt="SecretSwap logo" />
+                                : <img src='/static/secret-swap-light.png' alt="SecretSwap logo" />
+                            }
+
                         </a>
                         <div className="theme__container">
                             {(theme.currentTheme == 'light')?
@@ -90,13 +94,13 @@ const PageHeader = observer(({forceUpdate}:{forceUpdate:any}) =>{
                                 <img onClick={switchTheme} src='/static/moon.svg' alt="Key Icon"/>
                             }
                         </div>
-                        <div>
-                            <img src='/static/sefi_price_logo.png' alt='SeFi Price Logo'></img>
-                            <strong>SEFI ${prices['sefi']}</strong>
+                        <div className="pricing">
+                            <img src='/static/price-logo-sefi.png' alt='SeFi Price Logo'></img>
+                            <span className="token">SEFI</span> ${prices['sefi']}
                         </div>
-                        <div>
-                            <img src='/static/scrt_price_logo.png' alt='SCRT Price Logo'></img>
-                            <strong>SCRT ${prices['scrt']}</strong>
+                        <div className="pricing">
+                            <img src='/static/price-logo-scrt.png' alt='SCRT Price Logo'></img>
+                            <span className="token">SCRT</span> ${prices['scrt']}
                         </div>
                     </div>
 

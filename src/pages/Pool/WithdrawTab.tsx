@@ -71,7 +71,7 @@ export class WithdrawTab extends React.Component<
         <Scrollbars
           autoHide
           renderThumbVertical={this.renderThumbVertical}
-          style={{ width: 472, height: 300 }}
+          style={{ width: 462, height: 300 }}
           className={styles.withdrawLiquitityContent}
         >
           <div className={styles.lpTokensContainer}>

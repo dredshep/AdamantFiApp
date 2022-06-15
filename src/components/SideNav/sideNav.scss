@@ -1,15 +1,14 @@
 $primary-color: #cb9b51;
 $dark-primary-font-color: #ffffff;
-$dark-sidenav-background-color: linear-gradient(to right, #000000, #242424);;
+$dark-sidenav-background-color: linear-gradient(180deg, #000000 50.06%, rgba(0, 0, 0, 0.848958) 64.6%, #816508 100%);
 $light-primary-font-color: #242424;
-$light-sidenav-background-color: linear-gradient(#ffffff, #fcf5eb);
+$light-sidenav-background-color: linear-gradient(180deg, #FFFFFF 50.06%, #F5F5F5 64.6%, #F5D671 100%);
 
 .sidenav {
   height: 100%;
   width: 15vw;
   min-width: 150px;
   max-width: 200px;
-  border-right: 1px solid $primary-color;
   position: fixed;
   z-index: 9995;
   top: 0;
@@ -24,7 +23,7 @@ $light-sidenav-background-color: linear-gradient(#ffffff, #fcf5eb);
   ul {
     list-style-type: none;
     text-align: center;
-    padding: 0rem;
+    padding: 1.6rem 0 0;
   }
 
   ul > li {
@@ -32,11 +31,12 @@ $light-sidenav-background-color: linear-gradient(#ffffff, #fcf5eb);
     margin-bottom: 3rem;
 
     a, h3 {
-      font-size: 16px;
+      font-size: 20px;
       cursor: pointer;
       text-decoration: none;
       margin: 1rem 0rem;
       text-align: center;
+      line-height: 28px;
     }
   }
   ul > .active {
@@ -48,6 +48,7 @@ $light-sidenav-background-color: linear-gradient(#ffffff, #fcf5eb);
 
 .light.sidenav {
   background-image: $light-sidenav-background-color;
+  border-right: 1px solid $primary-color;
   ul > li:not(.active) {
     a, h3 {
       color: $light-primary-font-color;
@@ -60,6 +61,7 @@ $light-sidenav-background-color: linear-gradient(#ffffff, #fcf5eb);
 
 .dark.sidenav {
   background-image: $dark-sidenav-background-color;
+  border-right: 1px solid #816508;
   ul > li:not(.active) {
     a, h3 {
       color: $dark-primary-font-color;

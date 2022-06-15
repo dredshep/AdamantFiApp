@@ -5,7 +5,6 @@ $light-header-background-color: linear-gradient(#ffffff, #fefaf6);
 $primary-color: #cb9b51;
 
 .page-header {
-  border-bottom: 1px solid $primary-color;
   font-family: 'poppins';
   padding: 0 1rem;
   height: 80px;
@@ -47,8 +46,14 @@ $primary-color: #cb9b51;
       width: 40px;
       margin: 0rem 1rem 0rem 0rem;
     }
-    > strong {
-      font-size: 1.2rem;
+  }
+
+  .pricing {
+    font-size: 1.2rem;
+    font-weight:300;
+    .token {
+      font-weight:600;
+      margin-right:0.5rem;
     }
   }
 
@@ -56,10 +61,10 @@ $primary-color: #cb9b51;
     display: flex;
     align-items: center;
     > img {
-      height: 54px;
-      width: 61px;
-      margin-left: 3rem;
-      margin-right: 2rem;
+      height: 30px;
+      width: auto;
+      margin-left: 0rem;
+      margin-right: 2.5rem;
     }
   }
   > .theme__container {
@@ -172,8 +177,8 @@ $primary-color: #cb9b51;
     }
     > a {
       > img {
-        width: 50px;
-        height: auto;
+        height: 30px;
+        width: auto;
         margin: 0;
       }
     }
@@ -199,7 +204,8 @@ $primary-color: #cb9b51;
 }
 
 .light.page-header {
-  background-image: $light-header-background-color;
+  border-bottom: 1px solid $primary-color;
+  background: #fefaf6;
   color: $light-primary-font-color;
   .page-header-left > div {
     color: $light-primary-font-color;
@@ -208,10 +214,14 @@ $primary-color: #cb9b51;
     border: 1px solid $primary-color;
     border-radius: 9px;
   }
+  .pricing {
+      color: #242424 !important;
+  }
 }
 
 .dark.page-header {
-  background-image: $dark-header-background-color;
+  border-bottom: 1px solid #816508;
+  background: black;
   color: $dark-primary-font-color;
   .page-header-left > img {
     filter: invert(1);
@@ -225,5 +235,8 @@ $primary-color: #cb9b51;
     .wallet-icon > img {
       filter: invert(100%) !important;
     }
+  }
+  .pricing {
+      color: #ddd !important;
   }
 }

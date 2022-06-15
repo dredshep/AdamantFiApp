@@ -527,7 +527,7 @@ export class ProvideTab extends React.Component<
         {lpTokenBalance !== undefined && (
           <>
             <div style={rowStyle}>
-              <span>Your Total Pool Tokens</span>
+              <span>Your total pool tokens</span>
               <FlexRowSpace />
               {lpTokenBalanceNum.isNaN()
                 ? lpTokenBalance
@@ -554,7 +554,7 @@ export class ProvideTab extends React.Component<
                 color: this.props.theme.currentTheme == 'light' ? '#5F5F6B' : '#DEDEDE',
               }}
             >
-              Your Current Share of Pool
+              Your current share of pool
               <FlexRowSpace />
               {(() => {
                 if (JSON.stringify(lpTokenBalance).includes('View')) {
@@ -576,7 +576,7 @@ export class ProvideTab extends React.Component<
               color: this.props.theme.currentTheme == 'light' ? '#5F5F6B' : '#DEDEDE',
             }}
           >
-            Expected Gain in Your Share of Pool
+            Expected gain in your share of pool
             <FlexRowSpace />
             {`~${shareOfPoolNumberFormat.format(gainedShareOfPool.multipliedBy(100).toNumber())}%`}
           </div>

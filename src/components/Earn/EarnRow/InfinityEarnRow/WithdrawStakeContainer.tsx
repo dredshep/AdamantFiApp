@@ -144,7 +144,7 @@ const WithdrawStakeContainer = ({ props, value, onUpdate, updateWithdrawStake, c
                   createKey={createKey}
                 />
                 <ModalInfinityViewingKey theme={theme}>
-                  <img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/>
+                  <i style={{marginLeft: "4px"}}><img width="14px" src="/static/info.svg" alt="" style={{filter: "invert(60%) sepia(19%) saturate(1005%) hue-rotate(357deg) brightness(101%) contrast(97%)"}}/></i>
                 </ModalInfinityViewingKey></div> :
               (<div style={{float: 'left', overflow: 'hidden'}} className={`${styles.claim_label} ${styles[theme.currentTheme]} ${styles.withdrawAmount}`}>
                 {withdrawAmount === '' ?

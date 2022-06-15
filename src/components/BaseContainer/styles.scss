@@ -1,8 +1,8 @@
-$dark-primary-font-color: #ffffff;
-$dark-header-background-color: linear-gradient(#000000, #242424);
-$light-primary-font-color: #242424;
-$light-header-background-color: #ffffff;
-$primary-color: #cb9b51;
+$dark-primary-font-color: white;
+$dark-header-background-color: #444;
+$light-primary-font-color: white;
+$light-header-background-color: #444;
+$primary-color: #dcc7ab;
 
 .base {
   display: flex;
@@ -39,43 +39,47 @@ $primary-color: #cb9b51;
   }
 }
 
-// .domain-p {
-//   border-bottom: 1px solid $primary-color;
-//   width: 100%;
-//   text-align: center;
-//   z-index: 9990;
-//   margin-bottom: 1.5rem;
-//   padding: 0.25rem;
+ .headline {
+   border-bottom: 1px solid $primary-color;
+   width: 100%;
+   z-index: 9990;
+   margin-bottom: 1.5rem;
+   padding: 0.25rem 0.25rem 0.25rem 0.5rem;
 
-//   img {
-//     margin: 0 3px;
-//     vertical-align: middle;
-//   }
+   img {
+     margin: 0 3px;
+     vertical-align: middle;
+   }
 
-//   a {
-//     text-decoration: none;
-//     color: $primary-color;
-//   }
-// }
+   a {
+     text-decoration: none;
+     color: $primary-color;
+   }
+ }
 
-// .dark.domain-p {
-//   color: $dark-primary-font-color;
-// }
+ .dark.headline {
+   color: $dark-primary-font-color;
+   background-color: $dark-header-background-color;
+ }
 
-// .light.domain-p {
-//   color: $light-primary-font-color;
-// }
+ .light.headline {
+   color: $light-primary-font-color;
+   background-color: $light-header-background-color;
+ }
 
-// .light.domain-p > img {
-//   filter: invert(100%);
-// }
+ .light.headline > img {
+   //filter: invert(100%);
+ }
 
 .light.base {
   background: linear-gradient(180deg, #FFFFFF 0%, #f4ddbb 180.99%);
+  .bridge_link__container a {
+    color: #cb9b51;
+  }
 }
 
 .dark.base {
-  background: linear-gradient(180deg, #242525 0%, #000 180%);
+  background: linear-gradient(180deg, #000000 83.92%, rgba(46, 53, 53, 0) 237.86%);;
   .secured_container {
     img {
       filter: invert(1)
