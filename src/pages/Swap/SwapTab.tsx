@@ -140,6 +140,13 @@ export class SwapTab extends React.Component<
     });
   }
 
+  getPriceByDstAddress(dst_address: string): BigNumber {
+
+    let token = this.props.tokens.get(dst_address);
+
+    return new BigNumber(Number(token?.price));
+  }
+
   updateInputsFromBestRoute() {
     const { fromToken, toToken, fromInput, toInput } = this.state;
 
@@ -180,9 +187,9 @@ export class SwapTab extends React.Component<
       if (bestRoute) {
         const ourPrice = bestRouteToInput.div(bestRouteFromInput);
 
-        const fromTokenPrice = this.props.tokensStore.getPriceByDstAddress(fromToken);
+        const fromTokenPrice = this.getPriceByDstAddress(fromToken);
 
-        const marketPrice = fromTokenPrice.div(this.props.tokensStore.getPriceByDstAddress(toToken));
+        const marketPrice = fromTokenPrice.div(this.getPriceByDstAddress(toToken));
 
         const tenDollarsOfFromToken = new BigNumber(10.0).div(fromTokenPrice);
 
@@ -235,7 +242,7 @@ export class SwapTab extends React.Component<
     }
 
     // gas fees as expressed in the unfilled coin (can be the top or the bottom)
-    return cachedGasFeesUSD.map(x => new BigNumber(x).div(this.props.tokensStore.getPriceByDstAddress(unfilledCoin)));
+    return cachedGasFeesUSD.map(x => new BigNumber(x).div(this.getPriceByDstAddress(unfilledCoin)));
   }
 
   updateInputs() {

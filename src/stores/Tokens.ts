@@ -30,15 +30,6 @@ export class Tokens extends ListStoreConstructor<ITokenInfo> {
     return this.allData.find(token => token.dst_address === dst_address);
   }
 
-  getPriceByDstAddress(dst_address: string): BigNumber {
-    if(dst_address === 'uscrt') // If the token is the native SCRT, get the price for sSCRT
-      dst_address = 'secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek'
-
-    let token = this.allData.find(token => token.dst_address === dst_address);
-
-    return new BigNumber(token?.price);
-  }
-
   //
   @computed get totalLockedUSD() {
     return this.allData.reduce((acc, v) => acc + Number(v.totalLockedUSD), 0);
