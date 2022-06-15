@@ -1,5 +1,5 @@
 import { CosmWasmClient, ExecuteResult, SigningCosmWasmClient } from 'secretjs';
-import { divDecimals, unlockToken } from '../../utils';
+import { divDecimals, sleep, unlockToken } from '../../utils';
 import { StdFee } from 'secretjs/types/types';
 import { AsyncSender } from './asyncSender';
 
@@ -43,16 +43,22 @@ export const Snip20GetBalance = async (params: {
   const { secretjs, address, token, key } = params;
 
   let balanceResponse;
-  try {
-    balanceResponse = await secretjs.queryContractSmart(token, {
-      balance: {
-        address: address,
-        key,
-      },
-    });
-  } catch (e) {
-    console.log(e);
-    return unlockToken;
+  for (let i = 0; i < 4; i++) {
+    try {
+      balanceResponse = await secretjs.queryContractSmart(token, {
+        balance: {
+          address: address,
+          key,
+        },
+      });
+      break;
+    } catch (e) {
+      if (e.message !== 'Failed to decrypt the following error message: rpc error: code = Unknown desc = contract: not found (HTTP 500).') {
+        console.error(e)
+        return unlockToken;
+      }
+      sleep(1000)
+    }
   }
 
   if (balanceResponse.viewing_key_error) {
