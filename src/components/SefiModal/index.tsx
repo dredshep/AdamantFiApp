@@ -61,7 +61,7 @@ export const SefiModal = (props: { user: UserStoreEx; tokens: Tokens; metaMask: 
   async function getSefiToken() {
     const tokens: ITokenInfo[] = [...(await props.tokens.tokensUsage('SWAP'))];
     // convert to token map for swap
-    const swapTokens: SwapTokenMap = TokenMapfromITokenInfo(tokens); // [...TokenMapfromITokenInfo(tokens), ...loadTokensFromList('secret-2')];
+    const swapTokens: SwapTokenMap = await TokenMapfromITokenInfo(tokens); // [...TokenMapfromITokenInfo(tokens), ...loadTokensFromList('secret-2')];
 
     let SEFItoken;
     swapTokens.forEach(st => {

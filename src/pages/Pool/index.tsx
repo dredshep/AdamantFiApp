@@ -14,7 +14,7 @@ import { loadTokensFromList } from '../TokenModal/LocalTokens/LoadTokensFromList
 import { ISecretSwapPair, ITokenInfo } from '../../stores/interfaces';
 import { Tokens } from '../../stores/Tokens';
 import { getSymbolsFromPair } from '../../blockchain-bridge/scrt/swap';
-import { SwapToken, SwapTokenMap, TokenMapfromITokenInfo } from '../TokenModal/types/SwapToken';
+import { getPricesForJSONTokens, SwapToken, SwapTokenMap, TokenMapfromITokenInfo } from '../TokenModal/types/SwapToken';
 import LocalStorageTokens from '../../blockchain-bridge/scrt/CustomTokens';
 import cogoToast from 'cogo-toast';
 import { pairIdFromTokenIds, PairMap, SwapPair } from '../TokenModal/types/SwapPair';
@@ -492,7 +492,7 @@ export class SwapRouter extends React.Component<
     const tokens: ITokenInfo[] = [...(await this.props.tokens.tokensUsage('SWAP'))];
 
     // convert to token map for swap
-    const swapTokens: SwapTokenMap = TokenMapfromITokenInfo(tokens); // [...TokenMapfromITokenInfo(tokens), ...loadTokensFromList('secret-2')];
+    const swapTokens: SwapTokenMap = await TokenMapfromITokenInfo(tokens); // [...TokenMapfromITokenInfo(tokens), ...loadTokensFromList('secret-2')];
 
     // load custom tokens
     const customTokens = LocalStorageTokens.get();
@@ -500,8 +500,12 @@ export class SwapRouter extends React.Component<
       swapTokens.set(t.identifier, t);
     });
 
+    const tokenPrices =  await getPricesForJSONTokens()
+
     //load hardcoded tokens (scrt, atom, etc.)
     for (const t of loadTokensFromList(this.props.user.chainId || globalThis.config.CHAIN_ID)) {
+      if (tokenPrices[t.identifier])
+        t.price = tokenPrices[t.identifier]
       swapTokens.set(t.identifier, t);
     }
 
