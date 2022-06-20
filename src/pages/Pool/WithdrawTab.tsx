@@ -28,18 +28,18 @@ export class WithdrawTab extends React.Component<
     onCloseTab: CallableFunction;
     theme: Theme;
   },
-  { searchText: string; isOpen: boolean }
+  { searchText: string; openRow: number }
 > {
   constructor(props) {
     super(props);
   }
 
-  state = { searchText: '', isOpen: false };
+  state = { searchText: '', openRow: -1 };
   renderThumbVertical = () => {
     return <div className={`${styles.thumb} ${styles[this.props.theme.currentTheme]}`}></div>;
   };
-  setIsOpen(isRowOpen: boolean): void {
-    this.setState({ isOpen: isRowOpen });
+  setOpenRow(openRowID: number): void {
+    this.setState({ openRow: openRowID });
   }
   render() {
     const pairs = Array.from(new Set(this.props.pairs.values()));
@@ -113,7 +113,7 @@ export class WithdrawTab extends React.Component<
 
                 return p1Symbol.localeCompare(p2Symbol);
               })
-              .map(p => {
+              .map((p, index) => {
                 return (
                   <span key={p.lpTokenSymbol()}>
                     <WithdrawLiquidityPanel
@@ -126,10 +126,11 @@ export class WithdrawTab extends React.Component<
                       getBalance={this.props.updateToken}
                       onCloseTab={this.props.onCloseTab}
                       theme={this.props.theme}
-                      isRowOpen={this.state.isOpen}
-                      setIsRowOpen={(isOpen: boolean) => {
-                        this.setIsOpen(isOpen);
+                      openRow={this.state.openRow}
+                      setOpenRow={(openRow: number) => {
+                        this.setOpenRow(openRow);
                       }}
+                      id={index}
                     />
                   </span>
                 );
