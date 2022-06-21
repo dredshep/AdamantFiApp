@@ -46,8 +46,8 @@ export class AsyncSender extends SigningCosmWasmClient {
       };
     } catch (e) {
       console.error(`failed to broadcast tx: ${e}`);
-      let error = new CustomError(`Timed out while waiting for transaction`);
-      error.txHash = tx.transactionHash;
+      let error = new CustomError(`Transaction timed out, Keplr is likely out of sync causing transactions to fail. Try again in a few minutes when Keplr may be back in sync, this is not a SecretSwap issue`);
+      // error.txHash = tx.transactionHash;
       throw error;
     }
   };
