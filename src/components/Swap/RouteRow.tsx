@@ -1,17 +1,35 @@
 import { SwapTokenMap } from 'pages/TokenModal/types/SwapToken';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon, Image, Popup } from 'semantic-ui-react';
 import { FlexRowSpace } from './FlexRowSpace';
 import Loader from 'react-loader-spinner';
 import BigNumber from 'bignumber.js';
 import { formatAsUSD, formatSignificantFigures } from 'utils';
 import { useStores } from 'stores';
+import style from './style.styl'
 
-const routeLink = (
-  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="9 18 15 12 9 6"></polyline>
-  </svg>
-);
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+export default function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
 
 export const RouteRow = ({
   isLoading,
@@ -28,6 +46,7 @@ export const RouteRow = ({
 }) => {
   const [iconBackground, setIconBackground] = useState('whitesmoke');
   const { theme } = useStores();
+  const { width } = useWindowDimensions();
 
   if ((!route || route.length === 0) && !isLoading) {
     return null;
@@ -52,14 +71,14 @@ export const RouteRow = ({
   return (
     <div
       style={{
-        paddingTop: isLoading ? '1em' : '0.5em',
+        paddingTop: '1em',
         display: 'flex',
         alignItems: 'center',
-        color: theme.currentTheme === 'light' ? '#5F5F6B' : '#DEDEDE',
+        color: theme.currentTheme === 'light' ? 'black' : 'white',
       }}
     >
       Route
-      <Popup
+      {width > 940 && <Popup
         trigger={
           <Icon
             name="help"
@@ -67,6 +86,7 @@ export const RouteRow = ({
             size="tiny"
             style={{
               marginLeft: '0.5rem',
+              marginRight: '0.5rem',
               background: theme.currentTheme == 'light' ? 'whitesmoke' : 'rgba(255, 255, 255, 0.1)',
               verticalAlign: 'middle',
             }}
@@ -74,7 +94,7 @@ export const RouteRow = ({
             onMouseLeave={() => setIconBackground('whitesmoke')}
           />
         }
-        style={{ maxWidth: '600px' }}
+        style={{ maxWidth: '500px', zIndex: 9999999}}
         content={
           <div>
             <div>
@@ -96,9 +116,9 @@ export const RouteRow = ({
           </div>
         }
         position="left center"
-      />
+      />}
       <FlexRowSpace />
-      {isLoading ? <Loader type="ThreeDots" color="#00BFFF" height="1em" width="1em" /> : <Route currentTheme={theme.currentTheme} route={route} tokens={tokens} />}
+      {isLoading ? <Loader type="ThreeDots" color="#00BFFF" height="1em" width="1em" /> : <Route currentTheme={theme.currentTheme} route={route} tokens={tokens} isDetail={false}/>}
     </div>
   );
 
@@ -116,10 +136,10 @@ export const RouteRow = ({
     }
 
     return (
-      <div style={{ display: 'flex', marginTop: '0.3em', alignItems: 'center' }}>
+      <div style={{ display: 'flex', marginTop: '0.3em', alignItems: 'center'}}>
         {r.fromOutput && <Costs output={r.fromOutput} />}
         &nbsp;
-        <Route currentTheme="light" route={r.route} tokens={tokens} />
+        <Route currentTheme={theme.currentTheme} route={r.route} tokens={tokens} isDetail={true}/>
         &nbsp;
         {r.toOutput && <Costs output={r.toOutput} />}
       </div>
@@ -127,9 +147,16 @@ export const RouteRow = ({
   }
 };
 
-const Route = ({ route, tokens, currentTheme }: { route: string[], tokens: SwapTokenMap, currentTheme: any }) => {
+const Route = ({ route, tokens, currentTheme, isDetail }: { route: string[], tokens: SwapTokenMap, currentTheme: any, isDetail: boolean }) => {
+  const routeLink = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={(currentTheme === 'light' || isDetail) ? "black" : "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  );
+
   return (
-    <>
+    <div className={`${style.route}`} style={!isDetail ? {flexWrap: 'wrap',
+    maxWidth: '470px'} : {}}>
       {route.map((node, idx) => {
         const token = tokens.get(node);
         return (
@@ -137,7 +164,7 @@ const Route = ({ route, tokens, currentTheme }: { route: string[], tokens: SwapT
             style={{
               display: 'flex',
               alignItems: 'center',
-              color: currentTheme === 'light' ? '#686991' : '#DEDEDE',
+              color: (currentTheme === 'light' || isDetail) ? 'black' : 'white',
             }}
             key={token.identifier}
           >
@@ -155,7 +182,7 @@ const Route = ({ route, tokens, currentTheme }: { route: string[], tokens: SwapT
           </div>
         );
       })}
-    </>
+    </div>
   );
 };
 

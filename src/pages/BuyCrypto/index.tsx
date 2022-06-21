@@ -86,7 +86,7 @@ export const BuyCrypto = observer(() => {
   return (
     <BaseContainer>
       <PageContainer>
-        <main className={`${theme.currentTheme} buy-base-container`}>
+        <main className={`${theme.currentTheme} buy-base-container`} style={{marginTop: '2rem'}}>
           <section className="balances-container">
             <div>
               <p>SCRT</p>

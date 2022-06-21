@@ -46,7 +46,7 @@
       font-weight: 400;
     }
     button {
-      background: #3ba246;
+      background: #cb9b51;
       font-weight: 500;
       color: #fcf9f3;
       font-family: Poppins, Arial, Helvetica, sans-serif;
@@ -101,7 +101,7 @@
   }
   .primary {
     a {
-      color: #3ba246;
+      color: #cb9b51;
     }
   }
   .sefi-balance {
@@ -170,7 +170,7 @@
   font-family: Poppins, Arial, Helvetica, sans-serif;
   font-weight: 400;
   a {
-    color: #3ba246 !important;
+    color: #cb9b51 !important;
     text-decoration: underline;
     font-size: 12px;
   }
@@ -270,7 +270,7 @@ a {
   font-family: Poppins, Arial, Helvetica, sans-serif;
   font-weight: 600 !important;
   strong {
-    color: #3ba246;
+    color: #cb9b51;
   }
 }
 .congrats_msg {
@@ -298,7 +298,7 @@ a {
   display: grid;
   grid-template-columns: repeat(3, 33%);
   grid-template-rows: auto;
-  border: 1px solid #3ba246;
+  border: 1px solid #cb9b51;
   border-radius: 4px;
   padding: 1rem;
   margin: 1.5rem 0;
@@ -317,7 +317,7 @@ a {
 }
 .percentage-confirm {
   font-size: 28px !important;
-  color: #3ba246;
+  color: #cb9b51;
 }
 .align-right {
   justify-content: flex-end;
@@ -404,14 +404,14 @@ span {
 }
 
 .icon_info {
-  color: #3ba246 !important;
-  border: 0.1px solid #3ba246 !important;
+  color: #cb9b51 !important;
+  border: 0.1px solid #cb9b51 !important;
   margin-left: 10px !important;
   &::before {
     display: flex;
     justify-content: center;
     height: 100%;
     align-items: center;
-    color: #3ba246 !important;
+    color:#cb9b51 !important;
   }
 }

@@ -11,9 +11,9 @@ export const TokenButton = (props: { token: SwapToken; onClick?: any }) => {
   const {theme} = useStores()
   return (
     <div className={`${styles.tokenButton} ${styles[theme.currentTheme]}`} onClick={props.onClick}>
-      <Image src={props.token.logo} avatar style={{ boxShadow: 'rgba(0, 0, 0, 0.075) 0px 6px 10px' }} />
+      <img src={props.token.logo} className={`${styles.swapTokenImg}`} />
       <span>{truncateSymbol(props.token.symbol)}</span>
-      <ExpandIcon />
+      <img src="/static/angle-down.svg" alt="Down" className={`${styles.selectATokenDownAngle} ${styles[theme.currentTheme]}`}/>
     </div>
   );
 };

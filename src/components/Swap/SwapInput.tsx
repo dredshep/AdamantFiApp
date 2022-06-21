@@ -17,7 +17,6 @@ export const SwapInput = (props: {
       disabled={props.disabled === true}
       style={{
         padding: 0,
-        width: props.width || '180px',
       }}
 
       className={`${styles.customInput} ${styles[theme.currentTheme]}`}

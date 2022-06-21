@@ -11,7 +11,6 @@ interface ModalExplanationProps {
   token: RewardsToken;
   theme: Theme;
   children?: ReactChild;
-  infinityPoolPrice?: number;
   infinityPoolSymbol?: String;
 }
 interface ModalMultiplierTipProps {
@@ -34,11 +33,14 @@ const getLabel = (n: string): string => {
   }
 };
 
-export const ModalExplanation = observer(({ token, theme, children, infinityPoolPrice, infinityPoolSymbol }: ModalExplanationProps) => {
-  let stats = getAPRStats(token, Number(token.rewardsPrice));
-  if (infinityPoolPrice !== undefined) {
-    stats = getAPRStats(token, infinityPoolPrice, infinityPoolSymbol === 'SEFI');
-  }
+export const ModalExplanation = observer(({ token, theme, children, infinityPoolSymbol }: ModalExplanationProps) => {
+
+  let stats;
+
+  if (infinityPoolSymbol !== undefined)
+    stats = getAPRStats(token, Number(token.rewardsPrice), infinityPoolSymbol);
+  else
+    stats = getAPRStats(token, Number(token.rewardsPrice));
 
   return (
     <Popup position="bottom center" className={`apr-modal ${theme.currentTheme}`} trigger={children}>

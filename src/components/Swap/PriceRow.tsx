@@ -17,8 +17,8 @@ export const PriceRow = ({ price, fromToken, toToken, labelPrefix }: { price: Bi
 
   return (
     <div className={`${style.priceRow_container} ${style[theme.currentTheme]}`}>
-      {labelPrefix}Price
-      <FlexRowSpace />
+      <span style={{marginRight: '0.5rem'}}>{labelPrefix}Price</span>
+      <FlexRowSpace/>
       {`${formatSignificantFigures(displayPrice, 8)} ${displayLeftToken} per ${displayRightToken}`}
       <Icon
         circular

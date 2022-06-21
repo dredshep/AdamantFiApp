@@ -16,6 +16,7 @@ import { shareOfPoolNumberFormat, storeTxResultLocally } from './utils';
 import { AsyncSender } from '../../blockchain-bridge/scrt/asyncSender';
 import Theme from 'themes';
 import { GAS_FOR_WITHDRAW_LP_FROM_SWAP } from '../../utils/gasPrices';
+import './style.scss'
 
 export class WithdrawLiquidityPanel extends React.Component<
   {
@@ -173,7 +174,7 @@ export class WithdrawLiquidityPanel extends React.Component<
           margin: '.5rem 0',
           borderRadius: '16px',
           border: this.props.theme.currentTheme == 'light' ? '1px solid #DEDEDE' : '1px solid white',
-          backgroundColor: this.props.theme.currentTheme == 'light' ? 'white' : '',
+          backgroundColor: this.props.theme.currentTheme == 'light' ? 'white' : 'black',
         }}
       >
         <Accordion fluid>
@@ -215,12 +216,12 @@ export class WithdrawLiquidityPanel extends React.Component<
           <Accordion.Content active={this.state.isActive}>
             {this.state.isLoadingBalance ? (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Loader type="ThreeDots" color="#3ba246" height="0.5em" />
+                <Loader type="ThreeDots" color="#cb9b51" height="0.5em" />
               </div>
             ) : null}
             <div hidden={this.state.isLoadingBalance}>
               <div style={rowStyle}>
-                <span>Your Total Pool Tokens</span>
+                <span>Your total pool tokens</span>
                 <FlexRowSpace />
                 {lpTokenBalanceNum.isNaN()
                   ? lpTokenBalance
@@ -241,7 +242,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                     {getLogo(tokenB)}
                   </div>
                   <div style={rowStyle}>
-                    <span>Your Pool Share</span>
+                    <span>Your pool share</span>
                     <FlexRowSpace />
                     {lpShareJsxElement}
                   </div>
@@ -270,9 +271,10 @@ export class WithdrawLiquidityPanel extends React.Component<
                     <input
                       style={{
                         flex: 1,
-                        margin: '0 3px',
+                        margin: '0.75rem 0 0.5rem 0',
                       }}
                       type="range"
+                      color='#cb9b51'
                       min={0}
                       max={1}
                       step={0.01}
@@ -287,12 +289,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                   <div style={rowStyle}>
                     <Button
                       basic
-                      color="blue"
-                      style={{
-                        flex: 1,
-                        borderRadius: '12px',
-                        padding: '10px',
-                      }}
+                      className='withdrawAmountBtn'
                       onClick={async () => {
                         this.setState({ withdrawPercentage: 0.25 });
                       }}
@@ -301,13 +298,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                     </Button>
                     <Button
                       basic
-                      color="blue"
-                      style={{
-                        flex: 1,
-                        borderRadius: '12px',
-                        padding: '10px',
-                        marginLeft: '1em',
-                      }}
+                      className='withdrawAmountBtn'
                       onClick={async () => {
                         this.setState({ withdrawPercentage: 0.5 });
                       }}
@@ -316,13 +307,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                     </Button>
                     <Button
                       basic
-                      color="blue"
-                      style={{
-                        flex: 1,
-                        borderRadius: '12px',
-                        padding: '10px',
-                        marginLeft: '1em',
-                      }}
+                      className='withdrawAmountBtn'
                       onClick={async () => {
                         this.setState({ withdrawPercentage: 0.75 });
                       }}
@@ -331,13 +316,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                     </Button>
                     <Button
                       basic
-                      color="blue"
-                      style={{
-                        flex: 1,
-                        borderRadius: '12px',
-                        padding: '10px',
-                        marginLeft: '1em',
-                      }}
+                      className='withdrawAmountBtn'
                       onClick={async () => {
                         this.setState({ withdrawPercentage: 1 });
                       }}
@@ -385,12 +364,7 @@ export class WithdrawLiquidityPanel extends React.Component<
                       primary
                       loading={this.state.isLoading}
                       disabled={this.state.isLoading || amountInTokenDenom === '0'}
-                      style={{
-                        margin: '0.5em 0 0 0',
-                        borderRadius: '12px',
-                        padding: '18px',
-                        fontSize: '20px',
-                      }}
+                      className='withdrawBtn'
                       onClick={async () => {
                         this.setState({ isLoading: true });
 

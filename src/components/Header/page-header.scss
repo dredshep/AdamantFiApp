@@ -1,0 +1,242 @@
+$dark-primary-font-color: #ffffff;
+$dark-header-background-color: linear-gradient(#000000, #242424);
+$light-primary-font-color: #242424;
+$light-header-background-color: linear-gradient(#ffffff, #fefaf6);
+$primary-color: #cb9b51;
+
+.page-header {
+  font-family: 'poppins';
+  padding: 0 1rem;
+  height: 80px;
+  width: 100%;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  transition: .5s ease;
+
+  @media screen and (min-width: 768px) {
+    ul {
+      flex-direction: row;
+    }
+
+    li {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.page-header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 2rem;
+    line-height: 1.6;
+    > img {
+      height: 40px;
+      width: 40px;
+      margin: 0rem 1rem 0rem 0rem;
+    }
+  }
+
+  .pricing {
+    font-size: 1.2rem;
+    font-weight:300;
+    .token {
+      font-weight:600;
+      margin-right:0.5rem;
+    }
+  }
+
+  > a {
+    display: flex;
+    align-items: center;
+    > img {
+      height: 30px;
+      width: auto;
+      margin-left: 0rem;
+      margin-right: 2.5rem;
+    }
+  }
+  > .theme__container {
+    > img {
+      padding: 5px;
+      width: 35px;
+      height: 35px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+  }
+}
+
+#hamburger-menu {
+  cursor: pointer;
+  height: 24px;
+  width: 30px;
+  display: none;
+  transition: all 0.4s ease;
+
+  &.checked {
+    transform: rotate(180deg);
+    display: inline;
+  }
+}
+
+.page-header-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpl_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 47px;
+  padding: 1rem;
+
+  img {
+    filter: none !important;
+    width: auto;
+    height: 25px;
+    margin: 5px 5px 0px 5px;
+    cursor: pointer;
+  }
+}
+.keplr__status {
+  width: 12px;
+  height: 12px;
+  margin-left: 26px;
+  margin-bottom: 22px;
+  border-radius: 6px;
+  position: absolute;
+  background-color: #da2f4f;
+
+  &--online {
+    background-color: #03c076;
+  }
+}
+.connect_btn {
+  font-size: 16px;
+  cursor: pointer;
+  &:hover {
+    font-weight: 500;
+  }
+}
+.address_container {
+  display: flex;
+  flex-direction: row;
+  margin-left: 10px;
+  font-size: 1.2rem;
+
+  p {
+    margin: 0rem;
+  }
+
+  .balance {
+    display: flex;
+    flex-direction: row;
+
+    :first-child {
+      margin-right: 0.5rem;
+    }
+  }
+}
+.separator {
+  padding: 0 10px !important;
+}
+
+@media only screen and (max-width: 900px) {
+  .page-header-left > div:not(.theme__container) {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .btn-main,
+  .btn-secondary,
+  .hide_mobile {
+    display: none !important;
+  }
+  .page-header-left {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    > div {
+      margin: 0;
+    }
+    > a {
+      > img {
+        height: 30px;
+        width: auto;
+        margin: 0;
+      }
+    }
+    > .theme__container {
+      margin-right: 2rem;
+      > img {
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        margin: 0;
+      }
+    }
+  }
+
+  #hamburger-menu {
+    display: inline;
+    margin-left: 2rem;
+  }
+
+  .page-header-right {
+    display: none;
+  }
+}
+
+.light.page-header {
+  border-bottom: 1px solid $primary-color;
+  background: #fefaf6;
+  color: $light-primary-font-color;
+  .page-header-left > div {
+    color: $light-primary-font-color;
+  }
+  .kpl_container {
+    border: 1px solid $primary-color;
+    border-radius: 9px;
+  }
+  .pricing {
+      color: #242424 !important;
+  }
+}
+
+.dark.page-header {
+  border-bottom: 1px solid #816508;
+  background: black;
+  color: $dark-primary-font-color;
+  .page-header-left > img {
+    filter: invert(1);
+  }
+  .page-header-left > div {
+    color: $dark-primary-font-color;
+  }
+  .kpl_container {
+    border: 1px solid $primary-color;
+    border-radius: 9px;
+    .wallet-icon > img {
+      filter: invert(100%) !important;
+    }
+  }
+  .pricing {
+      color: #ddd !important;
+  }
+}

@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import useWindowDimensions from 'components/Swap/RouteRow';
 import React, { useState } from 'react';
 import { Container, Popup, Icon } from 'semantic-ui-react';
 import { useStores } from 'stores';
@@ -27,10 +28,10 @@ export const AdditionalInfo = ({
   const [liqProvFeeIconBackground, setLiqProvFeeIconBackground] = useState<string>('whitesmoke');
   const [priceImpactIconBackground, setPriceImpactIconBackground] = useState<string>('whitesmoke');
   const { theme, user } = useStores();
+  const { width } = useWindowDimensions();
 
   return (
-    <div style={{ maxWidth: '450px', minWidth: '450px' }}>
-      <Container className={`${style.additionalInfo_container} ${style[theme.currentTheme]}`}>
+      <div className={`${style.additionalInfo_container} ${style[theme.currentTheme]}`}>
         <div
           style={{
             display: 'flex',
@@ -46,10 +47,7 @@ export const AdditionalInfo = ({
                   name="help"
                   circular
                   size="tiny"
-                  style={{
-                    marginLeft: '0.5rem',
-                    verticalAlign: 'middle',
-                  }}
+                  className={`additional-info-icon ${theme.currentTheme}`}
                   onMouseEnter={() => setMinReceivedIconBackground('rgb(237, 238, 242)')}
                   onMouseLeave={() => setMinReceivedIconBackground('whitesmoke')}
                 />
@@ -77,10 +75,7 @@ export const AdditionalInfo = ({
                   name="help"
                   circular
                   size="tiny"
-                  style={{
-                    marginLeft: '0.5rem',
-                    verticalAlign: 'middle',
-                  }}
+                  className={`additional-info-icon ${theme.currentTheme}`}
                   onMouseEnter={() => setPriceImpactIconBackground('rgb(237, 238, 242)')}
                   onMouseLeave={() => setPriceImpactIconBackground('whitesmoke')}
                 />
@@ -106,10 +101,7 @@ export const AdditionalInfo = ({
                   name="help"
                   circular
                   size="tiny"
-                  style={{
-                    marginLeft: '0.5rem',
-                    verticalAlign: 'middle',
-                  }}
+                  className={`additional-info-icon ${theme.currentTheme}`}
                   onMouseEnter={() => setLiqProvFeeIconBackground('rgb(237, 238, 242)')}
                   onMouseLeave={() => setLiqProvFeeIconBackground('whitesmoke')}
                 />
@@ -119,14 +111,13 @@ export const AdditionalInfo = ({
             />
           </span>
           <strong>
-            {formatSignificantFigures(liquidityProviderFee, 8)}
+            {formatSignificantFigures(liquidityProviderFee, width < 768 ? 8 : 6)}
             &nbsp;
             {fromToken}
           </strong>
         </div>
         <PairAnalyticsLink pairAddress={pairAddress} />
-      </Container>
-    </div>
+      </div>
   );
 };
 

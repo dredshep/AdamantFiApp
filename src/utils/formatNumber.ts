@@ -89,7 +89,7 @@ export function formatZeroDecimals(value: number | string) {
 }
 
 const twoDecimalsFormatter = new Intl.NumberFormat('en-US', {
-  minimumFractionDigits: 0,
+  minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
 

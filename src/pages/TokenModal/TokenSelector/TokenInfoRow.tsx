@@ -84,7 +84,7 @@ export const TokenInfoRow = (props: { token: SwapToken; balance?: any; onClick?:
         </div>
         <FlexRowSpace />
         <div className={`${styles.tokenInfoItemsRight} ${styles[theme.currentTheme]}`}>
-          {props.token.identifier !== 'uscrt' ? props.token.address : 'native'}
+          {props.token.identifier !== 'uscrt' ? `${props.token.address.slice(0, 10)}...${props.token.address.slice(-6)}` : 'native'}
         </div>
       </div>
       <h3 className={`${styles.CopyWithFeedback} ${styles[theme.currentTheme]}`} hidden={!props.token.address}>

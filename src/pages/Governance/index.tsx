@@ -83,7 +83,7 @@ export const Governance = observer(() => {
     // }
     // return `${apyStr}%`;
 
-    return formatRoi(getAPRStats(token, 0, true)?.apr + getAPRStats(token, 0, false)?.apr, true)
+    return formatRoi(getAPRStats(token, 0)?.apr, true)
   };
 
   async function createSefiViewingKey() {
@@ -160,15 +160,20 @@ export const Governance = observer(() => {
   //fetch infinity pool reward token and total locked
   useEffect(() => {
     (async () => {
-      const sefi_reward_token = await user.getRewardToken(globalThis.config.SEFI_STAKING_CONTRACT);
-      const { total_locked } = await user?.secretjs?.queryContractSmart(globalThis.config.SEFI_STAKING_CONTRACT, {
-        total_locked: {},
-      });
-      const totalLocked = total_locked?.amount;
-      const convertTotalLocked = totalLocked / Math.pow(10, 6);
 
-      setRewardToken(sefi_reward_token);
-      setTotalLocked(convertTotalLocked);
+      try {
+        const sefi_reward_token = await user.getRewardToken(globalThis.config.SEFI_STAKING_CONTRACT);
+        const { total_locked } = await user?.secretjs?.queryContractSmart(globalThis.config.SEFI_STAKING_CONTRACT, {
+          total_locked: {},
+        });
+        const totalLocked = total_locked?.amount;
+        const convertTotalLocked = totalLocked / Math.pow(10, 6);
+
+        setRewardToken(sefi_reward_token);
+        setTotalLocked(convertTotalLocked);
+      } catch (error) {
+        console.error(error)
+      }
     })();
     //eslint-disable-next-line
   }, [tokens.allData]);
@@ -202,8 +207,7 @@ export const Governance = observer(() => {
       <PageContainer>
         <Box
           className={`${theme.currentTheme}`}
-          pad={{ horizontal: '136px', top: 'small' }}
-          style={{ alignItems: 'center' }}
+          style={{ alignItems: 'center', marginTop: '2rem' }}
         >
           <div className="governance ">
             <div className="column content-governance__note">
@@ -232,7 +236,6 @@ export const Governance = observer(() => {
                         <h1>
                           {numberFormatter(votingPower, 2)}
                           <span className="pink"> SEFI </span>
-                          <span>({totalVotingPower} %)</span>
                         </h1>
                       )
                     ) : (

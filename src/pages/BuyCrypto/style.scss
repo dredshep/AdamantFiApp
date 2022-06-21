@@ -33,6 +33,17 @@
   justify-content: center;
 }
 
+@media only screen and (max-width: 1250px) {
+  .buy-convert-grid {
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+  }
+
+  .convert-container {
+    margin: 2rem 0;
+  }
+}
+
 .transak-container,
 .convert-container {
   display: flex;

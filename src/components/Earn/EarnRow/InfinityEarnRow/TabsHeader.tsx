@@ -17,9 +17,9 @@ const Tab: React.FC<{ name: string }> = ({ name }) => {
         fontSize: '16px',
         cursor: 'pointer',
         borderRadius: leftTab ? '10px 0 0 10px' : '0 10px 10px 0',
-        border: '2px solid #3ba246',
+        border: '2px solid #cb9b51',
         width: '224px',
-        background: isSelected ? '#3ba246' : 'rgba(23,63,27,' + opacity + ')',
+        background: isSelected ? '#cb9b51' : 'rgba(65, 50, 25,' + opacity + ')',
         color: isSelected ? '#eee' : '#888',
         textAlign: 'center'
       }}

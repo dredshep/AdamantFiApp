@@ -113,7 +113,7 @@ export function notify(
   }
 
   const { hide } = cogoToast[cogoType](msg, {
-    toastContainerID: useContainer ? 'notifications_container' : '',
+    toastContainerID: 'notifications_container',
     hideAfter: hideAfterSec,
     onClick,
   });

@@ -1,13 +1,17 @@
 .swapContainerStyle {
   z-index: 10;
   border-radius: 16px;
-  padding: 1.625em;
+  padding: 26px;
+  border: 1px solid #cb9b51;
+  background-position: 50% 50%;
+  background-size: 110%;
   &.light{
     background-color: white;
     box-shadow: 4px 4px 32px rgba(140, 140, 140, 0.25);
+    background-image: url(../../css-static/panel-bg-light.png);
   }
   &.dark{
-    background: #0E0E10;
+    background-image: url(../../css-static/panel-bg-dark.png);
   }
 }
 
@@ -86,7 +90,7 @@ input {
   }
 
   &:focus {
-    border: 1px solid rgba(23,63,27,9);
+    border: 1px solid rgba(179, 134, 57,.6);
   }
   &::placeholder{
     font-family: 'Poppins',Arial, Helvetica, sans-serif;
@@ -100,7 +104,7 @@ input {
   font-size:  16px!important;
   font-weight:  600 !important;
   color: white !important;
-  background: rgb(23,63,27) !important;
+  background: #cb9b51 !important;
   height: 46px !important;
   &.dark{
     &:disabled{

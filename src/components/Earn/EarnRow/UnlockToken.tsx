@@ -5,6 +5,7 @@ import { UserStoreEx } from '../../../stores/UserStore';
 import { Button } from 'semantic-ui-react';
 import SoftTitleValue from '../SoftTitleValue';
 import { useState } from 'react';
+import './style.scss'
 //import { observer } from 'mobx-react-lite';
 
 const UnlockToken = (props: {
@@ -35,15 +36,7 @@ const UnlockToken = (props: {
           setLoading(false);
           clearInterval(props.pulseInterval);
         }}
-        style={{
-          display: 'flex',
-          borderRadius: '15px',
-          fontSize: '1rem',
-          fontWeight: 500,
-          height: 'auto',
-          padding: '0.5rem 0.3rem',
-          background: 'transparent',
-        }}
+        className='create-vkey'
       >
         <span
           role="img"

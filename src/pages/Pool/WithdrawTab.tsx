@@ -49,7 +49,7 @@ export class WithdrawTab extends React.Component<
         <Container className={`${styles.swapContainerStyle} ${styles[this.props.theme.currentTheme]}`}>
           <TabsHeader />
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Loader type="ThreeDots" color="#3ba246" height="0.5em" />
+            <Loader type="ThreeDots" color="#cb9b51" height="0.5em" />
           </div>
         </Container>
       );
@@ -71,7 +71,7 @@ export class WithdrawTab extends React.Component<
         <Scrollbars
           autoHide
           renderThumbVertical={this.renderThumbVertical}
-          style={{ width: 472, height: 300 }}
+          style={{ width: 462, height: 300 }}
           className={styles.withdrawLiquitityContent}
         >
           <div className={styles.lpTokensContainer}>
