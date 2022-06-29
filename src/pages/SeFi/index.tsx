@@ -71,7 +71,7 @@ const getAPRBeforeRender = (token) => {
   }
   else if (token.token.name === 'ALTER') {
     if (globalThis.config.FETCHER_CONFIGS.showAlterAPR && globalThis.config['PRICE_DATA']['ALTER/USD']) {
-      apr = ((16500 * 12) / (locked / globalThis.config['PRICE_DATA']['ALTER/USD'].price))
+      apr = ((14000 * 12) / (locked / globalThis.config['PRICE_DATA']['ALTER/USD'].price))
     } else {
       apr = 0;
     }
