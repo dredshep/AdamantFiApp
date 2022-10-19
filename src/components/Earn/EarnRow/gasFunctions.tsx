@@ -29,10 +29,10 @@ export function getGasFeeInfinityPool(action, activeProposals): StdFee {
 
   switch (action) {
     case 'deposit':
-      gas = (350_000 * rsAmount + 400_000 + 50_000 * activeProposals);
+      gas = (450_000 * rsAmount + 500_000 + 150_000 * activeProposals);
       break;
     case 'redeem_lockup':
-      gas = (350_000 * rsAmount + 300_000 + 50_000 * activeProposals);
+      gas = (450_000 * rsAmount + 400_000 + 150_000 * activeProposals);
       break;
     case 'redeem':
       gas = 500_000
