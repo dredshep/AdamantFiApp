@@ -3,6 +3,7 @@ import { Coin, StdFee } from 'secretjs/types/types';
 import retry from 'async-await-retry';
 import { sleep } from '../utils';
 import stores from 'stores';
+import { extractError } from './utils';
 class CustomError extends Error {
   public txHash: string;
 }
@@ -40,15 +41,22 @@ export class AsyncSender extends SigningCosmWasmClient {
         { retriesMax: 5, interval: 6000 },
       );
 
+      if (res?.code) {
+        const error = extractError(res);
+        throw new CustomError(error);
+      }
+
       return {
         ...res,
         transactionHash: tx.transactionHash,
       };
     } catch (e) {
       console.error(`failed to broadcast tx: ${e}`);
-      let error = new CustomError(`Transaction timed out, Keplr is likely out of sync causing transactions to fail. Try again in a few minutes when Keplr may be back in sync, this is not a SecretSwap issue`);
+      if (e.toString().includes('not found (HTTP 404)')) {
+        e = new CustomError(`Timed out waiting for transaction. Your transaction is pending and may be processed soon. Check an explorer to confirm.`);
+      }
       // error.txHash = tx.transactionHash;
-      throw error;
+      throw e;
     }
   };
 }
