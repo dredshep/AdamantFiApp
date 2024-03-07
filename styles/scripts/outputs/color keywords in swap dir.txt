@@ -1,0 +1,173 @@
+Searching for: White1000
+----------------------------------------
+Searching for: Basic1000
+----------------------------------------
+Searching for: Basic800
+----------------------------------------
+Searching for: Basic600
+----------------------------------------
+Searching for: Basic400
+----------------------------------------
+Searching for: Basic300
+----------------------------------------
+Searching for: Basic200
+----------------------------------------
+Searching for: Basic100
+----------------------------------------
+Searching for: Yellow600
+----------------------------------------
+Searching for: Yellow400
+----------------------------------------
+Searching for: Yellow200
+----------------------------------------
+Searching for: Green600
+----------------------------------------
+Searching for: Red600
+----------------------------------------
+Searching for: Grey700
+----------------------------------------
+Searching for: Grey600
+----------------------------------------
+Searching for: Grey500
+----------------------------------------
+Searching for: Grey400
+----------------------------------------
+Searching for: Blue500
+----------------------------------------
+Searching for: border
+src/pages/Swap/styles.styl:4:    border-radius: 16px;
+src/pages/Swap/styles.styl:10:    border: 1px solid #cb9b51;
+src/pages/Swap/styles.styl:14:    border-radius: 20px;
+src/pages/Swap/styles.styl:59:    border-radius: 20px;
+src/pages/Swap/styles.styl:60:    border: 1px solid rgb(237, 238, 242);
+src/pages/Swap/styles.styl:68:      border: 1px solid rgba(179, 134, 57,.6);
+src/pages/Swap/styles.styl:118:    border-radius: 16px;
+src/pages/Swap/styles.styl:123:    border: 1px solid #cb9b51;
+src/pages/Swap/styles.styl:127:    border-radius: 20px;
+src/pages/Swap/styles.styl:172:    border-radius: 20px;
+src/pages/Swap/styles.styl:173:    border: 1px solid rgb(237, 238, 242);
+src/pages/Swap/styles.styl:181:      border: 1px solid rgba(179, 134, 57,.6);
+src/pages/Swap/styles.styl:293:  border-radius: 4px !important;
+src/pages/Swap/styles.styl:314:  border-radius: 4px !important;
+src/pages/Swap/styles.styl:316:  border: none !important;
+src/pages/Swap/styles.styl:331:    border-radius: 4px !important;
+src/pages/Swap/styles.styl:332:    border: none !important;
+src/pages/Swap/styles.styl:338:  border: 0.1px solid #cb9b51 !important;
+src/pages/Swap/Cashback.tsx:119:            borderRadius: '20px',
+src/pages/Swap/Cashback.tsx:120:            border: '1px solid rgb(247, 248, 250)',
+src/pages/Swap/HistoryPanel.tsx:124:          borderRadius: '24px',
+src/pages/Swap/HistoryPanel.tsx:140:          borderRadius: '20px',
+src/pages/Swap/HistoryPanel.tsx:141:          border: '1px solid rgb(247, 248, 250)',
+src/pages/Swap/SwapTab.tsx:28:  borderRadius: '4px',
+src/pages/Swap/utils.tsx:25:      border-radius: 30px;
+src/pages/Swap/utils.tsx:28:      border: none;
+----------------------------------------
+Searching for: active
+src/pages/Swap/HistoryPanel.tsx:43:    isActive: boolean;
+src/pages/Swap/HistoryPanel.tsx:50:    isActive: false,
+src/pages/Swap/HistoryPanel.tsx:147:            active={this.state.isActive}
+src/pages/Swap/HistoryPanel.tsx:149:              this.setState({ isActive: !this.state.isActive }, async () => {
+src/pages/Swap/HistoryPanel.tsx:150:                if (this.state.isActive) {
+src/pages/Swap/HistoryPanel.tsx:188:          <Accordion.Content active={this.state.isActive}>
+----------------------------------------
+Searching for: formBackground
+----------------------------------------
+Searching for: light
+src/pages/Swap/styles.styl:1:.light{
+src/pages/Swap/styles.styl:5:    background-image: url(../../css-static/panel-bg-light.png);
+src/pages/Swap/styles.styl:21:    -webkit-tap-highlight-color: transparent;
+src/pages/Swap/styles.styl:134:    -webkit-tap-highlight-color: transparent;
+src/pages/Swap/styles.styl:231:  &.light {
+src/pages/Swap/styles.styl:284:  &.light {
+src/pages/Swap/styles.styl:304:  &.light{
+src/pages/Swap/style.scss:14:  &.light, &.light:before {
+----------------------------------------
+Searching for: dark
+src/pages/Swap/styles.styl:115:.dark{
+src/pages/Swap/styles.styl:119:    background-image: url(../../css-static/panel-bg-dark.png);
+src/pages/Swap/styles.styl:242:  &.dark {
+src/pages/Swap/styles.styl:298:  &.dark{
+src/pages/Swap/style.scss:10:  &.dark, &.dark:before {
+----------------------------------------
+Searching for: buttonBgColor
+----------------------------------------
+Searching for: Basic900
+----------------------------------------
+Searching for: Purple800
+----------------------------------------
+Searching for: Purple600
+----------------------------------------
+Searching for: Purple500
+----------------------------------------
+Searching for: Blue
+----------------------------------------
+Searching for: Red
+src/pages/Swap/AdditionalInfo.tsx:125:  if (priceImpact > 0.05) return 'red'; // High
+src/pages/Swap/index.tsx:339:    ).reduce((balances, value) => {
+src/pages/Swap/utils.tsx:39:export const wrongViewingKey = <strong style={{ color: 'red' }}>Wrong Viewing Key</strong>;
+src/pages/Swap/utils.tsx:72:          color: 'red',
+----------------------------------------
+Searching for: Red500
+----------------------------------------
+Searching for: Orange500
+----------------------------------------
+Searching for: Green500
+----------------------------------------
+Searching for: StandardBlack
+----------------------------------------
+Searching for: StandardWhite
+----------------------------------------
+Searching for: Background
+src/pages/Swap/styles.styl:5:    background-image: url(../../css-static/panel-bg-light.png);
+src/pages/Swap/styles.styl:6:    background-position: 50% 50%;
+src/pages/Swap/styles.styl:7:    background-size: 110%;
+src/pages/Swap/styles.styl:19:    background-color: transparent;
+src/pages/Swap/styles.styl:27:      background-color: rgba(23,63,27,.10);
+src/pages/Swap/styles.styl:32:      background-color: transparent;
+src/pages/Swap/styles.styl:119:    background-image: url(../../css-static/panel-bg-dark.png);
+src/pages/Swap/styles.styl:120:    background-position: 50% 50%;
+src/pages/Swap/styles.styl:121:    background-size: 110%;
+src/pages/Swap/styles.styl:132:    background-color: transparent;
+src/pages/Swap/styles.styl:140:      background-color: rgba(23,63,27,.10);
+src/pages/Swap/styles.styl:145:      background-color: transparent;
+src/pages/Swap/styles.styl:235:        background: whitesmoke;
+src/pages/Swap/styles.styl:246:        background: rgba(255, 255, 255, 0.1);
+src/pages/Swap/styles.styl:291:  background: #cb9b51 !important;
+src/pages/Swap/styles.styl:301:      background: #585858 !important;
+src/pages/Swap/styles.styl:307:      background: rgb(222, 222, 222) !important;
+src/pages/Swap/styles.styl:313:  background: #5f5f6b !important;
+src/pages/Swap/styles.styl:330:    background: #5f5f6b !important;
+src/pages/Swap/Cashback.tsx:121:            backgroundColor: 'white',
+src/pages/Swap/HistoryPanel.tsx:142:          backgroundColor: 'white',
+src/pages/Swap/SwapTab.tsx:34:const disableButtonStyle = { ...baseButtonStyle, color: '#5F5F6B', background: '#DEDEDE' };
+src/pages/Swap/SwapTab.tsx:35:const enableButtonStyle = { ...baseButtonStyle, color: '#FFFFFF', background: '#cb9b51' };
+src/pages/Swap/SwapTab.tsx:39:  background: 'transparent',
+src/pages/Swap/AdditionalInfo.tsx:27:  const [minReceivedIconBackground, setMinReceivedIconBackground] = useState<string>('whitesmoke');
+src/pages/Swap/AdditionalInfo.tsx:28:  const [liqProvFeeIconBackground, setLiqProvFeeIconBackground] = useState<string>('whitesmoke');
+src/pages/Swap/AdditionalInfo.tsx:29:  const [priceImpactIconBackground, setPriceImpactIconBackground] = useState<string>('whitesmoke');
+src/pages/Swap/AdditionalInfo.tsx:51:                  onMouseEnter={() => setMinReceivedIconBackground('rgb(237, 238, 242)')}
+src/pages/Swap/AdditionalInfo.tsx:52:                  onMouseLeave={() => setMinReceivedIconBackground('whitesmoke')}
+src/pages/Swap/AdditionalInfo.tsx:79:                  onMouseEnter={() => setPriceImpactIconBackground('rgb(237, 238, 242)')}
+src/pages/Swap/AdditionalInfo.tsx:80:                  onMouseLeave={() => setPriceImpactIconBackground('whitesmoke')}
+src/pages/Swap/AdditionalInfo.tsx:105:                  onMouseEnter={() => setLiqProvFeeIconBackground('rgb(237, 238, 242)')}
+src/pages/Swap/AdditionalInfo.tsx:106:                  onMouseLeave={() => setLiqProvFeeIconBackground('whitesmoke')}
+src/pages/Swap/utils.tsx:32:      background: #cb9b5150;
+src/pages/Swap/style.scss:11:    background: rgba(255, 255, 255, 0.1);
+src/pages/Swap/style.scss:15:    background: whitesmoke;
+----------------------------------------
+Searching for: Green
+src/pages/Swap/AdditionalInfo.tsx:129:  return 'green'; // Low
+----------------------------------------
+Searching for: Black
+src/pages/Swap/style.scss:16:    color: black;
+----------------------------------------
+Searching for: BlackTxt
+----------------------------------------
+Searching for: barBg
+----------------------------------------
+Searching for: inputBorder
+----------------------------------------
+Searching for: textColor
+----------------------------------------
+Searching for: buttonHoverBgColor
+----------------------------------------

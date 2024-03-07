@@ -1,0 +1,81 @@
+src/pages/Swap/styles.styl:10:    border: 1px solid #cb9b51;
+src/pages/Swap/styles.styl:31:      color: #848484;
+src/pages/Swap/styles.styl:123:    border: 1px solid #cb9b51;
+src/pages/Swap/styles.styl:144:      color: #848484;
+src/pages/Swap/styles.styl:233:      color:#1b1b1b;
+src/pages/Swap/styles.styl:244:      color:#F9FAFA;
+src/pages/Swap/styles.styl:248:          color: #F9FAFA;
+src/pages/Swap/styles.styl:291:  background: #cb9b51 !important;
+src/pages/Swap/styles.styl:300:      color: #d9d9d9 !important;
+src/pages/Swap/styles.styl:301:      background: #585858 !important;
+src/pages/Swap/styles.styl:313:  background: #5f5f6b !important;
+src/pages/Swap/styles.styl:315:  color: #f9fafa !important;
+src/pages/Swap/styles.styl:322:    color: #cb9b51 !important;
+src/pages/Swap/styles.styl:330:    background: #5f5f6b !important;
+src/pages/Swap/styles.styl:337:  color: #cb9b51 !important;
+src/pages/Swap/styles.styl:338:  border: 0.1px solid #cb9b51 !important;
+src/pages/Swap/styles.styl:345:    color: #cb9b51 !important;
+src/pages/Swap/Cashback.tsx:181:                        <Loader type="ThreeDots" color="#00BFFF" height="1em" width="1em" style={{ margin: 'auto' }} />
+src/pages/Swap/Cashback.tsx:218:                        <Loader type="ThreeDots" color="#00BFFF" height="1em" width="1em" style={{ margin: 'auto' }} />
+src/pages/Swap/Cashback.tsx:316:                    <Loader type="ThreeDots" color="#00BFFF" height="1em" width="1em" style={{ margin: 'auto' }} />
+src/pages/Swap/Cashback.tsx:330:                      <Loader type="ThreeDots" color="#00BFFF" height="1em" width="1em" style={{ margin: 'auto' }} />
+src/pages/Swap/HistoryPanel.tsx:191:                <Loader type="ThreeDots" color="#00BFFF" height="0.5em" />
+src/pages/Swap/SwapTab.tsx:34:const disableButtonStyle = { ...baseButtonStyle, color: '#5F5F6B', background: '#DEDEDE' };
+src/pages/Swap/SwapTab.tsx:35:const enableButtonStyle = { ...baseButtonStyle, color: '#FFFFFF', background: '#cb9b51' };
+src/pages/Swap/SwapTab.tsx:38:  color: '#cb9b51',
+src/pages/Swap/HistoryTab.tsx:40:            <Loader type="ThreeDots" color="#00BFFF" height="0.5em" />
+src/themes/theme.ts:20:      White1000: '#ffffff',
+src/themes/theme.ts:21:      Basic1000: '#000000',
+src/themes/theme.ts:22:      Basic800: '#30303d',
+src/themes/theme.ts:23:      Basic600: '#939393',
+src/themes/theme.ts:24:      Basic400: '#D7D7D7',
+src/themes/theme.ts:25:      Basic300: '#E6E6E6',
+src/themes/theme.ts:26:      Basic200: '#F5F5F5',
+src/themes/theme.ts:27:      Basic100: '#FFFFFF',
+src/themes/theme.ts:28:      Yellow600: '#FFCB02',
+src/themes/theme.ts:29:      Yellow400: '#FFE06E',
+src/themes/theme.ts:30:      Yellow200: '#FFF5CC',
+src/themes/theme.ts:31:      Green600: '#00A825',
+src/themes/theme.ts:32:      Red600: '#FF0000',
+src/themes/theme.ts:33:      Grey700: '#b5b5b5',
+src/themes/theme.ts:34:      Grey600: '#afb1c0',
+src/themes/theme.ts:35:      Grey500: '#9698a7',
+src/themes/theme.ts:36:      Grey400: '#d2d6e1',
+src/themes/theme.ts:37:      Blue500: '#4740a1',
+src/themes/theme.ts:39:      border: '#323232',
+src/themes/theme.ts:42:      active: '#FFCB02',
+src/themes/theme.ts:44:      formBackground: '#f8f8f8',
+src/themes/theme.ts:47:        light: '#323232',
+src/themes/theme.ts:50:        dark: '#f5f5f5',
+src/themes/theme.ts:51:        light: '#f5f5f5',
+src/themes/theme.ts:55:      buttonBgColor: '#4740a1',
+src/themes/baseTheme.ts:48:  Basic1000: '#323846',
+src/themes/baseTheme.ts:49:  Basic900: '#4E4E64',
+src/themes/baseTheme.ts:50:  Basic800: '#30303d',
+src/themes/baseTheme.ts:51:  Basic700: '#737392',
+src/themes/baseTheme.ts:52:  Basic500: '#9698A7',
+src/themes/baseTheme.ts:53:  Basic400: '#AFB1C0',
+src/themes/baseTheme.ts:54:  Basic300: '#D2D6E1',
+src/themes/baseTheme.ts:55:  Basic200: '#E7ECF7',
+src/themes/baseTheme.ts:56:  Basic100: '#F5F7FC',
+src/themes/baseTheme.ts:57:  Purple800: '#37317D',
+src/themes/baseTheme.ts:58:  Purple600: '#3F398F',
+src/themes/baseTheme.ts:59:  Purple500: '#4740A1',
+src/themes/baseTheme.ts:61:  Blue: '#0066B3',
+src/themes/baseTheme.ts:63:  Red: '#F15A22',
+src/themes/baseTheme.ts:64:  Red500: '#EB4D4B',
+src/themes/baseTheme.ts:66:  Orange500: '#EE9F18',
+src/themes/baseTheme.ts:68:  Green500: '#3DBE98',
+src/themes/baseTheme.ts:70:  StandardBlack: '#000000',
+src/themes/baseTheme.ts:71:  StandardWhite: '#ffffff',
+src/themes/baseTheme.ts:74:  Background: 'linear-gradient(171.96deg, #4460DC 0%, #3247A2 89.05%)',
+src/themes/baseTheme.ts:76:  Green: '#19B97C',
+src/themes/baseTheme.ts:77:  Black: '#405965',
+src/themes/baseTheme.ts:78:  // BlackTxt: '#495057',
+src/themes/baseTheme.ts:79:  BlackTxt: '#212D5E',
+src/themes/baseTheme.ts:116:  barBg: '#9a9a9a',
+src/themes/baseTheme.ts:120:  inputBorder: '#D6D6D6',
+src/themes/baseTheme.ts:257:      textColor: '#212D5E',
+src/themes/baseTheme.ts:275:      buttonBgColor: '#1c2a5e',
+src/themes/baseTheme.ts:276:      // buttonBgColor: '#03ade8',
+src/themes/baseTheme.ts:277:      buttonHoverBgColor: '#03ade8',
