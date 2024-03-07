@@ -1,6 +1,6 @@
 import { css } from 'styled-components';
 
-export const Theme: any = {
+export const Theme = {
   global: {
     size: {
       medium: '250px',
@@ -177,4 +177,4 @@ export const Theme: any = {
       ${(props: any) => 'border-collapse: separate; width: 100%; table-layout: fixed; word-break: break-all;}'}
     `,
   },
-};
+} as const;
